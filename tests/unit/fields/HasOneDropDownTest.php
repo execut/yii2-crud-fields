@@ -15,6 +15,7 @@ class HasOneDropDownTest extends TestCase
 {
     public function testGetField() {
         $field = $this->getField();
+        $field->model->testTest = Model::$query;
         $field = $field->getField();
         $this->assertEquals([
             'attribute' => 'test_test_id',
@@ -28,7 +29,7 @@ class HasOneDropDownTest extends TestCase
 
     public function testGetColumn() {
         $field = $this->getField();
-
+        $field->model->testTest = Model::$query;
 
         $this->assertEquals([
             'attribute' => 'test_test_id',
