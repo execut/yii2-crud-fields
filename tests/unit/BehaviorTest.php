@@ -31,6 +31,31 @@ class BehaviorTest extends TestCase
         $this->assertEquals($model, $field->model);
     }
 
+    public function testSetFieldsByAttribute() {
+        $model = new Model;
+        $behavior = new Behavior([
+            'owner' => $model,
+            'fields' => [
+                'name',
+            ],
+        ]);
+        $fields = $behavior->fields;
+        $this->assertCount(1, $fields);
+    }
+
+    public function testSetFieldsByClass() {
+        $model = new Model;
+        $behavior = new Behavior([
+            'owner' => $model,
+            'fields' => [
+                Field::class,
+            ],
+        ]);
+        $fields = $behavior->fields;
+        $this->assertCount(1, $fields);
+        $this->assertNull($fields[0]->attribute);
+    }
+
     public function testGetGridColumns() {
         $field = $this->getMockBuilder(Field::class)->setMethods(['getColumn'])->getMock();
         $fieldConfig = [

@@ -11,10 +11,14 @@ use yii\db\ActiveRecord;
 
 class FieldTest extends TestCase
 {
-    public $appConfig = [
-        'id' => 'actions-test',
-        'basePath' => __DIR__,
-    ];
+    public function testGettersWithoutAttribute() {
+        $field = new Field();
+        $this->assertEquals([], $field->rules());
+        $this->assertEquals([], $field->getColumn());
+        $this->assertEquals([], $field->getField());
+        $query = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([Model::class])->getMock();
+        $this->assertEquals($query, $field->applyScopes($query));
+    }
 
     public function testGetColumn() {
         $column = [

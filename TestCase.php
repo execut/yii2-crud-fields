@@ -5,15 +5,17 @@
 namespace execut\crudFields;
 
 
-class TestCase extends \yii\codeception\TestCase
+use Codeception\Test\Unit;
+
+class TestCase extends Unit
 {
-    public $appConfig = [
-        'id' => 'actions-test',
-        'basePath' => __DIR__ . '/../../../',
-        'components' => [
-            'assetManager' => [
-                'basePath' => __DIR__ . '/tests/assets/',
-            ],
-        ],
-    ];
+//    public $appConfig = [
+//        'id' => 'actions-test',
+//        'basePath' => __DIR__ . '/../../../',
+//        'components' => [
+//            'assetManager' => [
+//                'basePath' => __DIR__ . '/tests/assets/',
+//            ],
+//        ],
+//    ];
 }

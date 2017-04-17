@@ -7,6 +7,7 @@ namespace execut\crudFields\fields;
 
 use yii\base\Object;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 class Field extends Object
 {
@@ -47,12 +48,14 @@ class Field extends Object
         return $this;
     }
 
-    public function applyScopes($query) {
+    public function applyScopes(ActiveQuery $query) {
         $attribute = $this->attribute;
-        if ($this->model->$attribute !== null && $this->model->$attribute !== '') {
-            $query->andWhere([
-                $attribute => $this->model->$attribute,
-            ]);
+        if ($attribute !== null) {
+            if ($this->model->$attribute !== null && $this->model->$attribute !== '') {
+                $query->andWhere([
+                    $attribute => $this->model->$attribute,
+                ]);
+            }
         }
 
         return $query;
@@ -60,22 +63,24 @@ class Field extends Object
 
     public function rules() {
         $rules = [];
-        $rules[] = [
-            [$this->attribute],
-            'safe',
-            'on' => self::SCENARIO_GRID,
-        ];
+        if ($this->attribute !== null) {
+            $rules[] = [
+                [$this->attribute],
+                'safe',
+                'on' => self::SCENARIO_GRID,
+            ];
 
-        if ($this->required) {
-            $rule = 'required';
-        } else {
-            $rule = 'safe';
+            if ($this->required) {
+                $rule = 'required';
+            } else {
+                $rule = 'safe';
+            }
+            $rules[] = [
+                [$this->attribute],
+                $rule,
+                'on' => self::SCENARIO_FORM,
+            ];
         }
-        $rules[] = [
-            [$this->attribute],
-            $rule,
-            'on' => self::SCENARIO_FORM,
-        ];
 
         return $rules;
     }

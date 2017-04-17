@@ -20,6 +20,14 @@ class Behavior extends BaseBehavior
     public function getFields() {
         $fields = $this->_fields;
         foreach ($fields as $key => $field) {
+            if (is_string($field)) {
+                if (class_exists($field)) {
+                    $field = ['class' => $field];
+                } else {
+                    $field = ['attribute' => $field];
+                }
+            }
+
             if (is_array($field)) {
                 if (empty($field['class'])) {
                     $class = Field::class;

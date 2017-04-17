@@ -10,6 +10,7 @@ use yii\helpers\ArrayHelper;
 
 class Id extends Field
 {
+    public $attribute = 'id';
     public function getField()
     {
         return array_merge(parent::getField(), [

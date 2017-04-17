@@ -21,4 +21,9 @@ class IdTest extends TestCase
             'displayOnly' => true,
         ], $field->getField());
     }
+
+    public function testDefaultId() {
+        $field = new Id();
+        $this->assertEquals('id', $field->attribute);
+    }
 }
