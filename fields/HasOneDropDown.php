@@ -27,22 +27,31 @@ class HasOneDropDown extends HasOneRelation
         }
 
         $data = ['' => ''];
+        $relationGetter = 'get' . ucfirst($relationName);
         /**
          * @var ActiveQuery $relationQuery
          */
-        $relationQuery = $model->$relationName;
-//        $relationQuery->via = null;
-//        $relationQuery->link = null;
-        $data = ArrayHelper::merge($data, ArrayHelper::map($relationQuery->all(),'id', $nameAttribute));
+        $relationQuery = $model->$relationGetter();
+        $class = $relationQuery->modelClass;
+        $relationQuery = $class::find();
 
-        return ArrayHelper::merge(parent::getField(), [
+        $data = ArrayHelper::merge($data, ArrayHelper::map($relationQuery->all(),'id', $nameAttribute));
+        $config = [
+            'attribute' => $this->attribute,
             'value' => $value,
             'data' => $data,
-        ]);
+        ];
+
+        return ArrayHelper::merge([], $config);
     }
 
 
     public function getColumn() {
-        return $this->getField();
+        $field = $this->getField();
+        $data = $field['data'];
+        unset($field['data']);
+        $field['filter'] = $data;
+
+        return $field;
     }
 }

@@ -15,7 +15,6 @@ class HasOneDropDownTest extends TestCase
 {
     public function testGetField() {
         $field = $this->getField();
-        $field->model->testTest = Model::$query;
         $field = $field->getField();
         $this->assertEquals([
             'attribute' => 'test_test_id',
@@ -29,12 +28,11 @@ class HasOneDropDownTest extends TestCase
 
     public function testGetColumn() {
         $field = $this->getField();
-        $field->model->testTest = Model::$query;
 
         $this->assertEquals([
             'attribute' => 'test_test_id',
             'value' => 2,
-            'data' => [
+            'filter' => [
                 '' => '',
                 2 => 'test',
             ],
@@ -54,7 +52,7 @@ class HasOneDropDownTest extends TestCase
             'model' => $model,
         ]);
 
-        $query = Model::$query = $this->getMockBuilder(ActiveQuery::className())
+        $query = Model::$query = Model::$subQuery = $this->getMockBuilder(ActiveQuery::className())
             ->setConstructorArgs([Model::className()])
             ->setMethods(['andWhere', 'all'])
             ->getMock();
