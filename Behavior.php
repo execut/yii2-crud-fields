@@ -11,6 +11,38 @@ use yii\data\ActiveDataProvider;
 
 class Behavior extends BaseBehavior
 {
+    protected $_plugins = [];
+    public function setPlugins($plugins) {
+        $this->_plugins = $plugins;
+    }
+
+    protected $_pluginsIsInited = false;
+    protected function initPlugins() {
+        if (!$this->_pluginsIsInited) {
+            foreach ($this->_plugins as $key => $plugin) {
+                if (is_array($plugin)) {
+                    $this->_plugins[$key] = \yii::createObject($plugin);
+                }
+            }
+
+            $this->_pluginsIsInited = true;
+        }
+    }
+
+    public function getPlugins() {
+        $this->initPlugins();
+        return $this->_plugins;
+    }
+
+    public function getPluginsFields() {
+        $result = [];
+        foreach ($this->plugins as $plugin) {
+            $result = array_merge($result, $plugin->getFields());
+        }
+
+        return $result;
+    }
+
     protected $_fields = [];
     public function setFields($fields) {
         $this->_fields = $fields;
@@ -19,6 +51,8 @@ class Behavior extends BaseBehavior
 
     public function getFields() {
         $fields = $this->_fields;
+
+        $fields = array_merge($fields, $this->getPluginsFields());
         foreach ($fields as $key => $field) {
             if (is_string($field)) {
                 if (class_exists($field)) {
