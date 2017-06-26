@@ -7,6 +7,10 @@ namespace execut\crudFields;
 
 use Codeception\Test\Unit;
 
+/**
+ * Class TestCase
+ * @package execut\crudFields
+ */
 class TestCase extends Unit
 {
 //    public $appConfig = [

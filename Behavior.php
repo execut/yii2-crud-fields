@@ -34,6 +34,15 @@ class Behavior extends BaseBehavior
         return $this->_plugins;
     }
 
+    public function getRelation($name) {
+        foreach ($this->getPlugins() as $plugin) {
+            $relations = $plugin->getRelations();
+            if (!empty($relations[$name])) {
+                return $relations[$name];
+            }
+        }
+    }
+
     public function getPluginsFields() {
         $result = [];
         foreach ($this->plugins as $plugin) {

@@ -18,6 +18,26 @@ class HasOneRelationTest extends TestCase
         $this->assertEquals('testTest', $field->relation);
     }
 
+    public function testAddWithToSearchQuery() {
+        $field = $this->getField();
+        $field->with = [
+            'testTest2'
+        ];
+        $query = $this->getMockBuilder(ActiveQuery::className())
+            ->setConstructorArgs(['asdasd'])
+            ->setMethods(['with'])
+            ->getMock();
+        $query->expects($this->once())->method('with')->with([
+            'testTest2'
+        ])->willReturn($query);
+        $field->applyScopes($query);
+    }
+
+    public function testGetWithByDefault() {
+        $field = $this->getField();
+        $this->assertEquals('testTest', $field->getWith());
+    }
+
     /**
      * @return array|HasOneRelation
      */

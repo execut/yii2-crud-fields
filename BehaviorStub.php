@@ -15,4 +15,13 @@ trait BehaviorStub
     {
         return $this->getBehavior('fields')->rules();
     }
+    
+    public function getRelation($name, $throwException = true) {
+        $relation = $this->getBehavior('fields')->getRelation($name);
+        if ($relation) {
+            return $this->createRelationQuery($relation['class'], $relation['link'], $relation['multiple']);
+        }
+
+        return parent::getRelation($name, $throwException);
+    }
 }
