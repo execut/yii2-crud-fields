@@ -17,9 +17,14 @@ class ActionTest extends TestCase
     }
 
     public function testGetColumn() {
-        $field = new Action();
+        $field = new Action([
+            'update' => false,
+            'delete' => false,
+            'view' => false,
+        ]);
         $this->assertEquals([
             'class' => ActionColumn::class,
+            'template' => '',
         ], $field->getColumn());
     }
 

@@ -14,6 +14,7 @@ use execut\crudFields\fields\Boolean;
 use execut\crudFields\fields\Date;
 use execut\crudFields\fields\Field;
 use execut\crudFields\fields\Id;
+use execut\crudFields\fields\StringField;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
 
@@ -22,26 +23,44 @@ class ModelsHelper extends Component
     public $standardFieldsDefault = [
         'id' => [
             'class' => Id::class,
+            'order' => -20,
+            'column' => [
+                'visible' => false,
+            ],
         ],
         'visible' => [
             'class' => Boolean::class,
+            'order' => 75,
             'attribute' => 'visible',
         ],
         'name' => [
-            'class' => Field::class,
+            'class' => StringField::class,
+            'order' => -10,
             'attribute' => 'name',
             'required' => true,
         ],
         'created' => [
             'class' => Date::class,
+            'order' => 80,
             'attribute' => 'created',
+            'isTime' => true,
+            'column' => [
+                'visible' => false,
+            ],
         ],
         'updated' => [
             'class' => Date::class,
+            'order' => 90,
             'attribute' => 'updated',
+            'isTime' => true,
+            'column' => [
+                'visible' => false,
+            ],
         ],
         'actions' => [
             'class' => Action::class,
+            'order' => 100,
+            'view' => false,
         ],
     ];
 

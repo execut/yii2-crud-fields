@@ -7,11 +7,14 @@ namespace execut\crudFields;
 
 use execut\crudFields\fields\Field;
 use yii\base\Behavior as BaseBehavior;
+use yii\base\Exception;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Inflector;
 
 class Behavior extends BaseBehavior
 {
     protected $_plugins = [];
+    public $module = null;
     public function setPlugins($plugins) {
         $this->_plugins = $plugins;
     }
@@ -21,8 +24,15 @@ class Behavior extends BaseBehavior
         if (!$this->_pluginsIsInited) {
             foreach ($this->_plugins as $key => $plugin) {
                 if (is_array($plugin)) {
-                    $this->_plugins[$key] = \yii::createObject($plugin);
+                    $plugin = \yii::createObject($plugin);
                 }
+
+                if (!($plugin instanceof Plugin)) {
+                    throw new Exception('Fields plugin ' . get_class($plugin) . ' must bee instance of ' . Plugin::class);
+                }
+
+                $plugin->owner = $this->owner;
+                $this->_plugins[$key] = $plugin;
             }
 
             $this->_pluginsIsInited = true;
@@ -83,19 +93,24 @@ class Behavior extends BaseBehavior
             }
 
             $field->model = $this->owner;
+            $field->module = $this->module;
 
             $fields[$key] = $field;
         }
+
+        uasort($fields, function ($a, $b) {
+            return $a->order > $b->order;
+        });
 
         return $fields;
     }
 
     public function getGridColumns() {
         $columns = [];
-        foreach ($this->getFields() as $field) {
+        foreach ($this->getFields() as $key => $field) {
             $column = $field->getColumn();
             if ($column !== false) {
-                $columns[] = $column;
+                $columns[$key] = $column;
             }
         }
 
@@ -104,10 +119,10 @@ class Behavior extends BaseBehavior
 
     public function getFormFields() {
         $columns = [];
-        foreach ($this->getFields() as $field) {
+        foreach ($this->getFields() as $key => $field) {
             $field = $field->getField();
             if ($field !== false) {
-                $columns[] = $field;
+                $columns[$key] = $field;
             }
         }
 
@@ -142,6 +157,19 @@ class Behavior extends BaseBehavior
             }
         }
 
+        foreach ($this->getPlugins() as $plugin) {
+            $rules = array_merge($rules, $plugin->rules());
+        }
+
         return $rules;
+    }
+
+    public function attributesLabels() {
+        $result = [];
+        foreach ($this->getFields() as $field) {
+            $result[$field->attribute] = $field->getLabel($this->module);
+        }
+
+        return $result;
     }
 }

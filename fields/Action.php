@@ -7,9 +7,14 @@ namespace execut\crudFields\fields;
 
 use kartik\grid\ActionColumn;
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 
 class Action extends Field
 {
+    public $update = null;
+    public $view = null;
+    public $delete = null;
+
     public function getField()
     {
         return false;
@@ -17,9 +22,28 @@ class Action extends Field
 
     public function getColumn()
     {
-        return [
+        $column = [
             'class' => ActionColumn::class,
         ];
+
+        $template = '';
+        if ($this->update !== false) {
+            $template .= '{update} ';
+        }
+
+        if ($this->view !== false) {
+            $template .= '{view} ';
+        }
+
+        if ($this->delete !== false) {
+            $template .= '{delete} ';
+        }
+
+        $template = trim($template);
+
+        $column['template'] = $template;
+
+        return ArrayHelper::merge($this->_column, $column);
     }
 
     public function rules()
