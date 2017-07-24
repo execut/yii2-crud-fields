@@ -22,13 +22,20 @@ class DropDown extends Field
             $value = $model->$attribute;
         }
 
-        $columnValue = $this->getRelationObject()->getColumnValue();
+//        $columnValue = $this->getRelationObject()->getColumnValue();
+        $data = $this->getData();
         $config = [
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
-            'attribute' => $this->attribute,
-//            'value' => $value,
+            'attribute' => $attribute,
+//            'model' => $this->model,
+//            'viewModel' => $this->model,
+            'value' => function () use ($data, $value) {
+                if (!empty($data[$value])) {
+                    return $data[$value];
+                }
+            },
 //            'value' => $model, $columnValue,
-            'items' => $this->getData(),
+            'items' => $data,
         ];
 
         return ArrayHelper::merge([], $config);
@@ -36,13 +43,15 @@ class DropDown extends Field
 
 
     public function getColumn() {
-        $field = $this->getField();
-        $data = $field['items'];
-        unset($field['items']);
-        unset($field['type']);
-        $field['value'] = $this->getRelationObject()->valueAttribute;
-        $field['filter'] = $data;
+        $model = $this->model;
+        $attribute = $this->attribute;
 
-        return $field;
+        $config = [
+            'attribute' => $this->attribute,
+            'value' => $this->valueAttribute,
+            'filter' => $this->getData(),
+        ];
+
+        return $config;
     }
 }

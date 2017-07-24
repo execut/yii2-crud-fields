@@ -207,6 +207,7 @@ class Relation extends Object
     public function getRelationQuery()
     {
         $relationQuery = $this->field->model->getRelation($this->getName());
+
         return $relationQuery;
     }
 
