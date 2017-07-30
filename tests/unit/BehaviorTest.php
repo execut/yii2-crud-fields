@@ -2,7 +2,7 @@
 /**
  */
 
-namespace vendor\execut\crudFields;
+namespace execut\crudFields;
 
 
 use execut\crudFields\Behavior;

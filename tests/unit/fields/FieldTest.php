@@ -5,6 +5,7 @@
 namespace execut\crudFields\fields;
 
 
+use execut\crudFields\Relation;
 use execut\crudFields\TestCase;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -92,6 +93,17 @@ class FieldTest extends TestCase
             'attribute' => 'name',
         ]);
         $this->assertEquals($q, $field->applyScopes($q));
+    }
+
+    public function testApplyScopesWithRelationObject() {
+        $relation = $this->getMockBuilder(Relation::class)->setMethods(['applyScopes'])->getMock();
+        $relation->expects($this->once())->method('applyScopes');
+        $field = new Field([
+            'relation' => 'test',
+            'relationObject' => $relation,
+        ]);
+
+        $field->applyScopes(new ActiveQuery('asdas'));
     }
 
     public function testGetRules() {

@@ -12,20 +12,18 @@ use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
-class HasOneSelect2 extends HasOneRelation
+class HasOneSelect2 extends Field
 {
     public $url = null;
+    public $nameParam = null;
     public function getField() {
-        $sourceInitText = '';
-        $model = $this->model;
-        $attribute = $this->attribute;
-        $relationName = $this->relation;
-        $nameAttribute = $this->nameAttribute;
-        if (!empty($model->$attribute)) {
-            $sourceInitText = $model->$relationName->$nameAttribute;
+        if (!empty($this->_field)) {
+            return $this->_field;
         }
 
-        return ArrayHelper::merge(parent::getField(), [
+        $sourceInitText = $this->getRelationObject()->getSourceText();
+        $nameParam = $this->getNameParam();
+        return ArrayHelper::merge([
             'type' => DetailView::INPUT_SELECT2,
             'value' => $sourceInitText,
             'widgetOptions' => [
@@ -39,7 +37,7 @@ class HasOneSelect2 extends HasOneRelation
                         'data' => new JsExpression(<<<JS
 function(params) {
     return {
-        "name": params.term
+        "$nameParam": params.term
     };
 }
 JS
@@ -47,36 +45,29 @@ JS
                     ],
                 ],
             ],
-        ]);
+        ], parent::getField());
+    }
+
+    public function getNameParam() {
+        if ($this->nameParam !== null) {
+            return $this->nameParam;
+        }
+
+        $formName = $this->getRelationObject()->getRelationFormName();
+
+        return $formName . '[' . $this->nameAttribute . ']';
     }
 
 
     public function getColumn() {
-        $relationName = $this->relation;
-        $model = $this->model;
-        $modelClass = $model->getRelation($relationName)->modelClass;
-
-        $sourceInitText = [];
-        $attribute = $this->attribute;
-        $nameAttribute = $this->nameAttribute;
-        if (!empty($model->$attribute)) {
-            $sourceIds = [];
-            if (is_array($model->$attribute)) {
-                $sourceIds = $model->$attribute;
-            } else {
-                $sourceIds[] = $model->$attribute;
-            }
-
-            $models = $modelClass::find()->andWhere(['id' => $sourceIds])->all();
-
-            $sourceInitText = ArrayHelper::map($models, 'id', $nameAttribute);
-        }
+        $sourceInitText = $this->getRelationObject()->getSourcesText();
 
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
+        $nameParam = $this->getNameParam();
 
-        return [
-            'attribute' => $attribute,
-            'value' => $relationName . '.' . $nameAttribute,
+        return ArrayHelper::merge([
+            'attribute' => $this->attribute,
+            'value' => $this->getRelationObject()->getColumnValue(),
 //                'value' => function () {
 //                    return 'asdasd';
 //                },
@@ -95,7 +86,7 @@ JS
                         'data' => new JsExpression(<<<JS
 function (params) {
   return {
-    "name": params.term
+    "$nameParam": params.term
   };
 }
 JS
@@ -104,6 +95,6 @@ JS
                     ],
                 ],
             ],
-        ];
+        ], parent::getColumn());
     }
 }

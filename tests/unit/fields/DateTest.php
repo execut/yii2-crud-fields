@@ -18,19 +18,45 @@ class DateTest extends TestCase
             'attribute' => 'name',
             'model' => $model
         ]);
+        $column = $field->getColumn();
+        $this->assertArrayHasKey('filter', $column);
+        $column['filter'] = preg_replace('/daterangepicker_[a-z\d]+/', '', $column['filter']);
         $this->assertEquals([
             'attribute' => 'name',
-            'filter' => DateRangePicker::widget([
+            'filter' => preg_replace('/daterangepicker_[a-z\d]+/', '', DateRangePicker::widget([
+                'attribute' => 'name',
+                'model' => $model,
+                'convertFormat'=>true,
+                'pluginOptions'=>[
+                    'locale'=>['format'=>'Y-m-d']
+                ]
+            ])),
+        ], $column);
+    }
+
+    public function testGetColumnWithTime() {
+        $model = new Model();
+        $field = new Date([
+            'attribute' => 'name',
+            'model' => $model,
+            'isTime' => true,
+        ]);
+        $column = $field->getColumn();
+        $this->assertArrayHasKey('filter', $column);
+        $column['filter'] = preg_replace('/daterangepicker_[a-z\d]+/', '', $column['filter']);
+        $this->assertEquals([
+            'attribute' => 'name',
+            'filter' => preg_replace('/daterangepicker_[a-z\d]+/', '', DateRangePicker::widget([
                 'attribute' => 'name',
                 'model' => $model,
                 'convertFormat'=>true,
                 'pluginOptions'=>[
                     'timePicker'=>true,
                     'timePickerIncrement'=>15,
-                    'locale'=>['format'=>'Y-m-d']
+                    'locale'=>['format'=>'Y-m-d H:i:s']
                 ]
-            ]),
-        ], $field->getColumn());
+            ])),
+        ], $column);
     }
 
     public function testGetField() {
