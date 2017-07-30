@@ -7,6 +7,7 @@ namespace execut\crudFields;
 
 use execut\crudFields\fields\Field;
 use yii\base\Behavior as BaseBehavior;
+use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 
 class Behavior extends BaseBehavior
@@ -21,7 +22,12 @@ class Behavior extends BaseBehavior
         if (!$this->_pluginsIsInited) {
             foreach ($this->_plugins as $key => $plugin) {
                 if (is_array($plugin)) {
-                    $this->_plugins[$key] = \yii::createObject($plugin);
+                    $plugin = \yii::createObject($plugin);
+                    $this->_plugins[$key] = $plugin;
+                }
+
+                if (!($plugin instanceof Plugin)) {
+                    throw new Exception('Plugin must bee ' . Plugin::class . ' instace, but instance of ' . get_class($plugin) . ' is setted');
                 }
             }
 
