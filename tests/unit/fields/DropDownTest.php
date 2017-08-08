@@ -21,10 +21,13 @@ class DropDownTest extends TestCase
         $this->assertEquals([
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => 'test_test_id',
-            'value' => 'test',
+            'value' => function() {},
             'items' => [
                 '' => '',
                 2 => 'test',
+            ],
+            'options' => [
+                'prompt' => '',
             ],
         ], $field);
     }

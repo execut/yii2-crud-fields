@@ -27,6 +27,9 @@ class DropDown extends Field
         $config = [
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => $attribute,
+            'options' => [
+                'prompt' => '',
+            ],
 //            'model' => $this->model,
 //            'viewModel' => $this->model,
             'value' => function () use ($data, $value) {

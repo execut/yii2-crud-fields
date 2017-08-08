@@ -5,6 +5,8 @@
 namespace execut\crudFields;
 
 
+use yii\helpers\ArrayHelper;
+
 trait BehaviorStub
 {
     public function search() {
@@ -15,12 +17,12 @@ trait BehaviorStub
 
     public function attributeLabels()
     {
-        return $this->getBehavior('fields')->attributesLabels();
+        return ArrayHelper::merge(parent::attributeLabels(), $this->getBehavior('fields')->attributesLabels());
     }
 
     public function rules()
     {
-        $rules = $this->getBehavior('fields')->rules();
+        $rules = ArrayHelper::merge(parent::rules(), $this->getBehavior('fields')->rules());
 
         return $rules;
     }
