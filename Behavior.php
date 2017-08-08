@@ -25,6 +25,7 @@ class Behavior extends BaseBehavior
             foreach ($this->_plugins as $key => $plugin) {
                 if (is_array($plugin)) {
                     $plugin = \yii::createObject($plugin);
+                    $this->_plugins[$key] = $plugin;
                 }
 
                 if (!($plugin instanceof Plugin)) {
@@ -32,7 +33,6 @@ class Behavior extends BaseBehavior
                 }
 
                 $plugin->owner = $this->owner;
-                $this->_plugins[$key] = $plugin;
             }
 
             $this->_pluginsIsInited = true;
