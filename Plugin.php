@@ -29,4 +29,7 @@ abstract class Plugin
     public function rules() {
         return [];
     }
+
+    public function initDataProvider($dataProvider) {
+    }
 }

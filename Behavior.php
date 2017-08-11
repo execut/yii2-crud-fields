@@ -147,8 +147,15 @@ class Behavior extends BaseBehavior
                 'pageSize' => 100,
             ],
         ]);
+        $this->initDataProvider($dataProvider);
 
         return $dataProvider;
+    }
+
+    public function initDataProvider($dataProvider) {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->initDataProvider($dataProvider);
+        }
     }
 
     public function rules() {
