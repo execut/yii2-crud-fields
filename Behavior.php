@@ -143,6 +143,9 @@ class Behavior extends BaseBehavior
         $q = $this->applyScopes($q);
         $dataProvider = new ActiveDataProvider([
             'query' => $q,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
         ]);
 
         return $dataProvider;

@@ -79,7 +79,7 @@ class Relation extends Object
     /**
      * @return string
      */
-    public function getSourceText(): string
+    public function getSourceText()
     {
         $attribute = $this->field->attribute;
         $relationName = $this->name;
