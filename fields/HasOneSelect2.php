@@ -27,6 +27,7 @@ class HasOneSelect2 extends Field
             'type' => DetailView::INPUT_SELECT2,
             'value' => $sourceInitText,
             'widgetOptions' => [
+                'language' => $this->getLanguage(),
                 'initValueText' => $sourceInitText,
                 'pluginOptions' => [
                     'allowClear' => true,
@@ -74,6 +75,7 @@ JS
             'filter' => $sourceInitText,
             'filterType' => GridView::FILTER_SELECT2,
             'filterWidgetOptions' => [
+                'language' => $this->getLanguage(),
                 'initValueText' => $sourceInitText,
                 'options' => [
                     'multiple' => true,
@@ -96,5 +98,9 @@ JS
                 ],
             ],
         ], parent::getColumn());
+    }
+
+    public function getLanguage() {
+        return substr(\yii::$app->language, 0, 2);
     }
 }
