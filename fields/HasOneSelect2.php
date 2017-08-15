@@ -38,7 +38,8 @@ class HasOneSelect2 extends Field
                         'data' => new JsExpression(<<<JS
 function(params) {
     return {
-        "$nameParam": params.term
+        "$nameParam": params.term,
+        page: params.page
     };
 }
 JS
@@ -88,7 +89,8 @@ JS
                         'data' => new JsExpression(<<<JS
 function (params) {
   return {
-    "$nameParam": params.term
+    "$nameParam": params.term,
+    page: params.page
   };
 }
 JS
