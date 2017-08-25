@@ -18,7 +18,8 @@
   "minimum-stability": "stable",
   "require": {
     "yiisoft/yii2": "@dev",
-    "kartik-v/yii2-date-range": "*"
+    "kartik-v/yii2-date-range": "*",
+    "unclead/yii2-multiple-input": "*"
   },
   "autoload": {
     "psr-4": {

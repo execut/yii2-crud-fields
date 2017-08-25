@@ -119,7 +119,7 @@ class Field extends Object
 
         if ($scopeResult && $this->attribute) {
             $value = $this->getValue();
-            if (!empty($value)) {
+            if (!empty($value) || $value === '0') {
                 $query->andFilterWhere([
                     $attribute => $value,
                 ]);
@@ -158,6 +158,9 @@ class Field extends Object
 
     public function getLabel() {
         $attribute = Inflector::humanize($this->attribute, '_');
+        if ($this->module === null) {
+            return $attribute;
+        }
 
         return \Yii::t('modules/' . $this->module . '/', $attribute);
     }
