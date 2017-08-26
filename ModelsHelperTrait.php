@@ -23,4 +23,9 @@ trait ModelsHelperTrait
 
         return $helper->getStandardFields();
     }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
 }
