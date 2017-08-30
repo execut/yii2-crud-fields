@@ -9,6 +9,7 @@
 namespace execut\crudFields;
 
 
+use execut\crudFields\fields\Field;
 use yii\base\Object;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
@@ -16,6 +17,9 @@ use yii\helpers\Inflector;
 
 class Relation extends Object
 {
+    /**
+     * @var Field
+     */
     public $field = null;
     public $nameAttribute = 'name';
     public $valueAttribute = null;
@@ -122,16 +126,26 @@ class Relation extends Object
         if ($this->isManyToMany()) {
             $relationQuery = $this->getRelationQuery();
 
-            $via = $relationQuery->via;
-            $viaRelationName = $via[0];
-            $viaModels = $this->field->model->$viaRelationName;
-            $viaAttribute = $this->field->attribute;
-            if (!empty($this->field->model->$viaAttribute)) {
-                $sourceIds = $this->field->model->$viaAttribute;
+            if (!$this->isVia()) {
+                $link = $relationQuery->link;
+                $sourceIds = $relationQuery
+                    ->select('id');
             } else {
-                $sourceIds = [];
-                foreach ($viaModels as $viaModel) {
-                    $sourceIds[] = $viaModel->$viaAttribute;
+                $via = $relationQuery->via;
+                if ($via instanceof ActiveQuery) {
+                    $sourceIds = $via->select('id');
+                } else {
+                    $viaRelationName = $via[0];
+                    $viaModels = $this->field->model->$viaRelationName;
+                    $viaAttribute = $this->field->attribute;
+                    if (!empty($this->field->model->$viaAttribute)) {
+                        $sourceIds = $this->field->model->$viaAttribute;
+                    } else {
+                        $sourceIds = [];
+                        foreach ($viaModels as $viaModel) {
+                            $sourceIds[] = $viaModel->$viaAttribute;
+                        }
+                    }
                 }
             }
         } else {
@@ -172,6 +186,10 @@ class Relation extends Object
 
         $data = ArrayHelper::merge($data, ArrayHelper::map($relationQuery->all(), 'id', $this->nameAttribute));
         return $data;
+    }
+
+    public function isVia() {
+        return $this->getRelationQuery()->via !== null;
     }
 
     public function getColumnValue() {
@@ -219,6 +237,10 @@ class Relation extends Object
         $relationQuery = $this->getRelationQuery();
 
         $via = $relationQuery->via;
+        if ($via instanceof ActiveQuery) {
+            return $via;
+        }
+
         $viaRelation = $via[0];
         return $viaRelation;
     }
@@ -239,5 +261,9 @@ class Relation extends Object
 
     public function getViaToAttribute() {
         return current($this->getRelationQuery()->link);
+    }
+
+    public function getViaRelationModelClass() {
+        return $this->getViaRelationQuery()->modelClass;
     }
 }

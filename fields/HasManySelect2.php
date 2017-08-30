@@ -53,17 +53,32 @@ class HasManySelect2 extends HasOneSelect2
     {
         $sourceInitText = $this->getRelationObject()->getSourcesText();
         $nameParam = $this->getNameParam();
-        $viaRelationModelClass = $this->getRelationObject()->getViaRelationQuery()->modelClass;
-        $viaRelationModel = new $viaRelationModelClass;
+        $relation = $this->getRelationObject();
+        if ($relation->isVia()) {
+            $viaRelationModelClass = $this->getRelationObject()->getViaRelationQuery()->modelClass;
+            $viaRelationModel = new $viaRelationModelClass;
+            $attribute = $this->getRelationObject()->getViaRelation();
+
+            $toAttribute = $this->getRelationObject()->getViaFromAttribute();
+            $fromAttribute = $this->getRelationObject()->getViaToAttribute();
+        } else {
+            $relationQuery = $this->getRelationObject()->getRelationQuery();
+            $viaRelationModelClass = $relationQuery->modelClass;
+            $viaRelationModel = new $viaRelationModelClass;
+            $attribute = $this->getRelationObject()->getName();
+
+            $fromAttribute = key($relationQuery->link);
+            $toAttribute = current($relationQuery->link);
+        }
 
         $columns = ArrayHelper::merge([
             [
-                'name' => $this->getRelationObject()->getViaFromAttribute(),
+                'name' => $fromAttribute,
                 'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
                 'defaultValue' => $this->model->id,
             ],
             [
-                'name' => $this->getRelationObject()->getViaToAttribute(),
+                'name' => $toAttribute,
                 'type' => Select2::class,
                 'defaultValue' => null,
                 'value' => $sourceInitText,
@@ -97,7 +112,7 @@ JS
 
         return [
             'type' => DetailView::INPUT_WIDGET,
-            'attribute' => $this->getRelationObject()->getViaRelation(),
+            'attribute' => $attribute,
             'label' => $this->getLabel(),
             'format' => 'raw',
             'value' => function () {

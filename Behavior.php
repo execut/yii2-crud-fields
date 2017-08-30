@@ -182,4 +182,16 @@ class Behavior extends BaseBehavior
 
         return $result;
     }
+
+    public function getMultipleInputFields() {
+        $columns = [];
+        foreach ($this->getFields() as $key => $field) {
+            $field = $field->getMultipleInputField();
+            if ($field !== false) {
+                $columns[$key] = $field;
+            }
+        }
+
+        return $columns;
+    }
 }

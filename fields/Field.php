@@ -6,6 +6,7 @@ namespace execut\crudFields\fields;
 
 
 use execut\crudFields\Relation;
+use unclead\multipleinput\MultipleInputColumn;
 use yii\base\Object;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -20,6 +21,7 @@ class Field extends Object
     public $required = false;
     public $attribute = null;
     public $rules = [];
+    public $multipleInputType = MultipleInputColumn::TYPE_TEXT_INPUT;
     protected $_column = [];
     protected $_field = [];
 
@@ -103,6 +105,13 @@ class Field extends Object
         return $field;
     }
 
+    public function getMultipleInputField() {
+        return [
+            'name' => $this->attribute,
+            'type' => $this->multipleInputType,
+        ];
+    }
+
     public function setField($field) {
         $this->_field = $field;
 
@@ -149,7 +158,7 @@ class Field extends Object
             $rules[] = [
                 [$this->attribute],
                 $rule,
-                'on' => self::SCENARIO_FORM,
+                'on' => [self::SCENARIO_FORM, 'default'],
             ];
         }
 

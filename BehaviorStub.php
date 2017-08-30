@@ -5,6 +5,7 @@
 namespace execut\crudFields;
 
 
+use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 trait BehaviorStub
@@ -30,7 +31,17 @@ trait BehaviorStub
     public function getRelation($name, $throwException = true) {
         $relation = $this->getBehavior('fields')->getRelation($name);
         if ($relation) {
-            return $this->createRelationQuery($relation['class'], $relation['link'], $relation['multiple']);
+            /**
+             * @var ActiveQuery $query
+             */
+            $query = $this->createRelationQuery($relation['class'], $relation['link'], $relation['multiple']);
+            if (!empty($relation['via'])) {
+                $query->via($relation['via']);
+            } else if (!empty($relation['viaTable'])) {
+                 $query->viaTable($relation['viaTable'], $relation['viaLink']);
+            }
+
+            return $query;
         }
 
         return parent::getRelation($name, $throwException);
@@ -40,7 +51,7 @@ trait BehaviorStub
     {
         $relation = $this->getBehavior('fields')->getRelation($name);
         if ($relation && !$this->isRelationPopulated($name)) {
-            $this->populateRelation($name, $this->createRelationQuery($relation['class'], $relation['link'], $relation['multiple'])->findFor($name, $this));
+            $this->populateRelation($name, $this->getRelation($name)->findFor($name, $this));
         }
 
         return parent::__get($name);

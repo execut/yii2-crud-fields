@@ -28,7 +28,11 @@ class Editor extends Field
     public function getColumn()
     {
         return array_merge(parent::getColumn(), [
-            'format' => 'html',
+            'value' => function ($row) {
+                $attribute = $this->attribute;
+
+                return substr(strip_tags($row->$attribute), 0, 60);
+            },
         ]);
     }
 }

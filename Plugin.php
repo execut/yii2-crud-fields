@@ -22,6 +22,21 @@ abstract class Plugin
         return [];
     }
 
+    /**
+     * Example:
+     * [
+     *    [
+     *      'class' => Page::class,
+     *      'name' => 'pagesPage',
+     *      'link' => [
+     *          'id' => 'pages_page_id',
+     *      ],
+     *      'multiple' => false
+     *    ]
+     * ]
+     *
+     * @return array
+     */
     public function getRelations() {
         return [];
     }

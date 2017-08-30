@@ -19,7 +19,8 @@
   "require": {
     "yiisoft/yii2": "@dev",
     "kartik-v/yii2-date-range": "*",
-    "unclead/yii2-multiple-input": "*"
+    "unclead/yii2-multiple-input": "*",
+    "la-haute-societe/yii2-save-relations-behavior": "*"
   },
   "autoload": {
     "psr-4": {

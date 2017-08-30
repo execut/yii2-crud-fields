@@ -8,6 +8,7 @@ namespace execut\crudFields\fields;
 use kartik\detail\DetailView;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -69,7 +70,24 @@ JS
 
         return ArrayHelper::merge([
             'attribute' => $this->attribute,
-            'value' => $this->getRelationObject()->getColumnValue(),
+            'format' => 'html',
+            'value' => function ($row) {
+                $url = $this->url;
+                if (is_array($url)) {
+                    $url = $url[0];
+                } else {
+                    $url = str_replace('/index', '', $url);
+                }
+
+                $attribute = $this->attribute;
+
+                $url = [$url . '/update', 'id' => $row->$attribute];
+
+                $valueAttribute = $this->getRelationObject()->getColumnValue();
+                $value = ArrayHelper::getValue($row, $valueAttribute);
+
+                return Html::a($value, Url::to($url));
+            },
 //                'value' => function () {
 //                    return 'asdasd';
 //                },
