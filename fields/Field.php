@@ -24,6 +24,7 @@ class Field extends Object
     public $multipleInputType = MultipleInputColumn::TYPE_TEXT_INPUT;
     protected $_column = [];
     protected $_field = [];
+    public $displayOnly = false;
 
     public $nameAttribute = 'name';
     public $with = null;
@@ -100,6 +101,10 @@ class Field extends Object
 
         if ($this->attribute !== null) {
             $field['attribute'] = $this->attribute;
+        }
+
+        if ($this->displayOnly) {
+            $field['displayOnly'] = true;
         }
 
         return $field;
