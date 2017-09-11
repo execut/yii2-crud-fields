@@ -181,8 +181,9 @@ class Relation extends Object
     {
         $data = ['' => ''];
 
-        $class = $this->getRelationModelClass();
-        $relationQuery = $class::find();
+        $relationQuery = $this->getRelationQuery();
+        $relationQuery->link = null;
+        $relationQuery->primaryModel = null;
 
         $data = ArrayHelper::merge($data, ArrayHelper::map($relationQuery->all(), 'id', $this->nameAttribute));
         return $data;

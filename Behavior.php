@@ -96,6 +96,11 @@ class Behavior extends BaseBehavior
             $field->module = $this->module;
 
             $fields[$key] = $field;
+            if ($field instanceof Container) {
+                foreach ($field->getFields() as $subKey => $subField) {
+                    $fields[$subKey] = $subField;
+                }
+            }
         }
 
         uasort($fields, function ($a, $b) {
