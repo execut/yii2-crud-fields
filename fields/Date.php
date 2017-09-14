@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
 class Date extends Field
 {
     public $isTime = false;
+    public $fieldType = null;
     public $displayOnly = true;
     public function getColumn()
     {
@@ -38,15 +39,14 @@ class Date extends Field
             $type = DetailView::INPUT_DATE;
         }
 
+        if ($this->fieldType !== null) {
+            $type = $this->fieldType;
+        }
+
         return [
             'type' => $type,
             'attribute' => $this->attribute,
-            'widgetOptions' => [
-                'pluginOptions' => [
-                    'format' => $this->getFormat(true),
-                    'todayHighlight' => true
-                ],
-            ],
+            'widgetOptions' => $this->getWidgetOptions(),
         ];
     }
 
@@ -108,7 +108,8 @@ class Date extends Field
     {
         $format = $this->getFormat();
         $pluginOptions = [
-            'locale' => ['format' => $format, 'separator' => ' - ']
+            'locale' => ['format' => $format, 'separator' => ' - '],
+            'todayHightlight' => true,
         ];
 
         if ($this->isTime) {

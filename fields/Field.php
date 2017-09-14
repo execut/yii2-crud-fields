@@ -10,6 +10,8 @@ use unclead\multipleinput\MultipleInputColumn;
 use yii\base\Object;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
+use yii\helpers\Html;
 use yii\helpers\Inflector;
 
 class Field extends Object
@@ -17,6 +19,9 @@ class Field extends Object
     const SCENARIO_GRID = 'grid';
     const SCENARIO_FORM = 'form';
     public $module = null;
+    /**
+     * @var ActiveRecord
+     */
     public $model = null;
     public $required = false;
     public $attribute = null;
@@ -176,7 +181,7 @@ class Field extends Object
             return $attribute;
         }
 
-        return \Yii::t('modules/' . $this->module . '/', $attribute);
+        return \Yii::t('execut/' . $this->module, $attribute);
     }
 
     /**

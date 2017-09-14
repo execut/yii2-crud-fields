@@ -55,7 +55,7 @@ class HasManyMultipleInput extends Field
                 //                'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
                 //                'defaultValue' => $this->model->id,
                 //            ],
-                [
+                'id' => [
                     'name' => 'id',
                     'type' => Select2::class,
                     'defaultValue' => null,

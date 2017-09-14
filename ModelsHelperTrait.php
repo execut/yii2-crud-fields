@@ -9,6 +9,10 @@
 namespace execut\crudFields;
 
 
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
+
 trait ModelsHelperTrait
 {
     public function getStandardFields($exclude = null, $other = null) {
@@ -27,5 +31,20 @@ trait ModelsHelperTrait
     public function __toString()
     {
         return $this->name;
+    }
+
+    public function getStandardBehaviors($fields, $otherBehaviors = []) {
+        return ArrayHelper::merge([
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created',
+                'updatedAtAttribute' => 'updated',
+                'value' => new Expression('now()'),
+            ],
+            'fields' => [
+                'class' => Behavior::class,
+                'fields' => $fields,
+            ],
+        ], $otherBehaviors);
     }
 }

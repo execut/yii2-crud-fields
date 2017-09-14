@@ -21,12 +21,21 @@ class HasOneSelect2 extends Field//implements Container
     public $nameParam = null;
     public function getField() {
         $widgetOptions = $this->getSelect2WidgetOptions();
+        $rowOptions = [];
+        if (empty(array_filter($widgetOptions['data']))) {
+            $type = DetailView::INPUT_HIDDEN;
+            $rowOptions['style'] = 'display:none';
+        } else {
+            $type = DetailView::INPUT_SELECT2;
+        }
+
         $sourceInitText = $this->getRelationObject()->getSourceText();
 
         $field = [
-            'type' => DetailView::INPUT_SELECT2,
+            'type' => $type,
             'value' => $sourceInitText,
             'widgetOptions' => $widgetOptions,
+            'rowOptions' => $rowOptions,
         ];
 
 
@@ -137,6 +146,7 @@ JS
             'pluginOptions' => [
                 'allowClear' => true,
             ],
+            'options' => [],
         ];
 
         if ($this->url !== null) {
@@ -158,8 +168,9 @@ JS
                 ],
             ]);
         } else {
+            $data = $this->getRelationObject()->getData();
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
-                'data' => $this->getRelationObject()->getData(),
+                'data' => $data,
             ]);
         }
 
