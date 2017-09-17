@@ -159,4 +159,88 @@ JS
 
         return $formName . '[' . $this->nameAttribute . ']';
     }
+
+    public function applyScopes(ActiveQuery $query)
+    {
+        return $this->applyRelationScopes($query);
+    }
+
+
+    public function getColumn() {
+        $sourceInitText = $this->getRelationObject()->getSourcesText();
+
+//        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
+        $nameParam = $this->getNameParam();
+
+        return [
+            'attribute' => $this->attribute,
+            'format' => 'html',
+            'value' => function ($row) {
+                $url = $this->url;
+                if (is_array($url)) {
+                    $url = $url[0];
+                } else {
+                    $url = str_replace('/index', '', $url);
+                }
+
+                $attribute = $this->attribute;
+                $result = [];
+                foreach ($row->$attribute as $vsKeyword) {
+                    $currentUrl = [$url . '/update', 'id' => $vsKeyword->id];
+
+                    $value = ArrayHelper::getValue($vsKeyword, $this->nameAttribute);
+
+                    $result[] = Html::a($value, Url::to($currentUrl));
+                }
+
+                return implode(', ', $result);
+            },
+//            'value' => function ($row) {
+//                $url = $this->url;
+//                if (is_array($url)) {
+//                    $url = $url[0];
+//                } else {
+//                    $url = str_replace('/index', '', $url);
+//                }
+//
+//                $attribute = $this->attribute;
+//
+//                $url = [$url . '/update', 'id' => $row->$attribute];
+//
+//                $valueAttribute = $this->getRelationObject()->getColumnValue();
+//                $value = ArrayHelper::getValue($row, $valueAttribute);
+//
+//                return Html::a($value, Url::to($url));
+//            },
+//                'value' => function () {
+//                    return 'asdasd';
+//                },
+            'filter' => $sourceInitText,
+            'filterType' => GridView::FILTER_SELECT2,
+            'filterWidgetOptions' => [
+//                'language' => $this->getLanguage(),
+                'initValueText' => $sourceInitText,
+                'options' => [
+                    'multiple' => true,
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'ajax' => [
+                        'url' => Url::to($this->url),
+                        'dataType' => 'json',
+                        'data' => new JsExpression(<<<JS
+function (params) {
+  return {
+    "$nameParam": params.term,
+    page: params.page
+  };
+}
+JS
+                        )
+
+                    ],
+                ],
+            ],
+        ];
+    }
 }

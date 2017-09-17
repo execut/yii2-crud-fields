@@ -22,7 +22,7 @@ class HasOneSelect2 extends Field//implements Container
     public function getField() {
         $widgetOptions = $this->getSelect2WidgetOptions();
         $rowOptions = [];
-        if (empty(array_filter($widgetOptions['data']))) {
+        if (!empty($widgetOptions['data']) && empty(array_filter($widgetOptions['data']))) {
             $type = DetailView::INPUT_HIDDEN;
             $rowOptions['style'] = 'display:none';
         } else {

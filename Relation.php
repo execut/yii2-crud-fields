@@ -12,6 +12,7 @@ namespace execut\crudFields;
 use execut\crudFields\fields\Field;
 use yii\base\Object;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
@@ -52,10 +53,14 @@ class Relation extends Object
         if ($this->isManyToMany()) {
             $value = $this->field->value;
             if (!empty($value)) {
+                if (is_array($value) && current($value) instanceof ActiveRecord) {
+                    $value = ArrayHelper::map($value, 'id', 'id');
+                }
+
                 $viaRelationQuery = $this->getViaRelationQuery();
                 $viaRelationQuery->select(key($viaRelationQuery->link))
                     ->andWhere([
-                        $this->field->attribute => $value,
+                        current($this->getRelationQuery()->link) => $value,
                     ]);
                 $viaRelationQuery->link = null;
                 $viaRelationQuery->primaryModel = null;
