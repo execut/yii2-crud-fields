@@ -187,10 +187,10 @@ class Field extends Object
     /**
      * @param ActiveQuery $query
      */
-    protected function applyRelationScopes(ActiveQuery $query): void
+    protected function applyRelationScopes(ActiveQuery $query)
     {
         if ($this->relation) {
-            $this->getRelationObject()->applyScopes($query);
+            return $this->getRelationObject()->applyScopes($query);
         }
     }
 }
