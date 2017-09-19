@@ -95,12 +95,12 @@ class Relation extends Object
         $nameAttribute = $this->nameAttribute;
         $model = $this->field->model;
         $sourceInitText = '';
-        if (!empty($model->$attribute)) {
+        if (!empty($model->$attribute) && ($relationValue = $model->$relationName)) {
 //            if ($relationName === 'goodsArticle') {
 //                var_dump($model->$relationName);
 //                exit;
 //            }
-            $sourceInitText = $model->$relationName->$nameAttribute;
+            $sourceInitText = $relationValue->$nameAttribute;
         }
 
         return $sourceInitText;

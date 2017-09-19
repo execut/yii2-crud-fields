@@ -77,7 +77,7 @@ class Behavior extends BaseBehavior
         $fields = array_merge($fields, $this->getPluginsFields());
         foreach ($fields as $key => $field) {
             if (is_string($field)) {
-                if (class_exists($field)) {
+                if (@class_exists($field)) {
                     $field = ['class' => $field];
                 } else {
                     $field = ['attribute' => $field];
