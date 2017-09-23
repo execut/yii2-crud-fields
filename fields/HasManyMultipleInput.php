@@ -49,6 +49,18 @@ class HasManyMultipleInput extends Field
             $sourceInitText = $relation->getSourcesText();
             $viaRelationModelClass = $relation->getRelationModelClass();
             $viaRelationModel = new $viaRelationModelClass;
+            $changeEvent = new JsExpression(<<<JS
+    function () {
+        var el = $(this),
+            inputs = el.parent().parent().parent().find('input, select');
+        if (el.val()) {
+            inputs.not(el).attr('disabled', 'disabled');
+        } else {
+            inputs.not(el).attr('disabled', false);
+        }
+    }
+JS
+            );
             $targetFields = [
                 //            [
                 //                'name' => $toAttribute,
@@ -60,21 +72,13 @@ class HasManyMultipleInput extends Field
                     'type' => Select2::class,
                     'defaultValue' => null,
                     'value' => $sourceInitText,
+                    'headerOptions' => [
+                        'style' => 'width: 150px;',
+                    ],
                     'options' => [
                         'initValueText' => $sourceInitText,
                         'pluginEvents' => [
-                            'change' => new JsExpression(<<<JS
-    function () {
-        var el = $(this),
-            inputs = el.parent().parent().parent().find('input, select');
-        if (el.val()) {
-            inputs.not(el).attr('disabled', 'disabled');
-        } else {
-            inputs.not(el).attr('disabled', false);
-        }
-    }
-JS
-                            )
+                            'change' => $changeEvent,
                         ],
                         'pluginOptions' => [
                             'allowClear' => true,

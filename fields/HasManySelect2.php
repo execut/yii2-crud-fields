@@ -59,8 +59,8 @@ class HasManySelect2 extends HasOneSelect2
             $viaRelationModel = new $viaRelationModelClass;
             $attribute = $this->getRelationObject()->getViaRelation();
 
-            $toAttribute = $this->getRelationObject()->getViaFromAttribute();
-            $fromAttribute = $this->getRelationObject()->getViaToAttribute();
+            $fromAttribute = $this->getRelationObject()->getViaFromAttribute();
+            $toAttribute = $this->getRelationObject()->getViaToAttribute();
         } else {
             $relationQuery = $this->getRelationObject()->getRelationQuery();
             $viaRelationModelClass = $relationQuery->modelClass;
@@ -72,6 +72,10 @@ class HasManySelect2 extends HasOneSelect2
         }
 
         $columns = ArrayHelper::merge([
+            [
+                'name' => 'id',
+                'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
+            ],
             [
                 'name' => $fromAttribute,
                 'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
@@ -133,5 +137,10 @@ JS
                 'columns' => $columns
             ],
         ];
+    }
+
+    public function getMultipleInputField()
+    {
+        return false;
     }
 }
