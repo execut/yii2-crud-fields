@@ -141,7 +141,7 @@ JS
                 'allowEmptyList' => true,
                 'enableGuessTitle' => true,
                 'model' => $viaRelationModel,
-                'addButtonPosition' => MultipleInput::POS_ROW,
+                'addButtonPosition' => MultipleInput::POS_HEADER,
                 'columns' => $columns
             ],
         ], $field);
