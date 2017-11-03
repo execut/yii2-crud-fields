@@ -7,14 +7,17 @@ namespace execut\crudFields\fields;
 
 use execut\crudFields\Relation;
 use unclead\multipleinput\MultipleInputColumn;
+use yii\base\BaseObject;
+use yii\base\Exception;
 use yii\base\Object;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 
-class Field extends Object
+class Field extends BaseObject
 {
     const SCENARIO_GRID = 'grid';
     const SCENARIO_FORM = 'form';
@@ -24,22 +27,37 @@ class Field extends Object
      */
     public $model = null;
     public $required = false;
+    public $defaultValue = null;
     public $attribute = null;
     public $rules = [];
     public $multipleInputType = MultipleInputColumn::TYPE_TEXT_INPUT;
     protected $_column = [];
     protected $_field = [];
+    protected $_label = null;
     public $displayOnly = false;
+    public $isRenderRelationFields = false;
 
     public $nameAttribute = 'name';
     public $with = null;
     public $relation = null;
     public $data = [];
     public $valueAttribute = null;
+    public $multipleInputField = [];
+
+    /**
+     * @var \Closure|null
+     */
     public $scope = null;
 
     protected $_relationObject = null;
     public $order = 0;
+
+    public function attach() {
+        if ($this->defaultValue !== null) {
+            $attribute = $this->attribute;
+            $this->model->$attribute = $this->defaultValue;
+        }
+    }
 
     public function setRelationObject($object) {
         $this->_relationObject = $object;
@@ -48,7 +66,7 @@ class Field extends Object
     }
 
     public function getRelationObject() {
-        if ($this->_relationObject === null) {
+        if ($this->_relationObject === null && $this->relation !== null) {
             $this->_relationObject = new Relation([
                 'field' => $this,
                 'name' => $this->relation,
@@ -69,7 +87,12 @@ class Field extends Object
 
     public function getData() {
         if (empty($this->data)) {
-            return $this->getRelationObject()->getData();
+            $relationObject = $this->getRelationObject();
+            if (!$relationObject) {
+                throw new Exception('Data is required or set relation name');
+            }
+
+            return $relationObject->getData();
         }
 
         return $this->data;
@@ -77,6 +100,10 @@ class Field extends Object
 
     public function getColumn() {
         $column = $this->_column;
+        if ($column === false) {
+            return false;
+        }
+
         if (is_callable($column)) {
             $column = $column();
         }
@@ -96,30 +123,84 @@ class Field extends Object
 
     public function getField() {
         $field = $this->_field;
+        if (is_callable($field)) {
+            $field = $field($this->model, $this);
+        }
+
         if ($field === false) {
             return false;
         }
 
-        if (is_callable($field)) {
-            $field = $field($this->model, $this);
-        }
+        $field['viewModel'] = $this->model;
+        $field['editModel'] = $this->model;
 
         if ($this->attribute !== null) {
             $field['attribute'] = $this->attribute;
         }
 
-        if ($this->displayOnly) {
-            $field['displayOnly'] = true;
-        }
+        $field['displayOnly'] = $this->getDisplayOnly();
 
         return $field;
     }
 
+    public function getDisplayOnly() {
+        if ($this->displayOnly) {
+            if (is_callable($this->displayOnly)) {
+                return call_user_func($this->displayOnly);
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public function getFields($isWithRelationsFields = true) {
+        $fields = [];
+        if ($this->getIsRenderRelationFields() && $isWithRelationsFields) {
+            $relationObject = $this->getRelationObject();
+            $relationFields = $relationObject->getRelationFields();
+            foreach ($relationFields as $field) {
+                $formFields = $field->getFields(false);
+                foreach ($formFields as &$formField) {
+                    if (empty($formField['valueColOptions'])) {
+                        $formField['valueColOptions'] = [];
+                    }
+
+                    Html::addCssClass($formField['valueColOptions'], 'related-' . $relationObject->getName());
+//                    if (!empty($formField['attribute'])) {
+//                        ArrayHelper::setValue($formField, 'options.name', $this->model->formName() . '[' . $relationObject->getName() . '][' . $formField['attribute'] . ']');
+//                    }
+                }
+
+                $fields = ArrayHelper::merge($formFields, $fields);
+            }
+        } else {
+            $fields = [$this->attribute => $this->getField()];
+        }
+
+        return $fields;
+    }
+
+    public function getColumns() {
+        $column = $this->getColumn();
+        if ($column === false) {
+            return [];
+        }
+
+        return [$this->attribute => $column];
+    }
+
     public function getMultipleInputField() {
-        return [
+        if ($this->multipleInputField === false) {
+            return false;
+        }
+
+        return ArrayHelper::merge([
             'name' => $this->attribute,
             'type' => $this->multipleInputType,
-        ];
+            'options' => [
+                'placeholder' => $this->getLabel(),
+            ],
+        ], $this->multipleInputField);
     }
 
     public function setField($field) {
@@ -150,6 +231,16 @@ class Field extends Object
         return $query;
     }
 
+    public function getIsRenderRelationFields() {
+        if (is_callable($this->isRenderRelationFields)) {
+            $isRenderRelationFields = $this->isRenderRelationFields;
+
+            return $isRenderRelationFields($this);
+        }
+
+        return $this->isRenderRelationFields;
+    }
+
     public function rules() {
         $rules = $this->rules;
         if ($this->attribute !== null) {
@@ -159,23 +250,35 @@ class Field extends Object
                 'on' => self::SCENARIO_GRID,
             ];
 
-            if ($this->required) {
-                $rule = 'required';
-            } else {
-                $rule = 'safe';
-            }
+            if (!$this->getIsRenderRelationFields()) {
+                if ($this->required) {
+                    $rule = 'required';
+                } else {
+                    $rule = 'safe';
+                }
 
-            $rules[] = [
-                [$this->attribute],
-                $rule,
-                'on' => [self::SCENARIO_FORM, 'default'],
-            ];
+                $rules[] = [
+                    [$this->attribute],
+                    $rule,
+                    'on' => [self::SCENARIO_FORM, 'default'],
+                ];
+            }
         }
 
         return $rules;
     }
 
+    public function setLabel($label) {
+        $this->_label = $label;
+
+        return $this;
+    }
+
     public function getLabel() {
+        if ($this->_label !== null) {
+            return $this->_label;
+        }
+
         $attribute = Inflector::humanize($this->attribute, '_');
         if ($this->module === null) {
             return $attribute;

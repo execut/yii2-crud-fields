@@ -21,7 +21,7 @@ class FieldTest extends TestCase
         $this->assertEquals($query, $field->applyScopes($query));
     }
 
-    public function testGetColumn() {
+    public function testGetColumns() {
         $column = [
             'class' => 'test',
         ];
@@ -30,12 +30,14 @@ class FieldTest extends TestCase
             'attribute' => 'name'
         ]);
         $this->assertEquals([
-            'class' => 'test',
-            'attribute' => 'name'
-        ], $field->column);
+            'name' => [
+                'class' => 'test',
+                'attribute' => 'name'
+            ],
+        ], $field->columns);
     }
 
-    public function testGetField() {
+    public function testGetFields() {
         $formField = [
             'class' => 'test'
         ];
@@ -44,9 +46,11 @@ class FieldTest extends TestCase
             'attribute' => 'name'
         ]);
         $this->assertEquals([
-            'class' => 'test',
-            'attribute' => 'name'
-        ], $field->field);
+            'name' => [
+                'class' => 'test',
+                'attribute' => 'name'
+            ],
+        ], $field->fields);
     }
 
     public function testApplyScopes() {
@@ -121,7 +125,7 @@ class FieldTest extends TestCase
             [
                 ['name'],
                 'safe',
-                'on' => Field::SCENARIO_FORM,
+                'on' => [Field::SCENARIO_FORM, 'default'],
             ],
         ], $field->rules());
     }
@@ -142,9 +146,13 @@ class FieldTest extends TestCase
             [
                 ['name'],
                 'required',
-                'on' => Field::SCENARIO_FORM,
+                'on' => [Field::SCENARIO_FORM, 'default'],
             ],
         ], $field->rules());
+    }
+
+    public function testGetRelationFields() {
+
     }
 }
 
@@ -155,6 +163,11 @@ class Model extends ActiveRecord {
     public $testTest = null;
     public static $query = null;
     public static $subQuery = null;
+
+    public static function primaryKey() {
+        return ['id'];
+    }
+
     public static function find()
     {
         return self::$query;
@@ -167,5 +180,14 @@ class Model extends ActiveRecord {
         }
 
         return self::$subQuery;
+    }
+
+    public function getRelation($name, $throwException = true)
+    {
+        if ($name === 'testTest') {
+            return $this->getTestTest();
+        } else {
+            return parent::getRelation($name, $throwException);
+        }
     }
 }

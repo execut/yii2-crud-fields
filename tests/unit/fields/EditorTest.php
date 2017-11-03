@@ -37,7 +37,7 @@ class EditorTest extends TestCase
         ]);
         $this->assertEquals([
             'attribute' => 'text',
-            'format' => 'html',
+            'value' => function () {},
         ], $field->getColumn());
     }
 }

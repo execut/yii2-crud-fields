@@ -10,6 +10,7 @@ namespace execut\crudFields\fields;
 
 
 use kartik\detail\DetailView;
+use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
 
 class DropDown extends Field
@@ -27,9 +28,9 @@ class DropDown extends Field
         $config = [
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => $attribute,
-            'options' => [
-                'prompt' => '',
-            ],
+//            'options' => [
+//                'prompt' => '',
+//            ],
 //            'model' => $this->model,
 //            'viewModel' => $this->model,
             'value' => function () use ($data, $value) {
@@ -41,18 +42,37 @@ class DropDown extends Field
             'items' => $data,
         ];
 
-        return ArrayHelper::merge([], $config);
+        return ArrayHelper::merge(parent::getField(), $config);
     }
 
 
     public function getColumn() {
-        $model = $this->model;
-        $attribute = $this->attribute;
-
+        $data = $this->getData();
         $config = [
             'attribute' => $this->attribute,
-            'value' => $this->valueAttribute,
-            'filter' => $this->getData(),
+            'filter' => $data,
+        ];
+        if ($this->valueAttribute !== null) {
+            $config['value'] = $this->valueAttribute;
+        } else {
+            $config['value'] = function ($row) use ($data) {
+                $attribute = $this->attribute;
+                if (!empty($data[$row->$attribute])) {
+                    return $data[$row->$attribute];
+                }
+            };
+        }
+
+        return $config;
+    }
+
+    public function getMultipleInputField() {
+        $data = $this->getData();
+        $data[''] = $this->getLabel();
+        $config = [
+            'type' => MultipleInputColumn::TYPE_DROPDOWN,
+            'name' => $this->attribute,
+            'items' => $data,
         ];
 
         return $config;

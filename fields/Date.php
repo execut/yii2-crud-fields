@@ -22,14 +22,20 @@ class Date extends Field
 
         return ArrayHelper::merge([
             'filter' => DateRangePicker::widget($widgetOptions),
+            'format' => ['date', 'dd.MM.yy HH:mm'],
         ], parent::getColumn());
     }
 
     public function getField()
     {
+        if (empty($this->getValue())) {
+            return false;
+        }
+
         if ($this->displayOnly) {
             return array_merge(parent::getField(), [
                 'displayOnly' => true,
+                'format' => ['date', 'dd.MM.yy HH:mm'],
             ]);
         }
 
@@ -46,6 +52,7 @@ class Date extends Field
         return [
             'type' => $type,
             'attribute' => $this->attribute,
+            'format' => ['date', 'dd.MM.yy HH:mm'],
             'widgetOptions' => $this->getWidgetOptions(),
         ];
     }

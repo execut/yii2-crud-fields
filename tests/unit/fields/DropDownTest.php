@@ -11,6 +11,7 @@ namespace execut\crudFields\fields;
 
 use execut\crudFields\TestCase;
 use kartik\detail\DetailView;
+use unclead\multipleinput\MultipleInputColumn;
 use yii\db\ActiveQuery;
 
 class DropDownTest extends TestCase
@@ -26,8 +27,18 @@ class DropDownTest extends TestCase
                 '' => '',
                 2 => 'test',
             ],
-            'options' => [
-                'prompt' => '',
+        ], $field);
+    }
+
+    public function testGetMultipleInputField() {
+        $field = $this->getField();
+        $field = $field->getMultipleInputField();
+        $this->assertEquals([
+            'type'=> MultipleInputColumn::TYPE_DROPDOWN,
+            'name' => 'test_test_id',
+            'items' => [
+                '' => 'Test Test',
+                2 => 'test',
             ],
         ], $field);
     }
@@ -46,7 +57,7 @@ class DropDownTest extends TestCase
     }
 
     /**
-     * @return array|HasOneRelation
+     * @return Field
      */
     protected function getField()
     {
@@ -55,16 +66,21 @@ class DropDownTest extends TestCase
 
         $field = new DropDown([
             'attribute' => 'test_test_id',
+            'relation' => 'testTest',
             'model' => $model,
             'valueAttribute' => 'name',
         ]);
 
-        $query = Model::$query = Model::$subQuery = $this->getMockBuilder(ActiveQuery::className())
+        $query = Model::$query = $this->getMockBuilder(ActiveQuery::className())
             ->setConstructorArgs([Model::className()])
             ->setMethods(['andWhere', 'all'])
             ->getMock();
         $query->method('andWhere')->with(['id' => [2]])->willReturn($query);
         $query->method('all')->willReturn([$field->model]);
+        Model::$subQuery = clone Model::$query;
+        Model::$subQuery->link = [
+            'id' => 'test_test_id',
+        ];
 
         return $field;
     }

@@ -10,13 +10,16 @@ namespace execut\crudFields;
 
 
 use execut\crudFields\fields\Field;
-use yii\base\Object;
+use yii\base\BaseObject;
+use yii\base\Exception;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\helpers\Inflector;
+use yii\helpers\Url;
 
-class Relation extends Object
+class Relation extends BaseObject
 {
     /**
      * @var Field
@@ -30,6 +33,10 @@ class Relation extends Object
         $this->_name = $relation;
 
         return $this;
+    }
+
+    protected function getPrimaryKey() {
+        return current($this->field->model::primaryKey());
     }
 
     public function getName() {
@@ -50,23 +57,42 @@ class Relation extends Object
 
     public function applyScopes(ActiveQuery $query)
     {
-        if ($this->isManyToMany()) {
+        if ($this->getRelationQuery()->multiple) {
             $value = $this->field->value;
             if (!empty($value)) {
-                if (is_array($value) && current($value) instanceof ActiveRecord) {
-                    $value = ArrayHelper::map($value, 'id', 'id');
+                if ($this->isVia()) {
+                    $pk = $this->getPrimaryKey();
+                } else {
+                    $pk = $this->getRelationPrimaryKey();
                 }
 
-                $viaRelationQuery = $this->getViaRelationQuery();
-                $viaRelationQuery->select(key($viaRelationQuery->link))
-                    ->andWhere([
-                        current($this->getRelationQuery()->link) => $value,
+                if (is_array($value) && current($value) instanceof ActiveRecord) {
+                    $relationPk = $this->getRelationPrimaryKey();
+                    $value = ArrayHelper::map($value, $relationPk, $relationPk);
+                    $value = array_values($value);
+                }
+
+                if ($this->isVia()) {
+                    $viaRelationQuery = $this->getViaRelationQuery();
+                    $viaRelationQuery->select(key($viaRelationQuery->link))
+                        ->andWhere([
+                            current($this->getRelationQuery()->link) => $value,
+                        ]);
+                    $viaRelationQuery->link = null;
+                    $viaRelationQuery->primaryModel = null;
+                } else {
+                    $viaRelationQuery = $this->getRelationQuery();
+                    $viaRelationQuery->select(key($viaRelationQuery->link));
+                    $viaRelationQuery->indexBy = key($viaRelationQuery->link);
+                    $viaRelationQuery->andWhere([
+                        current($viaRelationQuery->link) => $value
                     ]);
-                $viaRelationQuery->link = null;
-                $viaRelationQuery->primaryModel = null;
+                    $viaRelationQuery->link = null;
+                    $viaRelationQuery->primaryModel = null;
+                }
 
                 $query->andWhere([
-                    'id' => $viaRelationQuery,
+                    $pk => $viaRelationQuery,
                 ]);
             }
         }
@@ -90,20 +116,9 @@ class Relation extends Object
      */
     public function getSourceText()
     {
-        $attribute = $this->field->attribute;
-        $relationName = $this->name;
-        $nameAttribute = $this->nameAttribute;
-        $model = $this->field->model;
-        $sourceInitText = '';
-        if (!empty($model->$attribute) && ($relationValue = $model->$relationName)) {
-//            if ($relationName === 'goodsArticle') {
-//                var_dump($model->$relationName);
-//                exit;
-//            }
-            $sourceInitText = $relationValue->$nameAttribute;
-        }
+        $result = $this->getSourcesText();
 
-        return $sourceInitText;
+        return current($result);
     }
 
     public function getRelationModelClass() {
@@ -113,10 +128,15 @@ class Relation extends Object
     }
 
     public function getRelationFormName() {
-        $relationModelClass = $this->getRelationModelClass();
-        $model = new $relationModelClass;
+        $model = $this->getRelationModel();
 
         return $model->formName();
+    }
+
+    public function getRelationPrimaryKey() {
+        $relationQuery = $this->getRelationQuery();
+        $class = $relationQuery->modelClass;
+        return current($class::primaryKey());
     }
 
     /**
@@ -124,32 +144,38 @@ class Relation extends Object
      */
     public function getSourcesText(): array
     {
+        $sourceInitText = [];
         $relationName = $this->name;
+        $nameAttribute = $this->nameAttribute;
         $model = $this->field->model;
         $modelClass = $this->getRelationModelClass();
+        if (empty($this->field->value)) {
+            return [];
+        }
 
         if ($this->isManyToMany()) {
             $relationQuery = $this->getRelationQuery();
-
-            if (!$this->isVia()) {
-                $link = $relationQuery->link;
-                $sourceIds = $relationQuery
-                    ->select('id');
+            $via = $relationQuery->via;
+            if ($via instanceof ActiveQuery) {
+                /**
+                 * @todo Needed autodetect via PK
+                 */
+                $sourceIds = $via->select('id');
             } else {
-                $via = $relationQuery->via;
-                if ($via instanceof ActiveQuery) {
-                    $sourceIds = $via->select('id');
-                } else {
-                    $viaRelationName = $via[0];
-                    $viaModels = $this->field->model->$viaRelationName;
-                    $viaAttribute = $this->field->attribute;
-                    if (!empty($this->field->model->$viaAttribute)) {
-                        $sourceIds = $this->field->model->$viaAttribute;
-                    } else {
-                        $sourceIds = [];
-                        foreach ($viaModels as $viaModel) {
-                            $sourceIds[] = $viaModel->$viaAttribute;
+                $viaRelationName = $via[0];
+                $viaModels = $this->field->model->$viaRelationName;
+                $viaAttribute = $this->field->attribute;
+                if (!empty($this->field->model->$viaAttribute)) {
+                    $sourceIds = $this->field->model->$viaAttribute;
+                    foreach ($sourceIds as $key => $sourceId) {
+                        if ($sourceId instanceof ActiveRecord) {
+                            $sourceIds[$key] = $sourceId->primaryKey;
                         }
+                    }
+                } else {
+                    $sourceIds = [];
+                    foreach ($viaModels as $viaModel) {
+                        $sourceIds[$viaModel->$viaAttribute] = $viaModel->$nameAttribute;
                     }
                 }
             }
@@ -162,15 +188,24 @@ class Relation extends Object
                 } else {
                     $sourceIds[] = $model->$attribute;
                 }
+
+                foreach ($sourceIds as $key => $sourceId) {
+                    if ($sourceId instanceof ActiveRecord) {
+                        $sourceInitText[$sourceId->primaryKey] = $sourceId->$nameAttribute;
+                    }
+                }
+
+                if (!empty($sourceInitText)) {
+                    return $sourceInitText;
+                }
             }
         }
 
-        $nameAttribute = $this->nameAttribute;
-        $sourceInitText = [];
         if (!empty($sourceIds)) {
-            $models = $modelClass::find()->andWhere(['id' => $sourceIds])->all();
+            $pk = current($modelClass::primaryKey());
+            $models = $modelClass::find()->andWhere([$pk => $sourceIds])->all();
 
-            $sourceInitText = ArrayHelper::map($models, 'id', $nameAttribute);
+            $sourceInitText = ArrayHelper::map($models, $pk, $nameAttribute);
         }
 
         return $sourceInitText;
@@ -186,11 +221,12 @@ class Relation extends Object
     {
         $data = ['' => ''];
 
-        $relationQuery = $this->getRelationQuery();
-        $relationQuery->link = null;
-        $relationQuery->primaryModel = null;
+        $models = $this->getRelatedModels();
 
-        $data = ArrayHelper::merge($data, ArrayHelper::map($relationQuery->all(), 'id', $this->nameAttribute));
+        $relationQuery = $this->getRelationQuery();
+        $idAttribute = key($relationQuery->link);
+
+        $data = ArrayHelper::merge($data, ArrayHelper::map($models, $idAttribute, $this->nameAttribute));
         return $data;
     }
 
@@ -198,35 +234,77 @@ class Relation extends Object
         return $this->getRelationQuery()->via !== null;
     }
 
-    public function getColumnValue() {
-        if ($this->isManyToMany()) {
-            return function ($model) {
-                $name = $this->getName();
-                $nameAttribute = $this->nameAttribute;
-                $result = [];
-                foreach ($model->$name as $value) {
-                    $result[] = $value->$nameAttribute;
-                }
-
-                return implode(', ', $result);
-            };
-        } else {
+    public function getColumnValue($row) {
+        if (!$this->isHasMany()) {
             if ($this->valueAttribute !== null) {
-                return $this->valueAttribute;
+                $attribute = $this->valueAttribute;
+            } else {
+                $attribute = $this->name . '.' . $this->nameAttribute;
             }
 
-            return $this->name . '.' . $this->nameAttribute;
+//            $q = $this->getRelationQuery();
+//            $fromAttribute = current($q->link);
+//            if (empty($this->field->model->$fromAttribute)) {
+//                return;
+//            }
+
+            $value = ArrayHelper::getValue($row, $attribute);
+            if (!$value) {
+                return;
+            }
+
+            if ($this->field->isNoRenderRelationLink || $this->field->url === null) {
+                return $value;
+            }
+
+            $url = $this->field->url;
+            if (!is_array($url)) {
+                $url = [$url];
+            }
+
+            $url[0] = str_replace('/index', '', $url[0]) . '/update';
+
+            if (!array_key_exists('id', $url)) {
+                $attribute = $this->field->attribute;
+                $url['id'] = $row->$attribute;
+            }
+
+            return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
+        } else {
+            $models = $row->{$this->getName()};
+            $result = '';
+            $nameAttribute = $this->nameAttribute;
+            foreach ($models as $model) {
+                $value = $model->$nameAttribute;
+                if ($this->field->isNoRenderRelationLink || $this->field->url === null) {
+                    $result .= $value . '<br>';
+                    continue;
+                }
+
+                $url = $this->field->url;
+                if (is_array($url)) {
+                    $url = $url[0];
+                } else {
+                    $url = str_replace('/index', '', $url);
+                }
+
+                $url = [$url . '/update', 'id' => $model->primaryKey];
+
+                $result .= $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']) . '<br>';
+            }
+
+            return $result;
         }
     }
 
     protected function isManyToMany() {
         $relationQuery = $this->getRelationQuery();
 
-        return $relationQuery->multiple;
+        return $relationQuery->multiple && $this->isVia();
     }
 
     /**
-     * @return mixed
+     * @return ActiveQuery
      */
     public function getRelationQuery()
     {
@@ -271,5 +349,54 @@ class Relation extends Object
 
     public function getViaRelationModelClass() {
         return $this->getViaRelationQuery()->modelClass;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRelatedModels()
+    {
+        $relationQuery = clone $this->getRelationQuery();
+        $relationQuery->link = null;
+        $relationQuery->primaryModel = null;
+        $models = $relationQuery->all();
+        return $models;
+    }
+
+    public function isHasMany() {
+        return $this->getRelationQuery()->multiple;
+    }
+    
+    public function getRelationFields() {
+        $model = $this->getRelationModel();
+        if (!$model->getBehavior('fields') || $this->isManyToMany() || $this->isHasMany()) {
+            return [];
+        }
+
+        $fields = $model->getFields();
+        $pks = $model->primaryKey();
+        foreach ($fields as $key => $field) {
+            if ($field->attribute === null || in_array($key, $pks)) {
+                unset($fields[$key]);
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRelationModel()
+    {
+        $name = $this->getName();
+        if (!$this->isHasMany() && ($model = $this->field->model->$name)) { //$this->field->getValue() &&
+            return $model;
+        }
+
+        $relationModelClass = $this->getRelationModelClass();
+        $model = new $relationModelClass;
+
+        return $model;
     }
 }

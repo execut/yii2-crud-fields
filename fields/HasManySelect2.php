@@ -7,8 +7,6 @@ namespace execut\crudFields\fields;
 
 use detalika\cars\models\ModificationsVsEngine;
 use kartik\detail\DetailView;
-use kartik\grid\BooleanColumn;
-use kartik\grid\GridView;
 use kartik\select2\Select2;
 use unclead\multipleinput\MultipleInput;
 use unclead\multipleinput\MultipleInputColumn;
@@ -22,18 +20,7 @@ use yii\web\JsExpression;
 
 class HasManySelect2 extends HasOneSelect2
 {
-    public $columns = [
-        'id' => [
-            'attribute' => 'id',
-        ],
-        'name' => [
-            'attribute' => 'name',
-        ],
-        'visible' => [
-            'class' => BooleanColumn::class,
-            'attribute' => 'visible'
-        ],
-    ];
+    public $columns = null;
 
     public $viaColumns = [];
 
@@ -52,7 +39,6 @@ class HasManySelect2 extends HasOneSelect2
     public function getField()
     {
         $sourceInitText = $this->getRelationObject()->getSourcesText();
-        $nameParam = $this->getNameParam();
         $relation = $this->getRelationObject();
         if ($relation->isVia()) {
             $viaRelationModelClass = $this->getRelationObject()->getViaRelationQuery()->modelClass;
@@ -61,6 +47,17 @@ class HasManySelect2 extends HasOneSelect2
 
             $fromAttribute = $this->getRelationObject()->getViaFromAttribute();
             $toAttribute = $this->getRelationObject()->getViaToAttribute();
+            $relationName = $this->getRelationObject()->getName();
+            if (empty($this->model->$attribute)) {
+                $viaModelsAttributes = [];
+                foreach ($this->model->$relationName as $model) {
+                    $viaModelsAttributes[] = [
+                        $fromAttribute => $model->primaryKey
+                    ];
+                }
+
+                $this->model->$attribute = $viaModelsAttributes;
+            }
         } else {
             $relationQuery = $this->getRelationObject()->getRelationQuery();
             $viaRelationModelClass = $relationQuery->modelClass;
@@ -86,25 +83,7 @@ class HasManySelect2 extends HasOneSelect2
                 'type' => Select2::class,
                 'defaultValue' => null,
                 'value' => $sourceInitText,
-                'options' => [
-                    'initValueText' => $sourceInitText,
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'placeholder' => '',
-                        'ajax' => [
-                            'url' => Url::to($this->url),
-                            'dataType' => 'json',
-                            'data' => new JsExpression(<<<JS
-function(params) {
-    return {
-        "$nameParam": params.term
-    };
-}
-JS
-                            )
-                        ],
-                    ],
-                ],
+                'options' => $this->getSelect2WidgetOptions(),
             ],
         ], $this->viaColumns);
 
@@ -120,13 +99,13 @@ JS
             'label' => $this->getLabel(),
             'format' => 'raw',
             'value' => function () {
-                $dataProvider = new ActiveDataProvider();
-                $query = $this->model->getRelation($this->relation);
-                $dataProvider->query = $query;
-                return GridView::widget([
-                    'dataProvider' => $dataProvider,
-                    'columns' => $this->columns,
-                ]);
+//                $dataProvider = new ActiveDataProvider();
+//                $query = $this->model->getRelation($this->relation);
+//                $dataProvider->query = $query;
+//                return GridView::widget([
+//                    'dataProvider' => $dataProvider,
+//                    'columns' => $this->columns,
+//                ]);
             },
             'widgetOptions' => [
                 'class' => MultipleInput::className(),

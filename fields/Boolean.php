@@ -7,10 +7,12 @@ namespace execut\crudFields\fields;
 
 use kartik\detail\DetailView;
 use kartik\grid\BooleanColumn;
+use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
 
 class Boolean extends Field
 {
+    public $multipleInputType = MultipleInputColumn::TYPE_CHECKBOX;
     public function getColumn()
     {
         return ArrayHelper::merge([
@@ -20,7 +22,12 @@ class Boolean extends Field
 
     public function getField()
     {
-        return array_merge(parent::getField(), [
+        $field = parent::getField();
+        if ($field === false) {
+            return false;
+        }
+
+        return array_merge($field, [
             'type' => DetailView::INPUT_CHECKBOX,
         ]);
     }

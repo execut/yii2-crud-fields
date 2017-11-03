@@ -12,8 +12,23 @@ use yii\helpers\ArrayHelper;
 class Action extends Field
 {
     public $update = null;
-    public $view = null;
+    public $view = false;
     public $delete = null;
+    public $_column = [
+        'options' => [
+            'style' => [
+                'min-width' => '156px',
+            ],
+        ],
+        'updateOptions' => [
+            'class' => 'btn btn-primary',
+            'label' => 'Просмотр',
+        ],
+        'deleteOptions' => [
+            'class' => 'btn btn-danger glyphicon glyphicon-remove',
+            'label' => ''
+        ],
+    ];
 
     public function getField()
     {

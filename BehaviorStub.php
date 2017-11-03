@@ -16,9 +16,15 @@ trait BehaviorStub
         return $dp;
     }
 
+    protected function attributesLabelsStub() {
+        return [];
+    }
+
     public function attributeLabels()
     {
-        return ArrayHelper::merge(parent::attributeLabels(), $this->getBehavior('fields')->attributesLabels());
+        $result = ArrayHelper::merge(parent::attributeLabels(), $this->getBehavior('fields')->attributesLabels(), $this->attributesLabelsStub());
+
+        return $result;
     }
 
     public function rules()
@@ -51,9 +57,34 @@ trait BehaviorStub
     {
         $relation = $this->getBehavior('fields')->getRelation($name);
         if ($relation && !$this->isRelationPopulated($name)) {
-            $this->populateRelation($name, $this->getRelation($name)->findFor($name, $this));
+            $relation = $this->getRelation($name);
+            $relation = $relation->findFor($name, $this);
+            $this->populateRelation($name, $relation);
         }
 
         return parent::__get($name);
     }
+
+//    protected $_formName = null;
+//
+//    public function setFormName($formName) {
+//        $this->_formName = $formName;
+//
+//        return $this;
+//    }
+//
+//    public function formName() {
+//        return $this->_formName;
+//    }
+
+//    public function attributes() {
+//        $result = [];
+//        foreach ($this->getBehavior('fields')->getFields() as $field) {
+//            if ($field->attribute) {
+//                $result[] = $field->attribute;
+//            }
+//        }
+//
+//        return $result;
+//    }
 }

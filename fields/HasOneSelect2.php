@@ -9,6 +9,7 @@ use kartik\detail\DetailView;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
 use unclead\multipleinput\MultipleInputColumn;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -19,25 +20,48 @@ class HasOneSelect2 extends Field//implements Container
 {
     public $url = null;
     public $nameParam = null;
+    public $isNoRenderRelationLink = false;
     public function getField() {
         $widgetOptions = $this->getSelect2WidgetOptions();
         $rowOptions = [];
-        if (!empty($widgetOptions['data']) && empty(array_filter($widgetOptions['data']))) {
+        if ($this->getDisplayOnly() && empty($this->getValue())) {
             $type = DetailView::INPUT_HIDDEN;
             $rowOptions['style'] = 'display:none';
         } else {
             $type = DetailView::INPUT_SELECT2;
+//            $widgetOptions['data'][''] = '';
         }
 
-        $sourceInitText = $this->getRelationObject()->getSourceText();
+//        if ($this->isRenderRelationFields) {
+//            $relationName = $this->getRelationObject()->getName();
+//            $widgetOptions['pluginEvents'] = [
+//                'change' => new JsExpression(<<<JS
+//        function () {
+//            var el = $(this),
+//                inputs = $('.related-$relationName input').not(el),
+//                parents = inputs.not(el).attr('disabled', 'disabled').parent().parent().parent().parent().parent();
+//            if (el.val()) {
+//                inputs.attr('disabled', 'disabled');
+//                parents.hide();
+//            } else {
+//                inputs.attr('disabled', false).val('');
+//                parents.show();
+//            }
+//        }
+//JS
+//                )
+//            ];
+//        }
 
+//        $sourceInitText = $this->getRelationObject()->getSourceText();
         $field = [
             'type' => $type,
-            'value' => $sourceInitText,
+            'value' => $this->getRelationObject()->getColumnValue($this->model),
+            'format' => 'raw',
             'widgetOptions' => $widgetOptions,
+            'displayOnly' => $this->getIsRenderRelationFields(),
             'rowOptions' => $rowOptions,
         ];
-
 
         $field = ArrayHelper::merge($field, parent::getField());
 
@@ -63,61 +87,32 @@ class HasOneSelect2 extends Field//implements Container
 
 
     public function getColumn() {
+        $column = parent::getColumn();
+        if ($column === false) {
+            return false;
+        }
+
         $sourceInitText = $this->getRelationObject()->getSourcesText();
 
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
-        $nameParam = $this->getNameParam();
+        if (empty($this->attribute)) {
+            throw new Exception('Attribute is required');
+        }
 
         return ArrayHelper::merge([
             'attribute' => $this->attribute,
-            'format' => 'html',
+            'format' => 'raw',
+//            'value' => $this->getData(),
             'value' => function ($row) {
-                $url = $this->url;
-                if (is_array($url)) {
-                    $url = $url[0];
-                } else {
-                    $url = str_replace('/index', '', $url);
-                }
-
-                $attribute = $this->attribute;
-
-                $url = [$url . '/update', 'id' => $row->$attribute];
-
-                $valueAttribute = $this->getRelationObject()->getColumnValue();
-                $value = ArrayHelper::getValue($row, $valueAttribute);
-
-                return Html::a($value, Url::to($url));
+                return $this->getRelationObject()->getColumnValue($row);
             },
 //                'value' => function () {
 //                    return 'asdasd';
 //                },
             'filter' => $sourceInitText,
             'filterType' => GridView::FILTER_SELECT2,
-            'filterWidgetOptions' => [
-                'language' => $this->getLanguage(),
-                'initValueText' => $sourceInitText,
-                'options' => [
-                    'multiple' => true,
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'ajax' => [
-                        'url' => Url::to($this->url),
-                        'dataType' => 'json',
-                        'data' => new JsExpression(<<<JS
-function (params) {
-  return {
-    "$nameParam": params.term,
-    page: params.page
-  };
-}
-JS
-                        )
-
-                    ],
-                ],
-            ],
-        ], parent::getColumn());
+            'filterWidgetOptions' => $this->getSelect2WidgetOptions(),
+        ], $column);
     }
 
     public function getLanguage() {
@@ -128,7 +123,7 @@ JS
     {
         return [
             'type' => Select2::class,
-            'name' => $this->getNameParam(),
+            'name' => $this->attribute,
             'options' => $this->getSelect2WidgetOptions(),
         ];
     }
@@ -138,7 +133,7 @@ JS
      */
     protected function getSelect2WidgetOptions(): array
     {
-        $sourceInitText = $this->getRelationObject()->getSourceText();
+        $sourceInitText = $this->getRelationObject()->getSourcesText();
         $nameParam = $this->getNameParam();
         $widgetOptions = [
             'language' => $this->getLanguage(),
@@ -146,7 +141,9 @@ JS
             'pluginOptions' => [
                 'allowClear' => true,
             ],
-            'options' => [],
+            'options' => [
+                'placeholder' => $this->getLabel(),
+            ],
         ];
 
         if ($this->url !== null) {

@@ -4,14 +4,11 @@
 
 namespace execut\crudFields;
 
-
-use Codeception\Test\Unit;
-
 /**
  * Class TestCase
  * @package execut\crudFields
  */
-class TestCase extends Unit
+class TestCase extends \PHPUnit\Framework\TestCase
 {
 //    public $appConfig = [
 //        'id' => 'actions-test',
