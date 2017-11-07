@@ -15,6 +15,15 @@ class Id extends Field
     public $multipleInputType = MultipleInputColumn::TYPE_HIDDEN_INPUT;
     public $displayOnly = true;
 
+    public function getField()
+    {
+        if (!$this->getValue()) {
+            return false;
+        }
+
+        return parent::getField();
+    }
+
     public function rules()
     {
         $rules = $this->rules;

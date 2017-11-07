@@ -15,6 +15,7 @@ use yii\helpers\ArrayHelper;
 
 class DropDown extends Field
 {
+    public $multipleInputType = MultipleInputColumn::TYPE_DROPDOWN;
     public function getField() {
         $model = $this->model;
         $attribute = $this->attribute;
@@ -70,11 +71,10 @@ class DropDown extends Field
         $data = $this->getData();
         $data[''] = $this->getLabel();
         $config = [
-            'type' => MultipleInputColumn::TYPE_DROPDOWN,
             'name' => $this->attribute,
             'items' => $data,
         ];
 
-        return $config;
+        return ArrayHelper::merge(parent::getMultipleInputField(), $config);
     }
 }

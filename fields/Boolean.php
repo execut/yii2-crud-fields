@@ -27,8 +27,21 @@ class Boolean extends Field
             return false;
         }
 
+        if ($this->getDisplayOnly()) {
+            $value = function () {
+                if ($this->getValue()) {
+                    return 'Да';
+                } else {
+                    return 'Нет';
+                }
+            };
+        } else {
+            $value = null;
+        }
+
         return array_merge($field, [
             'type' => DetailView::INPUT_CHECKBOX,
+            'value' => $value,
         ]);
     }
 }

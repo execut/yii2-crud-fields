@@ -145,7 +145,6 @@ class Relation extends BaseObject
     public function getSourcesText(): array
     {
         $sourceInitText = [];
-        $relationName = $this->name;
         $nameAttribute = $this->nameAttribute;
         $model = $this->field->model;
         $modelClass = $this->getRelationModelClass();
@@ -260,13 +259,12 @@ class Relation extends BaseObject
             $url = $this->field->url;
             if (!is_array($url)) {
                 $url = [$url];
-            }
-
-            $url[0] = str_replace('/index', '', $url[0]) . '/update';
-
-            if (!array_key_exists('id', $url)) {
-                $attribute = $this->field->attribute;
-                $url['id'] = $row->$attribute;
+            } else {
+                $url[0] = str_replace('/index', '', $url[0]) . '/update';
+                if (!array_key_exists('id', $url)) {
+                    $attribute = $this->field->attribute;
+                    $url['id'] = $row->$attribute;
+                }
             }
 
             return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);

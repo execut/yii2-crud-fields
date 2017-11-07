@@ -242,7 +242,7 @@ class Field extends BaseObject
     }
 
     public function rules() {
-        $rules = $this->rules;
+        $rules = [];
         if ($this->attribute !== null) {
             $rules[] = [
                 [$this->attribute],
@@ -265,7 +265,7 @@ class Field extends BaseObject
             }
         }
 
-        return $rules;
+        return ArrayHelper::merge($rules, $this->rules);
     }
 
     public function setLabel($label) {
@@ -295,5 +295,9 @@ class Field extends BaseObject
         if ($this->relation) {
             return $this->getRelationObject()->applyScopes($query);
         }
+    }
+
+    public function getFormBuilderFields() {
+        return [];
     }
 }
