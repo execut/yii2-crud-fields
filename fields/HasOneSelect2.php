@@ -22,6 +22,11 @@ class HasOneSelect2 extends Field//implements Container
     public $nameParam = null;
     public $isNoRenderRelationLink = false;
     public function getField() {
+        $field = parent::getField();
+        if ($field === false) {
+            return $field;
+        }
+
         $widgetOptions = $this->getSelect2WidgetOptions();
         $rowOptions = [];
         if ($this->getDisplayOnly() && empty($this->getValue())) {
@@ -54,16 +59,14 @@ class HasOneSelect2 extends Field//implements Container
 //        }
 
 //        $sourceInitText = $this->getRelationObject()->getSourceText();
-        $field = [
+        $field = ArrayHelper::merge([
             'type' => $type,
             'value' => $this->getRelationObject()->getColumnValue($this->model),
             'format' => 'raw',
             'widgetOptions' => $widgetOptions,
             'displayOnly' => $this->getIsRenderRelationFields(),
             'rowOptions' => $rowOptions,
-        ];
-
-        $field = ArrayHelper::merge($field, parent::getField());
+        ], $field);
 
         return $field;
     }

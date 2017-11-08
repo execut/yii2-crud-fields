@@ -197,6 +197,7 @@ class Field extends BaseObject
         return ArrayHelper::merge([
             'name' => $this->attribute,
             'type' => $this->multipleInputType,
+            'enableError' => true,
             'options' => [
                 'placeholder' => $this->getLabel(),
             ],
@@ -250,7 +251,7 @@ class Field extends BaseObject
                 'on' => self::SCENARIO_GRID,
             ];
 
-            if (!$this->getIsRenderRelationFields()) {
+            if (!$this->getIsRenderRelationFields() && !$this->getDisplayOnly()) {
                 if ($this->required) {
                     $rule = 'required';
                 } else {
