@@ -104,7 +104,7 @@ class Behavior extends BaseBehavior
 
     public function getPluginsFields() {
         $result = [];
-        foreach ($this->plugins as $plugin) {
+        foreach ($this->getPlugins() as $plugin) {
             $result = array_merge($result, $plugin->getFields());
         }
 

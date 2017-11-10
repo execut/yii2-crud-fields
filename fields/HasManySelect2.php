@@ -69,16 +69,16 @@ class HasManySelect2 extends HasOneSelect2
         }
 
         $columns = ArrayHelper::merge([
-            [
+            'id' => [
                 'name' => 'id',
                 'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
             ],
-            [
+            'from' => [
                 'name' => $fromAttribute,
                 'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
                 'defaultValue' => $this->model->id,
             ],
-            [
+            'to' => [
                 'name' => $toAttribute,
                 'type' => Select2::class,
                 'defaultValue' => null,
@@ -88,7 +88,7 @@ class HasManySelect2 extends HasOneSelect2
         ], $this->viaColumns);
 
         foreach ($columns as &$column) {
-            if (empty($column['title']) && !empty($column['name'])) {
+            if (!isset($column['title']) && !empty($column['name'])) {
                 $column['title'] = Html::activeLabel($viaRelationModel, $column['name']);
             }
         }
