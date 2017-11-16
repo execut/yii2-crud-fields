@@ -208,6 +208,13 @@ class Behavior extends BaseBehavior
             $query = $field->applyScopes($query);
         }
 
+        foreach ($this->getPlugins() as $plugin) {
+            $pluginResult = $plugin->applyScopes($query);
+            if ($pluginResult !== null) {
+                $query = $pluginResult;
+            }
+        }
+
         return $query;
     }
 

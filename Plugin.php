@@ -2,6 +2,8 @@
 namespace execut\crudFields;
 
 
+use yii\db\ActiveQuery;
+
 abstract class Plugin
 {
     /**
@@ -36,5 +38,8 @@ abstract class Plugin
     }
 
     public function initDataProvider($dataProvider) {
+    }
+
+    public function applyScopes(ActiveQuery $q) {
     }
 }
