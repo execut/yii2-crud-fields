@@ -21,6 +21,7 @@ class HasOneSelect2 extends Field//implements Container
     public $url = null;
     public $nameParam = null;
     public $isNoRenderRelationLink = false;
+    public $createUrl = null;
     public function getField() {
         $field = parent::getField();
         if ($field === false) {
@@ -34,6 +35,14 @@ class HasOneSelect2 extends Field//implements Container
             $rowOptions['style'] = 'display:none';
         } else {
             $type = DetailView::INPUT_SELECT2;
+            if ($this->createUrl) {
+                $widgetOptions['addon'] = [
+                    'append' => [
+                        'content' => $this->getCreateButton(),
+                        'asButton' => true
+                    ]
+                ];
+            }
 //            $widgetOptions['data'][''] = '';
         }
 
@@ -64,6 +73,9 @@ class HasOneSelect2 extends Field//implements Container
             'value' => $this->getRelationObject()->getColumnValue($this->model),
             'format' => 'raw',
             'widgetOptions' => $widgetOptions,
+            'fieldConfig' => [
+//                'template' => "{input}$createButton\n{error}\n{hint}",
+            ],
             'displayOnly' => $this->getIsRenderRelationFields(),
             'rowOptions' => $rowOptions,
         ], $field);
@@ -139,6 +151,7 @@ class HasOneSelect2 extends Field//implements Container
         $sourceInitText = $this->getRelationObject()->getSourcesText();
         $nameParam = $this->getNameParam();
         $widgetOptions = [
+            'theme' => Select2::THEME_BOOTSTRAP,
             'language' => $this->getLanguage(),
             'initValueText' => $sourceInitText,
             'pluginOptions' => [
@@ -175,5 +188,18 @@ JS
         }
 
         return $widgetOptions;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCreateButton(): string
+    {
+        return Html::a('Создать', $this->createUrl, [
+            'class' => 'btn btn-primary',
+            'title' => 'Создать новый автомобиль',
+            'data-toggle' => 'tooltip',
+            'target' => '_blank',
+        ]);
     }
 }
