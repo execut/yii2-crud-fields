@@ -261,10 +261,11 @@ class Relation extends BaseObject
                 $url = [$url];
             } else {
                 $url[0] = str_replace('/index', '', $url[0]) . '/update';
-                if (!array_key_exists('id', $url)) {
-                    $attribute = $this->field->attribute;
-                    $url['id'] = $row->$attribute;
-                }
+            }
+
+            if (!array_key_exists('id', $url)) {
+                $attribute = $this->field->attribute;
+                $url['id'] = $row->$attribute;
             }
 
             return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
