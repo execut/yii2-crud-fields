@@ -36,6 +36,7 @@ class Field extends BaseObject
     protected $_label = null;
     public $displayOnly = false;
     public $isRenderRelationFields = false;
+    public $isRenderInRelationForm = true;
 
     public $nameAttribute = 'name';
     public $with = null;

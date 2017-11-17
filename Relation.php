@@ -375,6 +375,10 @@ class Relation extends BaseObject
         $fields = $model->getFields();
         $pks = $model->primaryKey();
         foreach ($fields as $key => $field) {
+            if (!$field->isRenderInRelationForm) {
+                unset($fields[$key]);
+            }
+
             if ($field->attribute === null || in_array($key, $pks)) {
                 unset($fields[$key]);
             }
