@@ -46,7 +46,6 @@ class DropDown extends Field
         return ArrayHelper::merge(parent::getField(), $config);
     }
 
-
     public function getColumn() {
         $data = $this->getData();
         $config = [
@@ -69,12 +68,31 @@ class DropDown extends Field
 
     public function getMultipleInputField() {
         $data = $this->getData();
-        $data[''] = $this->getLabel();
+        $data = ArrayHelper::merge($this->getEmptyDataStub(), $data);
         $config = [
             'name' => $this->attribute,
             'items' => $data,
         ];
 
         return ArrayHelper::merge(parent::getMultipleInputField(), $config);
+    }
+
+    protected $emptyDataStub = null;
+    public function setEmptyDataStub($stub) {
+        $this->emptyDataStub = $stub;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getEmptyDataStub()
+    {
+        if ($this->emptyDataStub !== null) {
+            return $this->emptyDataStub;
+        }
+
+        return ['' => $this->getLabel()];
     }
 }
