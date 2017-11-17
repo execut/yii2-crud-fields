@@ -384,6 +384,13 @@ class Relation extends BaseObject
             }
         }
 
+        /**
+         * TODO copy-paste from Behavior sort logic
+         */
+        uasort($fields, function ($a, $b) {
+            return $a->order > $b->order;
+        });
+
         return $fields;
     }
 
