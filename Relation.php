@@ -203,7 +203,6 @@ class Relation extends BaseObject
         if (!empty($sourceIds)) {
             $pk = current($modelClass::primaryKey());
             $models = $modelClass::find()->andWhere([$pk => $sourceIds])->all();
-
             $sourceInitText = ArrayHelper::map($models, $pk, $nameAttribute);
         }
 

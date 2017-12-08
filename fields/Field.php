@@ -9,7 +9,6 @@ use execut\crudFields\Relation;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\base\BaseObject;
 use yii\base\Exception;
-use yii\base\Object;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;

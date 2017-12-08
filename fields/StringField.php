@@ -6,7 +6,6 @@ namespace execut\crudFields\fields;
 
 
 use execut\crudFields\Relation;
-use yii\base\Object;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\helpers\Inflector;

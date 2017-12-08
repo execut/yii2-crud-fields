@@ -352,7 +352,15 @@ JS
                 ];
             }
 
-            $columns = ArrayHelper::merge($pksFields, $viaRelationModel->getMultipleInputFields(), $this->viaColumns);
+            $multipleInputColumns = $viaRelationModel->getMultipleInputFields();
+//            foreach ($multipleInputColumns as $multipleInputColumn) {
+//                if (!empty($multipleInputColumn['type']) && $multipleInputColumn['type'] === Select2::class) {
+//                    $sourceInitText = $this->getRelationSourceText($multipleInputColumn['name']);
+//                    $multipleInputColumn['options']['initValueText'] = $sourceInitText;
+//                }
+//            }
+
+            $columns = ArrayHelper::merge($pksFields, $multipleInputColumns, $this->viaColumns);
         }
 
         $widgetOptions = [
@@ -365,4 +373,11 @@ JS
         ];
         return $widgetOptions;
     }
+
+//    public function getRelationSourceText($attribute) {
+//        $models = $this->getValue();
+//        $result = ArrayHelper::map($models, $attribute, 'name');
+//
+//        return $result;
+//    }
 }
