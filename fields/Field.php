@@ -43,6 +43,8 @@ class Field extends BaseObject
     public $data = [];
     public $valueAttribute = null;
     public $multipleInputField = [];
+    public $url = null;
+    public $isNoRenderRelationLink = false;
 
     /**
      * @var \Closure|null
@@ -131,14 +133,19 @@ class Field extends BaseObject
             return false;
         }
 
-        $field['viewModel'] = $this->model;
-        $field['editModel'] = $this->model;
+        if ($this->model !== null) {
+            $field['viewModel'] = $this->model;
+            $field['editModel'] = $this->model;
+        }
 
         if ($this->attribute !== null) {
             $field['attribute'] = $this->attribute;
         }
 
-        $field['displayOnly'] = $this->getDisplayOnly();
+        $displayOnly = $this->getDisplayOnly();
+        if ($displayOnly) {
+            $field['displayOnly'] = true;
+        }
 
         return $field;
     }

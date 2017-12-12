@@ -18,9 +18,7 @@ use yii\web\JsExpression;
 
 class HasOneSelect2 extends Field//implements Container
 {
-    public $url = null;
     public $nameParam = null;
-    public $isNoRenderRelationLink = false;
     public $createUrl = null;
     public function getField() {
         $field = parent::getField();

@@ -79,13 +79,17 @@ class DateTest extends TestCase
     }
 
     public function testGetField() {
+        $model = new Model();
         $field = new Date([
             'attribute' => 'name',
+            'model' => $model,
         ]);
         $this->assertEquals([
             'attribute' => 'name',
             'displayOnly' => true,
             'format' => ['date', 'dd.MM.yy HH:mm'],
+            'viewModel' => $model,
+            'editModel' => $model,
         ], $field->getField());
     }
 }

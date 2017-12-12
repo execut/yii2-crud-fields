@@ -86,7 +86,7 @@ class BehaviorTest extends TestCase
             ],
         ]);
         $this->assertEquals([
-            [
+            '0_' => [
                 'test' => 'test'
             ]
         ], $behavior->getFormFields());

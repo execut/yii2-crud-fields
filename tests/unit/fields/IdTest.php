@@ -19,6 +19,8 @@ class IdTest extends TestCase
         $this->assertEquals([
             'attribute' => 'name',
             'displayOnly' => true,
+            'viewModel' => $model,
+            'editModel' => $model,
         ], $field->getField());
     }
 

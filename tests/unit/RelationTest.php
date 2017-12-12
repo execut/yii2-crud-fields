@@ -41,7 +41,7 @@ class RelationTest extends TestCase
 
     public function testGetColumnValue() {
         $relation = $this->getRelation();
-        $this->assertEquals('testTest.name', $relation->getColumnValue());
+        $this->assertEquals('test', $relation->getColumnValue($relation->field->model));
     }
 
     public function testGetSourceText() {
@@ -56,7 +56,7 @@ class RelationTest extends TestCase
     }
 
     /**
-     * @return array|HasOneRelation
+     * @return Relation
      */
     protected function getRelation()
     {

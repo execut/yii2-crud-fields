@@ -48,7 +48,7 @@ class FieldTest extends TestCase
         $this->assertEquals([
             'name' => [
                 'class' => 'test',
-                'attribute' => 'name'
+                'attribute' => 'name',
             ],
         ], $field->fields);
     }

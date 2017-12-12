@@ -25,7 +25,6 @@ class ActionTest extends TestCase
         $this->assertEquals([
             'class' => ActionColumn::class,
             'template' => '',
-            'width' => '155px',
             'updateOptions' => [
                 'class' => 'btn btn-primary',
                 'label' => 'Просмотр',
@@ -33,6 +32,11 @@ class ActionTest extends TestCase
             'deleteOptions' => [
                 'class' => 'btn btn-danger glyphicon glyphicon-remove',
                 'label' => '',
+            ],
+            'options' => [
+                'style' => [
+                    'min-width' => '156px',
+                ],
             ],
         ], $field->getColumn());
     }

@@ -39,9 +39,14 @@ class Boolean extends Field
             $value = null;
         }
 
-        return array_merge($field, [
+        $result = [
             'type' => DetailView::INPUT_CHECKBOX,
-            'value' => $value,
-        ]);
+        ];
+
+        if ($value !== null) {
+            $result['value'] = $value;
+        }
+
+        return array_merge($field, $result);
     }
 }

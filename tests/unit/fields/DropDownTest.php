@@ -17,8 +17,8 @@ use yii\db\ActiveQuery;
 class DropDownTest extends TestCase
 {
     public function testGetField() {
-        $field = $this->getField();
-        $field = $field->getField();
+        $fieldObject = $this->getField();
+        $field = $fieldObject->getField();
         $this->assertEquals([
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => 'test_test_id',
@@ -27,6 +27,8 @@ class DropDownTest extends TestCase
                 '' => '',
                 2 => 'test',
             ],
+            'viewModel' => $fieldObject->model,
+            'editModel' => $fieldObject->model,
         ], $field);
     }
 
@@ -36,9 +38,13 @@ class DropDownTest extends TestCase
         $this->assertEquals([
             'type'=> MultipleInputColumn::TYPE_DROPDOWN,
             'name' => 'test_test_id',
+            'enableError' => true,
             'items' => [
-                '' => 'Test Test',
+                '' => '',
                 2 => 'test',
+            ],
+            'options' => [
+                'placeholder' => 'Test Test',
             ],
         ], $field);
     }
