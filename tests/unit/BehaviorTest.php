@@ -68,7 +68,7 @@ class BehaviorTest extends TestCase
             ],
         ]);
         $this->assertEquals([
-            [
+            '' => [
                 'test' => 'test'
             ]
         ], $behavior->getGridColumns());

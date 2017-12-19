@@ -202,7 +202,8 @@ class Relation extends BaseObject
 
         if (!empty($sourceIds)) {
             $pk = current($modelClass::primaryKey());
-            $models = $modelClass::find()->andWhere([$pk => $sourceIds])->all();
+            $q = $modelClass::find()->andWhere([$pk => $sourceIds]);
+            $models = $q->all();
             $sourceInitText = ArrayHelper::map($models, $pk, $nameAttribute);
         }
 
@@ -357,6 +358,11 @@ class Relation extends BaseObject
         $relationQuery = clone $this->getRelationQuery();
         $relationQuery->link = null;
         $relationQuery->primaryModel = null;
+
+        if ($this->nameAttribute !== null) {
+            $relationQuery->orderBy($this->nameAttribute);
+        }
+
         $models = $relationQuery->all();
         return $models;
     }
@@ -396,11 +402,17 @@ class Relation extends BaseObject
     /**
      * @return mixed
      */
-    public function getRelationModel()
+    public function getRelationModel($isFirst = false)
     {
         $name = $this->getName();
-        if (!$this->isHasMany() && ($model = $this->field->model->$name)) { //$this->field->getValue() &&
-            return $model;
+        if ((!$this->isHasMany() || $isFirst) && ($model = $this->field->model->$name)) { //$this->field->getValue() &&
+            if ($isFirst) {
+                if (current($model)) {
+                    return current($model);
+                }
+            } else {
+                return $model;
+            }
         }
 
         $relationModelClass = $this->getRelationModelClass();

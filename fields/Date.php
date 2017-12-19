@@ -72,7 +72,7 @@ class Date extends Field
         $attribute = $this->attribute;
         $t = $modelClass::tableName();
         $value = $this->model->$attribute;
-        if (!empty($value) && strpos(' - ', $value) !== false) {
+        if (!empty($value) && strpos($value, ' - ') !== false) {
             $timeFormat = 'H:i:s';
             $dateTimeFormat = 'Y-m-d '. $timeFormat;
 

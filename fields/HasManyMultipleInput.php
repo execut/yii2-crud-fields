@@ -183,6 +183,10 @@ class HasManyMultipleInput extends Field
 
 
     public function getColumn() {
+        if (parent::getColumn() === false) {
+            return false;
+        }
+
 //        $sourceInitText = $this->getRelationObject()->getSourcesText();
 
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
@@ -297,11 +301,6 @@ class HasManyMultipleInput extends Field
 JS
             );
             $targetFields = [
-                //            [
-                //                'name' => $toAttribute,
-                //                'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
-                //                'defaultValue' => $this->model->id,
-                //            ],
                 'id' => [
                     'name' => 'id',
                     'type' => Select2::class,
@@ -342,8 +341,7 @@ JS
                 }
             }
         } else {
-            $viaRelationModelClass = $relation->getRelationModelClass();
-            $viaRelationModel = new $viaRelationModelClass;
+            $viaRelationModel = $this->getRelationObject()->getRelationModel(true);
             $pksFields = [];
             foreach ($viaRelationModel->primaryKey() as $primaryKey) {
                 $pksFields[$primaryKey] = [
@@ -362,7 +360,6 @@ JS
 
             $columns = ArrayHelper::merge($pksFields, $multipleInputColumns, $this->viaColumns);
         }
-
         $widgetOptions = [
             'class' => MultipleInput::className(),
             'allowEmptyList' => true,
@@ -372,6 +369,16 @@ JS
             'columns' => $columns
         ];
         return $widgetOptions;
+    }
+
+    public function getMultipleInputField() {
+        $options = $this->getMultipleInputWidgetOptions();
+
+        return [
+            'type' => MultipleInput::class,
+            'name' => $this->attribute,
+            'options' => $options,
+        ];
     }
 
 //    public function getRelationSourceText($attribute) {

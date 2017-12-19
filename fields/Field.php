@@ -97,6 +97,11 @@ class Field extends BaseObject
             return $relationObject->getData();
         }
 
+        if (is_callable($this->data)) {
+            $data = $this->data;
+            return $data($this->model);
+        }
+
         return $this->data;
     }
 
@@ -218,19 +223,21 @@ class Field extends BaseObject
     }
 
     public function applyScopes(ActiveQuery $query) {
-        $attribute = $this->attribute;
-        $scopeResult = true;
-        if ($this->scope !== null) {
-            $scope = $this->scope;
-            $scopeResult = $scope($query, $this->model);
-        }
+        if ($this->scope !== false) {
+            $attribute = $this->attribute;
+            $scopeResult = true;
+            if ($this->scope !== null) {
+                $scope = $this->scope;
+                $scopeResult = $scope($query, $this->model);
+            }
 
-        if ($scopeResult && $this->attribute) {
-            $value = $this->getValue();
-            if (!empty($value) || $value === '0') {
-                $query->andFilterWhere([
-                    $attribute => $value,
-                ]);
+            if ($scopeResult && $this->attribute) {
+                $value = $this->getValue();
+                if (!empty($value) || $value === '0') {
+                    $query->andFilterWhere([
+                        $attribute => $value,
+                    ]);
+                }
             }
         }
 
@@ -250,9 +257,22 @@ class Field extends BaseObject
     }
 
     public function rules() {
+        if ($this->rules === false) {
+            return [];
+        }
+
         $rules = [];
         if ($this->attribute !== null) {
-            $rules[] = [
+            if ($this->defaultValue !== null) {
+                $rules[$this->attribute . 'DefaultValue'] = [
+                    [$this->attribute],
+                    'default',
+                    'value' => $this->defaultValue,
+                    'on' => [self::SCENARIO_FORM, 'default'],
+                ];
+            }
+
+            $rules[$this->attribute . 'SafeOnGrid'] = [
                 [$this->attribute],
                 'safe',
                 'on' => self::SCENARIO_GRID,
@@ -265,7 +285,7 @@ class Field extends BaseObject
                     $rule = 'safe';
                 }
 
-                $rules[] = [
+                $rules[$this->attribute . $rule . 'onFormAndDefault'] = [
                     [$this->attribute],
                     $rule,
                     'on' => [self::SCENARIO_FORM, 'default'],

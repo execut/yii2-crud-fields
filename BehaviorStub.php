@@ -65,6 +65,10 @@ trait BehaviorStub
         return parent::__get($name);
     }
 
+    public function getRowOptions() {
+        return $this->getBehavior('fields')->getRowOptions();
+    }
+
 //    protected $_formName = null;
 //
 //    public function setFormName($formName) {

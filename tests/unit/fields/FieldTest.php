@@ -117,12 +117,12 @@ class FieldTest extends TestCase
             'attribute' => 'name',
         ]);
         $this->assertEquals([
-            [
+            'nameSafeOnGrid' => [
                 ['name'],
                 'safe',
                 'on' => Field::SCENARIO_GRID,
             ],
-            [
+            'namesafeonFormAndDefault' => [
                 ['name'],
                 'safe',
                 'on' => [Field::SCENARIO_FORM, 'default'],
@@ -138,12 +138,12 @@ class FieldTest extends TestCase
             'required' => true,
         ]);
         $this->assertEquals([
-            [
+            'nameSafeOnGrid' => [
                 ['name'],
                 'safe',
                 'on' => Field::SCENARIO_GRID,
             ],
-            [
+            'namerequiredonFormAndDefault' => [
                 ['name'],
                 'required',
                 'on' => [Field::SCENARIO_FORM, 'default'],

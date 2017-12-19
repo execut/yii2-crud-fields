@@ -18,6 +18,7 @@ class Behavior extends BaseBehavior
 {
     protected $_plugins = [];
     public $module = null;
+    public $relations = [];
 
     /**
      * @param ActiveRecord $owner
@@ -84,7 +85,7 @@ class Behavior extends BaseBehavior
     }
 
     public function getRelations() {
-        $relations = [];
+        $relations = $this->relations;
         foreach ($this->getPlugins() as $plugin) {
             $relations = ArrayHelper::merge($relations, $plugin->getRelations());
         }
@@ -120,6 +121,18 @@ class Behavior extends BaseBehavior
     public function getField($name) {
         $fields = $this->getFields();
         return $fields[$name];
+    }
+
+    public function getRowOptions() {
+        $plugins = $this->getPlugins();
+        $options = [];
+        foreach ($plugins as $plugin) {
+            if ($plugin instanceof RowOptionsPlugin) {
+                $options = ArrayHelper::merge($options, $plugin->getRowOptions());
+            }
+        }
+
+        return $options;
     }
 
     protected $fieldsIsInitied = false;
@@ -165,9 +178,32 @@ class Behavior extends BaseBehavior
             $fields[$key] = $field;
         }
 
-        uasort($fields, function ($a, $b) {
-            return $a->order > $b->order;
-        });
+//        $orderedFields = array_filter($fields, function ($field) {
+//            return $field->order != 0;
+//        });
+//
+//        $unOrderedFields = array_filter($fields, function ($field) {
+//            return $field->order == 0;
+//        });
+
+        $orderedFields = [];
+        foreach ($fields as $key => $field) {
+            if (!isset($orderedFields[$field->order])) {
+                $orderedFields[$field->order] = [];
+            }
+
+            $orderedFields[$field->order][] = $field;
+        }
+
+        ksort($orderedFields);
+        $fields = [];
+        foreach ($orderedFields as $orderedField) {
+            $fields = array_merge($fields, $orderedField);
+        }
+
+//        $fields = array_merge($orderedFields, array_filter($fields, function ($field) {
+//            return $field->order == 0;
+//        }));
 
         $this->_fields = $fields;
         $this->fieldsIsInitied = true;
@@ -177,9 +213,9 @@ class Behavior extends BaseBehavior
 
     public function getGridColumns() {
         $columns = [];
-        foreach ($this->getFields() as $key => $field) {
+        foreach ($this->getFields() as $field) {
             $fieldColumns = $field->getColumns();
-            foreach ($fieldColumns as $column) {
+            foreach ($fieldColumns as $key => $column) {
                 if ($column !== false) {
                     $columns[$key] = $column;
                 }

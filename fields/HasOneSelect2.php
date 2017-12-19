@@ -16,10 +16,11 @@ use yii\helpers\Inflector;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
-class HasOneSelect2 extends Field//implements Container
+class HasOneSelect2 extends Field
 {
     public $nameParam = null;
     public $createUrl = null;
+    public $widgetOptions = [];
     public function getField() {
         $field = parent::getField();
         if ($field === false) {
@@ -105,7 +106,7 @@ class HasOneSelect2 extends Field//implements Container
             return false;
         }
 
-        $sourceInitText = $this->getRelationObject()->getSourcesText();
+        $sourceInitText = $this->getSourcesText();
 
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
         if (empty($this->attribute)) {
@@ -146,7 +147,7 @@ class HasOneSelect2 extends Field//implements Container
      */
     protected function getSelect2WidgetOptions(): array
     {
-        $sourceInitText = $this->getRelationObject()->getSourcesText();
+        $sourceInitText = $this->getSourcesText();
         $nameParam = $this->getNameParam();
         $widgetOptions = [
             'theme' => Select2::THEME_BOOTSTRAP,
@@ -179,11 +180,13 @@ JS
                 ],
             ]);
         } else {
-            $data = $this->getRelationObject()->getData();
+            $data = $this->getData();
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'data' => $data,
             ]);
         }
+
+        $widgetOptions = ArrayHelper::merge($widgetOptions, $this->widgetOptions);
 
         return $widgetOptions;
     }
@@ -199,5 +202,17 @@ JS
             'data-toggle' => 'tooltip',
             'target' => '_blank',
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSourcesText(): array
+    {
+        if ($relation = $this->getRelationObject()) {
+            return $relation->getSourcesText();
+        }
+
+        return $this->getData();
     }
 }
