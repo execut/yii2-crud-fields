@@ -29,7 +29,7 @@ trait BehaviorStub
 
     public function rules()
     {
-        $rules = ArrayHelper::merge(parent::rules(), $this->getBehavior('fields')->rules());
+        $rules = array_merge(parent::rules(), $this->getBehavior('fields')->rules());
 
         return $rules;
     }

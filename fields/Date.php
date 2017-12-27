@@ -99,8 +99,12 @@ class Date extends Field
             $dateTimeStr,
             self::getApplicationTimeZone()
         );
-        $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        $dateTime->setTimezone(new \DateTimeZone(self::getDatabaseTimeZone()));
         return $dateTime->format($format);
+    }
+
+    protected static function getDatabaseTimeZone() {
+        return 'Europe/Moscow';
     }
 
     private static function getApplicationTimeZone()

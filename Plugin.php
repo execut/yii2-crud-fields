@@ -3,6 +3,7 @@ namespace execut\crudFields;
 
 
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 
 abstract class Plugin
 {
@@ -10,7 +11,12 @@ abstract class Plugin
      * @var Behavior
      */
     public $owner = null;
+    public $fields = [];
     public function getFields() {
+        return ArrayHelper::merge($this->_getFields(), $this->fields);
+    }
+
+    protected function _getFields() {
         return [];
     }
 

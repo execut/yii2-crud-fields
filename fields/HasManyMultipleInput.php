@@ -360,6 +360,7 @@ JS
 
             $columns = ArrayHelper::merge($pksFields, $multipleInputColumns, $this->viaColumns);
         }
+
         $widgetOptions = [
             'class' => MultipleInput::className(),
             'allowEmptyList' => true,

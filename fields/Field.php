@@ -55,7 +55,7 @@ class Field extends BaseObject
     public $order = 0;
 
     public function attach() {
-        if ($this->defaultValue !== null) {
+        if ($this->defaultValue !== null && $this->model->scenario !== self::SCENARIO_GRID) {
             $attribute = $this->attribute;
             $this->model->$attribute = $this->defaultValue;
         }
@@ -293,7 +293,9 @@ class Field extends BaseObject
             }
         }
 
-        return ArrayHelper::merge($rules, $this->rules);
+        $rules = ArrayHelper::merge($rules, $this->rules);
+
+        return $rules;
     }
 
     public function setLabel($label) {

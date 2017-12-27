@@ -192,7 +192,7 @@ class Behavior extends BaseBehavior
                 $orderedFields[$field->order] = [];
             }
 
-            $orderedFields[$field->order][] = $field;
+            $orderedFields[$field->order][$key] = $field;
         }
 
         ksort($orderedFields);
@@ -280,16 +280,16 @@ class Behavior extends BaseBehavior
         foreach ($this->getFields() as $field) {
             $fieldRules = $field->rules();
             if ($fieldRules !== false) {
-                $rules = array_merge($rules, $fieldRules);
+                $rules = ArrayHelper::merge($rules, $fieldRules);
             }
         }
 
         foreach ($this->getPlugins() as $plugin) {
-            $rules = array_merge($rules, $plugin->rules());
+            $rules = ArrayHelper::merge($rules, $plugin->rules());
         }
 
         foreach ($this->getRelations() as $relation => $relationParams) {
-            $rules[] = [$relation, 'safe'];
+            $rules[$relation . 'Safe'] = [$relation, 'safe'];
         }
 
         return $rules;
