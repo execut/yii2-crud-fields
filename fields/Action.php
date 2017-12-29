@@ -62,6 +62,11 @@ class Action extends Field
         return ArrayHelper::merge($this->_column, $column);
     }
 
+    public function getColumns()
+    {
+        return ['actions' => $this->getColumn()];
+    }
+
     public function rules()
     {
         return false;
