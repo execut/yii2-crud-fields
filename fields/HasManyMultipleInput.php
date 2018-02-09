@@ -183,14 +183,15 @@ class HasManyMultipleInput extends Field
 
 
     public function getColumn() {
-        if (parent::getColumn() === false) {
+        $column = parent::getColumn();
+        if ($column === false) {
             return false;
         }
 
 //        $sourceInitText = $this->getRelationObject()->getSourcesText();
 
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
-        return [
+        return ArrayHelper::merge([
             'attribute' => $this->attribute,
             'format' => 'html',
             'value' => function ($row) {
@@ -271,7 +272,7 @@ class HasManyMultipleInput extends Field
 //                    ],
 //                ],
 //            ],
-        ];
+        ], $column);
     }
 
     /**

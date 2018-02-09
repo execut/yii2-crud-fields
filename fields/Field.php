@@ -57,7 +57,9 @@ class Field extends BaseObject
     public function attach() {
         if ($this->defaultValue !== null && $this->model->scenario !== self::SCENARIO_GRID) {
             $attribute = $this->attribute;
-            $this->model->$attribute = $this->defaultValue;
+            if ($this->model->$attribute === null) {
+                $this->model->$attribute = $this->defaultValue;
+            }
         }
     }
 
