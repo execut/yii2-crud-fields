@@ -15,9 +15,14 @@ class Boolean extends Field
     public $multipleInputType = MultipleInputColumn::TYPE_CHECKBOX;
     public function getColumn()
     {
+        $column = parent::getColumn();
+        if ($column === false) {
+            return false;
+        }
+
         return ArrayHelper::merge([
             'class' => BooleanColumn::class,
-        ], parent::getColumn());
+        ], $column);
     }
 
     public function getField()
