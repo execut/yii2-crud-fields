@@ -16,9 +16,14 @@ class Textarea extends StringField
 {
     public function getField()
     {
+        $parentField = parent::getField();
+        if ($parentField === false) {
+            return false;
+        }
+
         $field = [
             'type' => DetailView::INPUT_TEXTAREA,
         ];
-        return ArrayHelper::merge(parent::getField(), $field);
+        return ArrayHelper::merge($parentField, $field);
     }
 }
