@@ -24,6 +24,11 @@ class Action extends Field
 
     public function getColumn()
     {
+        $parentColumn = parent::getColumn();
+        if ($parentColumn === false) {
+            return false;
+        }
+
         $column = [
             'class' => ActionColumn::class,
             'options' => [
@@ -58,7 +63,7 @@ class Action extends Field
 
         $column['template'] = $template;
 
-        return ArrayHelper::merge($this->_column, $column);
+        return ArrayHelper::merge($parentColumn, $column);
     }
 
     public function getColumns()
