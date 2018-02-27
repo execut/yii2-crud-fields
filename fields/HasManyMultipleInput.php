@@ -134,6 +134,7 @@ class HasManyMultipleInput extends Field
                     'dataProvider' => $dataProvider,
                     'layout' => '{toolbar}{items}',
                     'bordered' => false,
+                    'toolbar' => '',
 //                    'caption' => $this->getLabel(),
 //                    'captionOptions' => [
 //                        'class' => 'success',
