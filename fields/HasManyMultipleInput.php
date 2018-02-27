@@ -116,12 +116,23 @@ class HasManyMultipleInput extends Field
             'label' => function () {
                 $model = $this->model;
                 $relationName = $this->getRelationObject()->getName();
+                $models = $model->$relationName;
+                $models = ArrayHelper::map($models, function ($row) {
+                    return $row->primaryKey;
+                }, function ($row) {
+                    return $row;
+                });
                 $dataProvider = new ArrayDataProvider([
-                    'allModels' => $model->$relationName,
+                    'allModels' => $models,
                 ]);
-                return GridView::widget(ArrayHelper::merge([
+                $widgetClass = GridView::class;
+                if (!empty($this->gridOptions['class'])) {
+                    $widgetClass = $this->gridOptions['class'];
+                }
+
+                return $widgetClass::widget(ArrayHelper::merge([
                     'dataProvider' => $dataProvider,
-                    'layout' => '{items}',
+                    'layout' => '{toolbar}{items}',
                     'bordered' => false,
 //                    'caption' => $this->getLabel(),
 //                    'captionOptions' => [

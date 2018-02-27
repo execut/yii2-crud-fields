@@ -15,21 +15,7 @@ class Action extends Field
     public $view = false;
     public $delete = null;
     public $order = 1000;
-    public $_column = [
-        'options' => [
-            'style' => [
-                'min-width' => '156px',
-            ],
-        ],
-        'updateOptions' => [
-            'class' => 'btn btn-primary',
-            'label' => 'Просмотр',
-        ],
-        'deleteOptions' => [
-            'class' => 'btn btn-danger glyphicon glyphicon-remove',
-            'label' => ''
-        ],
-    ];
+    public $_column = [];
 
     public function getField()
     {
@@ -40,6 +26,19 @@ class Action extends Field
     {
         $column = [
             'class' => ActionColumn::class,
+            'options' => [
+                'style' => [
+                    'min-width' => '156px',
+                ],
+            ],
+            'updateOptions' => [
+                'class' => 'btn btn-primary update',
+                'label' => 'Просмотр',
+            ],
+            'deleteOptions' => [
+                'class' => 'btn btn-danger glyphicon glyphicon-remove',
+                'label' => ''
+            ],
         ];
 
         $template = '';

@@ -47,6 +47,10 @@ class DropDown extends Field
     }
 
     public function getColumn() {
+        if ($this->_column === false) {
+            return false;
+        }
+
         $data = $this->getData();
         $config = [
             'attribute' => $this->attribute,
@@ -63,10 +67,15 @@ class DropDown extends Field
             };
         }
 
-        return $config;
+        return ArrayHelper::merge(parent::getColumn(), $config);
     }
 
     public function getMultipleInputField() {
+        $multipleInputField = parent::getMultipleInputField();
+        if ($multipleInputField === false) {
+            return $multipleInputField;
+        }
+
         $data = $this->getData();
         $data = ArrayHelper::merge($this->getEmptyDataStub(), $data);
         $config = [
@@ -74,7 +83,7 @@ class DropDown extends Field
             'items' => $data,
         ];
 
-        return ArrayHelper::merge(parent::getMultipleInputField(), $config);
+        return ArrayHelper::merge($multipleInputField, $config);
     }
 
     protected $emptyDataStub = null;
