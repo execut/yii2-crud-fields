@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
 
 class Action extends Field
 {
-    public $update = null;
+    public $update = false;
     public $view = false;
     public $delete = null;
     public $order = 1000;
@@ -36,10 +36,10 @@ class Action extends Field
                     'min-width' => '156px',
                 ],
             ],
-            'updateOptions' => [
-                'class' => 'btn btn-primary update',
-                'label' => 'Просмотр',
-            ],
+//            'updateOptions' => [
+//                'class' => 'btn btn-primary update',
+//                'label' => 'Просмотр',
+//            ],
             'deleteOptions' => [
                 'class' => 'btn btn-danger glyphicon glyphicon-remove',
                 'label' => ''
