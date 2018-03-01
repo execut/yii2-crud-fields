@@ -60,6 +60,9 @@ class Action extends Field
         }
 
         $template = trim($template);
+        if ($template === '') {
+            return false;
+        }
 
         $column['template'] = $template;
 

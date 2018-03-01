@@ -32,8 +32,13 @@ class Date extends Field
             return false;
         }
 
+        $field = parent::getField();
+        if ($field === false) {
+            return false;
+        }
+
         if ($this->displayOnly) {
-            return array_merge(parent::getField(), [
+            return array_merge($field, [
                 'displayOnly' => true,
                 'format' => ['date', 'dd.MM.yy HH:mm'],
             ]);
