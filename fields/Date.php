@@ -18,12 +18,17 @@ class Date extends Field
     public $displayOnly = true;
     public function getColumn()
     {
+        $parentColumn = parent::getColumn();
+        if ($parentColumn === false) {
+            return false;
+        }
+
         $widgetOptions = $this->getWidgetOptions();
 
         return ArrayHelper::merge([
             'filter' => DateRangePicker::widget($widgetOptions),
             'format' => ['date', 'dd.MM.yy HH:mm'],
-        ], parent::getColumn());
+        ], $parentColumn);
     }
 
     public function getField()

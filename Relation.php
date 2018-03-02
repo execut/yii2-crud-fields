@@ -268,7 +268,7 @@ class Relation extends BaseObject
                 $url['id'] = $row->$attribute;
             }
 
-            return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
+            return Html::a($value . '&nbsp;>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
         } else {
             $models = $row->{$this->getName()};
             $result = '';
