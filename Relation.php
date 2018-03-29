@@ -268,7 +268,7 @@ class Relation extends BaseObject
                 $url['id'] = $row->$attribute;
             }
 
-            return Html::a($value . '&nbsp;>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию', 'draggable' => 'false']);
+            return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
         } else {
             $models = $row->{$this->getName()};
             $result = '';
@@ -289,7 +289,7 @@ class Relation extends BaseObject
 
                 $url = [$url . '/update', 'id' => $model->primaryKey];
 
-                $result .= $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию', 'draggable' => 'false']) . '<br>';
+                $result .= $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']) . '<br>';
             }
 
             return $result;
