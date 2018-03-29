@@ -224,7 +224,7 @@ class HasManyMultipleInput extends Field
                         }
 
                         $currentUrl = [$url . '/update', 'id' => $vsKeyword->$pk];
-                        $value = Html::a($value, Url::to($currentUrl));
+                        $value = $value . '&nbsp;' . Html::a('>>>', Url::to($currentUrl));
                     }
 
                     $result[] = $value;
