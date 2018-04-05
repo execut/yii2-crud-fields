@@ -44,6 +44,7 @@ class Field extends BaseObject
     public $valueAttribute = null;
     public $multipleInputField = [];
     public $url = null;
+    public $updateUrl = null;
     public $isNoRenderRelationLink = false;
 
     /**
@@ -188,7 +189,10 @@ class Field extends BaseObject
                 $fields = ArrayHelper::merge($formFields, $fields);
             }
         } else {
-            $fields = [$this->attribute => $this->getField()];
+            $field = $this->getField();
+            if ($field !== false) {
+                $fields = [$this->attribute => $field];
+            }
         }
 
         return $fields;

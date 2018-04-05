@@ -252,21 +252,12 @@ class Relation extends BaseObject
                 return;
             }
 
-            if ($this->field->isNoRenderRelationLink || $this->field->url === null) {
+            $url = $this->getUpdateUrl($row);
+            if ($this->field->isNoRenderRelationLink || $url === null) {
                 return $value;
             }
 
-            $url = $this->field->url;
-            if (!is_array($url)) {
-                $url = [$url];
-            } else {
-                $url[0] = str_replace('/index', '', $url[0]) . '/update';
-            }
-
-            if (!array_key_exists('id', $url)) {
-                $attribute = $this->field->attribute;
-                $url['id'] = $row->$attribute;
-            }
+            $url = $this->getUpdateUrl($row);
 
             return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
         } else {
@@ -275,19 +266,11 @@ class Relation extends BaseObject
             $nameAttribute = $this->nameAttribute;
             foreach ($models as $model) {
                 $value = $model->$nameAttribute;
-                if ($this->field->isNoRenderRelationLink || $this->field->url === null) {
+                $url = $this->getUpdateUrl($row);
+                if ($this->field->isNoRenderRelationLink || $url === null) {
                     $result .= $value . '<br>';
                     continue;
                 }
-
-                $url = $this->field->url;
-                if (is_array($url)) {
-                    $url = $url[0];
-                } else {
-                    $url = str_replace('/index', '', $url);
-                }
-
-                $url = [$url . '/update', 'id' => $model->primaryKey];
 
                 $result .= $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']) . '<br>';
             }
@@ -419,5 +402,33 @@ class Relation extends BaseObject
         $model = new $relationModelClass;
 
         return $model;
+    }
+
+    /**
+     * @param $row
+     * @return array|null
+     */
+    protected function getUpdateUrl($row)
+    {
+        if (!empty($this->field->updateUrl)) {
+            return $this->field->updateUrl;
+        }
+
+        $url = $this->field->url;
+        if ($url === null) {
+            return;
+        }
+
+        if (!is_array($url)) {
+            $url = [$url];
+        } else {
+            $url[0] = str_replace('/index', '', $url[0]) . '/update';
+        }
+
+        if (!array_key_exists('id', $url)) {
+            $attribute = $this->field->attribute;
+            $url['id'] = $row->$attribute;
+        }
+        return $url;
     }
 }
