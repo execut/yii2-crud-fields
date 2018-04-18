@@ -28,6 +28,7 @@ class Relation extends BaseObject
     public $nameAttribute = 'name';
     public $valueAttribute = null;
     public $with = null;
+    public $orderByAttribute = 'name';
     protected $_name = null;
     public function setName($relation) {
         $this->_name = $relation;
@@ -216,7 +217,7 @@ class Relation extends BaseObject
      * @param $nameAttribute
      * @return array
      */
-    public function getData(): array
+    public function getData($asLink = false): array
     {
         $data = ['' => ''];
 
@@ -224,8 +225,15 @@ class Relation extends BaseObject
 
         $relationQuery = $this->getRelationQuery();
         $idAttribute = key($relationQuery->link);
+        if ($asLink) {
+            $nameAttribute = function ($model) {
+                return $this->getLink($model, $this->nameAttribute, 'primaryKey');
+            };
+        } else {
+            $nameAttribute = $this->nameAttribute;
+        }
 
-        $data = ArrayHelper::merge($data, ArrayHelper::map($models, $idAttribute, $this->nameAttribute));
+        $data = ArrayHelper::merge($data, ArrayHelper::map($models, $idAttribute, $nameAttribute));
         return $data;
     }
 
@@ -247,32 +255,13 @@ class Relation extends BaseObject
 //                return;
 //            }
 
-            $value = ArrayHelper::getValue($row, $attribute);
-            if (!$value) {
-                return;
-            }
-
-            $url = $this->getUpdateUrl($row);
-            if ($this->field->isNoRenderRelationLink || $url === null) {
-                return $value;
-            }
-
-            $url = $this->getUpdateUrl($row);
-
-            return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
+            return $this->getLink($row, $attribute);
         } else {
             $models = $row->{$this->getName()};
             $result = '';
             $nameAttribute = $this->nameAttribute;
             foreach ($models as $model) {
-                $value = $model->$nameAttribute;
-                $url = $this->getUpdateUrl($row);
-                if ($this->field->isNoRenderRelationLink || $url === null) {
-                    $result .= $value . '<br>';
-                    continue;
-                }
-
-                $result .= $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']) . '<br>';
+                $result .= $this->getLink($model, $nameAttribute);
             }
 
             return $result;
@@ -342,8 +331,8 @@ class Relation extends BaseObject
         $relationQuery->link = null;
         $relationQuery->primaryModel = null;
 
-        if ($this->nameAttribute !== null) {
-            $relationQuery->orderBy($this->nameAttribute);
+        if ($this->orderByAttribute !== null) {
+            $relationQuery->orderBy($this->orderByAttribute);
         }
 
         $models = $relationQuery->all();
@@ -408,7 +397,7 @@ class Relation extends BaseObject
      * @param $row
      * @return array|null
      */
-    protected function getUpdateUrl($row)
+    protected function getUpdateUrl($row, $keyAttribute)
     {
         if (!empty($this->field->updateUrl)) {
             return $this->field->updateUrl;
@@ -426,9 +415,32 @@ class Relation extends BaseObject
         }
 
         if (!array_key_exists('id', $url)) {
-            $attribute = $this->field->attribute;
-            $url['id'] = $row->$attribute;
+            if ($keyAttribute === null) {
+                $keyAttribute = $this->field->attribute;
+            }
+
+            $url['id'] = $row->$keyAttribute;
         }
         return $url;
+    }
+
+    /**
+     * @param $row
+     * @param $attribute
+     * @return mixed|string|void
+     */
+    protected function getLink($row, $nameAttribute, $keyAttribute = null)
+    {
+        $value = ArrayHelper::getValue($row, $nameAttribute);
+        if (!$value) {
+            return;
+        }
+
+        $url = $this->getUpdateUrl($row, $keyAttribute);
+        if ($this->field->isNoRenderRelationLink || $url === null) {
+            return $value;
+        }
+
+        return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
     }
 }

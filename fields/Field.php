@@ -38,6 +38,7 @@ class Field extends BaseObject
     public $isRenderInRelationForm = true;
 
     public $nameAttribute = 'name';
+    public $orderByAttribute = null;
     public $with = null;
     public $relation = null;
     public $data = [];
@@ -76,6 +77,7 @@ class Field extends BaseObject
                 'field' => $this,
                 'name' => $this->relation,
                 'nameAttribute' => $this->nameAttribute,
+                'orderByAttribute' => $this->orderByAttribute,
                 'with' => $this->with,
                 'valueAttribute' => $this->valueAttribute,
             ]);
@@ -253,6 +255,10 @@ class Field extends BaseObject
     }
 
     public function getIsRenderRelationFields() {
+        if ($this->getDisplayOnly()) {
+            return false;
+        }
+
         if (is_callable($this->isRenderRelationFields)) {
             $isRenderRelationFields = $this->isRenderRelationFields;
 
