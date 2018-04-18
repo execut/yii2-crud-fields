@@ -23,6 +23,7 @@ class HasOneRadioList extends HasOneSelect2
     public $nameParam = null;
     public $createUrl = null;
     public $widgetOptions = [];
+    public $fieldWidgetOptions = [];
     public function getField() {
         $data = $this->getRelationObject()->getData(true);
         unset($data['']);
@@ -35,18 +36,25 @@ class HasOneRadioList extends HasOneSelect2
             return parent::getField();
         }
 
+        if (count($data) == 1) {
+            $value = key($data);
+        } else {
+            $value = null;
+        }
+
         $data[''] = 'Новый автомобиль';
 
         return [
             'type' => DetailView::INPUT_WIDGET,
             'attribute' => $this->attribute,
-            'widgetOptions' => [
+            'widgetOptions' => ArrayHelper::merge([
                 'class' => RadioListWithSubform::class,
                 'clientOptions' => [
                     'relatedSelector' => 'tr:has(.related-' . $this->relation . ')',
+                    'value' => $value,
                 ],
                 'data' => $data,
-            ],
+            ], $this->fieldWidgetOptions),
         ];
     }
 

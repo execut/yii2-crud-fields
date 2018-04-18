@@ -20,6 +20,10 @@
             t.inputs.change(function () {
                 t.initRelatedElements();
             });
+
+            if (typeof opts.value !== 'undefined' && opts.value) {
+                t.inputs.filter('[value=' + opts.value + ']').prop('checked', true).change();
+            }
         },
         initRelatedElements: function () {
             var t = this,
