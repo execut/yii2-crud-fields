@@ -116,15 +116,18 @@ class HasManyMultipleInput extends Field
             'label' => function () {
                 $model = $this->model;
                 $relationName = $this->getRelationObject()->getName();
-                $models = $model->$relationName;
-                $models = ArrayHelper::map($models, function ($row) {
-                    return $row->primaryKey;
-                }, function ($row) {
-                    return $row;
-                });
-                $dataProvider = new ArrayDataProvider([
-                    'allModels' => $models,
+                $dataProvider = new ActiveDataProvider([
+                    'query' => $model->getRelation($relationName),
                 ]);
+//                $models = $model->$relationName;
+//                $models = ArrayHelper::map($models, function ($row) {
+//                    return $row->primaryKey;
+//                }, function ($row) {
+//                    return $row;
+//                });
+//                $dataProvider = new ArrayDataProvider([
+//                    'allModels' => $models,
+//                ]);
                 $widgetClass = GridView::class;
                 if (!empty($this->gridOptions['class'])) {
                     $widgetClass = $this->gridOptions['class'];
@@ -132,7 +135,7 @@ class HasManyMultipleInput extends Field
 
                 return $widgetClass::widget(ArrayHelper::merge([
                     'dataProvider' => $dataProvider,
-                    'layout' => '{toolbar}{items}',
+                    'layout' => '{toolbar}{summary}{items}{pager}',
                     'bordered' => false,
                     'toolbar' => '',
 //                    'caption' => $this->getLabel(),
@@ -165,6 +168,10 @@ class HasManyMultipleInput extends Field
 
     public function applyScopes(ActiveQuery $query)
     {
+        if ($this->scope === false) {
+            return $query;
+        }
+
         $relatedModelClass = $this->getRelationObject()->getRelationModelClass();
         $relatedModel = new $relatedModelClass;
         foreach ($this->value as $row) {
