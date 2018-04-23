@@ -172,7 +172,10 @@ class Behavior extends BaseBehavior
             }
 
             $field->model = $this->owner;
-            $field->module = $this->module;
+            if ($field->module === null) {
+                $field->module = $this->module;
+            }
+
             $field->attach();
 
             $fields[$key] = $field;

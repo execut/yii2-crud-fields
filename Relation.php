@@ -258,11 +258,13 @@ class Relation extends BaseObject
             return $this->getLink($row, $attribute);
         } else {
             $models = $row->{$this->getName()};
-            $result = '';
+            $result = [];
             $nameAttribute = $this->nameAttribute;
             foreach ($models as $model) {
-                $result .= $this->getLink($model, $nameAttribute);
+                $result[] = $this->getLink($model, $nameAttribute, 'primaryKey');
             }
+
+            $result = implode(', ', $result);
 
             return $result;
         }

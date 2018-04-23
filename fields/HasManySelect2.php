@@ -69,10 +69,6 @@ class HasManySelect2 extends HasOneSelect2
         }
 
         $columns = ArrayHelper::merge([
-            'id' => [
-                'name' => 'id',
-                'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
-            ],
             'from' => [
                 'name' => $fromAttribute,
                 'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
@@ -86,6 +82,13 @@ class HasManySelect2 extends HasOneSelect2
                 'options' => $this->getSelect2WidgetOptions(),
             ],
         ], $this->viaColumns);
+
+        if ($toAttribute !== 'id' && empty($columns['id'])) {
+            $columns['id'] = [
+                'name' => 'id',
+                'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
+            ];
+        }
 
         foreach ($columns as &$column) {
             if (!isset($column['title']) && !empty($column['name'])) {
