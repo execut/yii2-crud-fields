@@ -143,7 +143,7 @@ class HasManyMultipleInput extends Field
 //                        'class' => 'success',
 //                    ],
                     'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
-                    'showOnEmpty' => false,
+                    'showOnEmpty' => true,
                 ], $this->gridOptions));
             },
         ];
