@@ -27,7 +27,6 @@ class HasOneRadioList extends HasOneSelect2
     public function getField() {
         $data = $this->getRelationObject()->getData(true);
         unset($data['']);
-
         if (empty($data)) {
             return false;
         }
@@ -42,7 +41,9 @@ class HasOneRadioList extends HasOneSelect2
             $value = null;
         }
 
-        $data[''] = 'Новый автомобиль';
+        if ($this->isRenderRelationFields) {
+            $data[''] = 'Новый автомобиль';
+        }
 
         return [
             'type' => DetailView::INPUT_WIDGET,
@@ -68,7 +69,7 @@ class HasOneRadioList extends HasOneSelect2
             $fields = [];
         }
 
-        $fields = ArrayHelper::merge($fields, parent::getFields());
+        $fields = array_merge($fields, parent::getFields());
 
         return $fields;
     }
