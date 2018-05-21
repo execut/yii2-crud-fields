@@ -38,7 +38,7 @@ class Field extends BaseObject
     public $isRenderInRelationForm = true;
 
     public $nameAttribute = 'name';
-    public $orderByAttribute = null;
+    public $orderByAttribute = 'name';
     public $with = null;
     public $relation = null;
     public $data = [];
@@ -57,9 +57,9 @@ class Field extends BaseObject
     public $order = 0;
 
     public function attach() {
-        if ($this->defaultValue !== null && $this->model->scenario !== self::SCENARIO_GRID) {
+        if ($this->defaultValue !== null && $this->model->scenario === self::SCENARIO_FORM) {
             $attribute = $this->attribute;
-            if ($attribute === $this->relation || $this->model->$attribute === null) {
+            if ($attribute === $this->relation && ($this->model->$attribute === null || $this->model->$attribute === [])) {
                 $defaultValue = $this->defaultValue;
                 if ($attribute === $this->relation && is_callable($defaultValue)) {
                     $defaultValue = $defaultValue();
