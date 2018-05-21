@@ -28,7 +28,7 @@ class Relation extends BaseObject
     public $nameAttribute = 'name';
     public $valueAttribute = null;
     public $with = null;
-    public $orderByAttribute = 'name';
+    public $orderByAttribute = null;
     protected $_name = null;
     public function setName($relation) {
         $this->_name = $relation;
@@ -333,8 +333,13 @@ class Relation extends BaseObject
         $relationQuery->link = null;
         $relationQuery->primaryModel = null;
 
-        if ($this->orderByAttribute !== null) {
-            $relationQuery->orderBy($this->orderByAttribute);
+        $orderByAttribute = $this->orderByAttribute;
+        if ($orderByAttribute === null) {
+            $orderByAttribute = $this->nameAttribute;
+        }
+
+        if ($orderByAttribute !== null) {
+            $relationQuery->orderBy($orderByAttribute);
         }
 
         $models = $relationQuery->all();
