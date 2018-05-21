@@ -59,7 +59,7 @@ class Field extends BaseObject
     public function attach() {
         if ($this->defaultValue !== null && $this->model->scenario === self::SCENARIO_FORM) {
             $attribute = $this->attribute;
-            if ($attribute === $this->relation && ($this->model->$attribute === null || $this->model->$attribute === [])) {
+            if ($this->model->$attribute === null || $this->model->$attribute === []) {
                 $defaultValue = $this->defaultValue;
                 if ($attribute === $this->relation && is_callable($defaultValue)) {
                     $defaultValue = $defaultValue();
