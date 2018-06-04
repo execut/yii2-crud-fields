@@ -72,7 +72,7 @@ class HasManySelect2 extends HasOneSelect2
             'from' => [
                 'name' => $fromAttribute,
                 'type' => MultipleInputColumn::TYPE_HIDDEN_INPUT,
-                'defaultValue' => $this->model->id,
+                'defaultValue' => $this->model->primaryKey,
             ],
             'to' => [
                 'name' => $toAttribute,

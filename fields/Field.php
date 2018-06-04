@@ -38,7 +38,7 @@ class Field extends BaseObject
     public $isRenderInRelationForm = true;
 
     public $nameAttribute = 'name';
-    public $orderByAttribute = 'name';
+    public $orderByAttribute = null;
     public $with = null;
     public $relation = null;
     public $data = [];

@@ -8,6 +8,7 @@ namespace execut\crudFields\fields;
 use kartik\depdrop\DepDrop;
 use kartik\detail\DetailView;
 use kartik\grid\GridView;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -54,6 +55,39 @@ class HasOneDepDrop extends HasOneSelect2
         ]);
     }
 
+    public function getMultipleInputField()
+    {
+        throw new Exception(__METHOD__ . ' is not implemented');
+        $widgetOptions = $this->getSelect2WidgetOptions();
+        unset($widgetOptions['pluginOptions']['ajax']);
+        $data = $this->getData();
+
+        return [
+            'type' => DepDrop::class,
+            'name' => $this->attribute,
+            'value' => $this->value,
+            'options' => [
+                'type' => DepDrop::TYPE_SELECT2,
+                'data' => $data,
+                'pluginOptions' => [
+                    'loadingText' => 'Загрузка...',
+                    //                    'initialize' => true,
+                    'nameParam' => 'text',
+                    'allParam' => $this->dependedAttribute,
+                    'ajaxSettings' => [
+                        'method' => 'get',
+                    ],
+                    'url' => Url::to($this->url),
+                    'depends' => $this->getDepends(),
+                ],
+                'select2Options' => ArrayHelper::merge($widgetOptions,
+                    [
+                    ]
+                )
+            ],
+        ];
+    }
+
     protected function getDepends() {
         $result = [];
         foreach ($this->depends as $depend) {
@@ -74,15 +108,23 @@ class HasOneDepDrop extends HasOneSelect2
                 if (!empty($this->searchDataScopes[$depend])) {
                     $this->searchDataScopes[$depend]($query, $this->model->$depend);
                 } else {
-                    $query->andWhere([
+                    $where = [
                         $depend => $this->model->$depend,
-                    ]);
+                    ];
+                    $query->andWhere($where);
                 }
             }
         }
 
         if ($isHas) {
-            return $query->indexBy(current($this->model->primaryKey()))->select($this->nameAttribute)->column();
+//            if ($indexBy) {
+            $indexBy = $this->getRelationObject()->getRelationPrimaryKey();
+//            } else {
+//                $indexBy = 'Ref_Key';
+//            }
+
+            $result = $query->indexBy($indexBy)->select($this->nameAttribute)->column();
+            return $result;
         }
     }
 }

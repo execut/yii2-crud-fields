@@ -25,7 +25,7 @@ class DropDown extends Field
         }
 
 //        $columnValue = $this->getRelationObject()->getColumnValue();
-        $data = $this->getData();
+        $data = $this->getDataWithEmptyStub();
         $config = [
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => $attribute,
@@ -76,8 +76,8 @@ class DropDown extends Field
             return $multipleInputField;
         }
 
-        $data = $this->getData();
-        $data = ArrayHelper::merge($this->getEmptyDataStub(), $data);
+        $data = $this->getDataWithEmptyStub();
+
         $config = [
             'name' => $this->attribute,
             'items' => $data,
@@ -103,5 +103,15 @@ class DropDown extends Field
         }
 
         return ['' => $this->getLabel()];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDataWithEmptyStub(): array
+    {
+        $data = $this->getData();
+        $data = ArrayHelper::merge($this->getEmptyDataStub(), $data);
+        return $data;
     }
 }
