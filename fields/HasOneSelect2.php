@@ -125,7 +125,11 @@ class HasOneSelect2 extends Field
 //                },
             'filter' => $sourceInitText,
             'filterType' => GridView::FILTER_SELECT2,
-            'filterWidgetOptions' => $this->getSelect2WidgetOptions(),
+            'filterWidgetOptions' => ArrayHelper::merge($this->getSelect2WidgetOptions(), [
+                'options' => [
+                    'multiple' => true
+                ],
+            ]),
         ], $column);
     }
 

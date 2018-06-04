@@ -246,6 +246,10 @@ class Field extends BaseObject
 
             if ($scopeResult && $this->attribute) {
                 $value = $this->getValue();
+                if (is_array($value)) {
+                    $value = array_filter($value);
+                }
+
                 if (!empty($value) || $value === '0') {
                     $query->andFilterWhere([
                         $attribute => $value,
