@@ -175,7 +175,7 @@ class Relation extends BaseObject
                 } else {
                     $sourceIds = [];
                     foreach ($viaModels as $viaModel) {
-                        $sourceIds[$viaModel->$viaAttribute] = $viaModel->$nameAttribute;
+                        $sourceIds[$viaModel->$viaAttribute] = ArrayHelper::getValue($viaModel, $nameAttribute);
                     }
                 }
             }
@@ -191,7 +191,7 @@ class Relation extends BaseObject
 
                 foreach ($sourceIds as $key => $sourceId) {
                     if ($sourceId instanceof ActiveRecord) {
-                        $sourceInitText[$sourceId->primaryKey] = $sourceId->$nameAttribute;
+                        $sourceInitText[$sourceId->primaryKey] = ArrayHelper::getValue($sourceId, $nameAttribute);
                     }
                 }
 
