@@ -284,34 +284,7 @@ class Field extends BaseObject
 
         $rules = [];
         if ($this->attribute !== null) {
-            if ($this->defaultValue !== null) {
-                $rules[$this->attribute . 'DefaultValue'] = [
-                    [$this->attribute],
-                    'default',
-                    'value' => $this->defaultValue,
-                    'on' => [self::SCENARIO_FORM, 'default'],
-                ];
-            }
-
-            $rules[$this->attribute . 'SafeOnGrid'] = [
-                [$this->attribute],
-                'safe',
-                'on' => self::SCENARIO_GRID,
-            ];
-
-            if (!$this->getIsRenderRelationFields() && !$this->getDisplayOnly()) {
-                if ($this->required) {
-                    $rule = 'required';
-                } else {
-                    $rule = 'safe';
-                }
-
-                $rules[$this->attribute . $rule . 'onFormAndDefault'] = [
-                    [$this->attribute],
-                    $rule,
-                    'on' => [self::SCENARIO_FORM, 'default'],
-                ];
-            }
+            $rules = $this->getRules();
         }
 
         $rules = ArrayHelper::merge($rules, $this->rules);
@@ -350,5 +323,42 @@ class Field extends BaseObject
 
     public function getFormBuilderFields() {
         return [];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRules(): array
+    {
+        $rules = [];
+        if ($this->defaultValue !== null) {
+            $rules[$this->attribute . 'DefaultValue'] = [
+                [$this->attribute],
+                'default',
+                'value' => $this->defaultValue,
+                'on' => [self::SCENARIO_FORM, 'default'],
+            ];
+        }
+
+        $rules[$this->attribute . 'SafeOnGrid'] = [
+            [$this->attribute],
+            'safe',
+            'on' => self::SCENARIO_GRID,
+        ];
+
+        if (!$this->getIsRenderRelationFields() && !$this->getDisplayOnly()) {
+            if ($this->required) {
+                $rule = 'required';
+            } else {
+                $rule = 'safe';
+            }
+
+            $rules[$this->attribute . $rule . 'onFormAndDefault'] = [
+                [$this->attribute],
+                $rule,
+                'on' => [self::SCENARIO_FORM, 'default'],
+            ];
+        }
+        return $rules;
     }
 }

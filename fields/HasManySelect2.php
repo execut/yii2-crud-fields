@@ -23,6 +23,9 @@ class HasManySelect2 extends HasOneSelect2
     public $columns = null;
 
     public $viaColumns = [];
+    public $existsValidatorOptions = [
+        'allowArray' => true,
+    ];
 
     public function getColumn()
     {

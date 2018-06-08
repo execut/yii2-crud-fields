@@ -103,7 +103,7 @@ class HasOneDepDrop extends HasOneSelect2
         $isHas = false;
         $depends = [$this->depends[count($this->depends) - 1]];
         foreach ($depends as $depend) {
-            if (!empty($this->model->$depend)) {
+            if (!empty($this->model->$depend) && empty($this->model->errors[$depend])) {
                 $isHas = true;
                 if (!empty($this->searchDataScopes[$depend])) {
                     $this->searchDataScopes[$depend]($query, $this->model->$depend);
