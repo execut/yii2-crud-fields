@@ -17,7 +17,7 @@ use yii\helpers\Inflector;
 class Behavior extends BaseBehavior
 {
     protected $_plugins = [];
-    public $module = null;
+    protected $_module = null;
     public $relations = [];
     const RELATIONS_SAVER_KEY = 'relationsSaver';
 
@@ -297,6 +297,28 @@ class Behavior extends BaseBehavior
         }
 
         return $rules;
+    }
+
+    public function setModule($module) {
+        $this->_module = $module;
+
+        return $this;
+    }
+
+    public function getModule() {
+        if ($this->_module === null) {
+            return $this->detectModule();
+        }
+
+        return $this->_module;
+    }
+
+    public function detectModule() {
+        $ownerClass = get_class($this->owner);
+        $parts = explode('\\', $ownerClass);
+        if (!empty($parts[1])) {
+            return $parts[1];
+        }
     }
 
     public function attributesLabels() {

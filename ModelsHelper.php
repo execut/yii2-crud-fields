@@ -59,7 +59,6 @@ class ModelsHelper extends Component
         ],
         'actions' => [
             'class' => Action::class,
-            'order' => 100,
             'view' => false,
         ],
     ];

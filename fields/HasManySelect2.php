@@ -128,4 +128,13 @@ class HasManySelect2 extends HasOneSelect2
     {
         return false;
     }
+
+    protected function getRules(): array
+    {
+        $rules = parent::getRules();
+
+        unset($rules[$this->attribute . '_limit']);
+
+        return $rules;
+    }
 }
