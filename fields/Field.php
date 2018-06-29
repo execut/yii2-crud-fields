@@ -346,18 +346,26 @@ class Field extends BaseObject
             'on' => self::SCENARIO_GRID,
         ];
 
-        if (!$this->getIsRenderRelationFields() && !$this->getDisplayOnly()) {
+        if (!$this->getDisplayOnly()) {
             if ($this->required) {
                 $rule = 'required';
             } else {
                 $rule = 'safe';
             }
 
-            $rules[$this->attribute . $rule . 'onFormAndDefault'] = [
-                [$this->attribute],
-                $rule,
-                'on' => [self::SCENARIO_FORM, 'default'],
-            ];
+            if ($this->getIsRenderRelationFields()) {
+                $rules[$this->relation . $rule . 'onFormAndDefault'] = [
+                    [$this->relation],
+                    $rule,
+                    'on' => [self::SCENARIO_FORM, 'default'],
+                ];
+            } else {
+                $rules[$this->attribute . $rule . 'onFormAndDefault'] = [
+                    [$this->attribute],
+                    $rule,
+                    'on' => [self::SCENARIO_FORM, 'default'],
+                ];
+            }
         }
         return $rules;
     }
