@@ -193,7 +193,7 @@ class Field extends BaseObject
 //                    }
                 }
 
-                $fields = ArrayHelper::merge($formFields, $fields);
+                $fields = ArrayHelper::merge($fields, $formFields);
             }
         } else {
             $field = $this->getField();

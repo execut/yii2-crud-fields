@@ -68,17 +68,19 @@ class HasOneSelect2 extends Field
 //        }
 
 //        $sourceInitText = $this->getRelationObject()->getSourceText();
-        $field = ArrayHelper::merge([
-            'type' => $type,
-            'value' => $this->getRelationObject()->getColumnValue($this->model),
-            'format' => 'raw',
-            'widgetOptions' => $widgetOptions,
-            'fieldConfig' => [
-//                'template' => "{input}$createButton\n{error}\n{hint}",
-            ],
-            'displayOnly' => $this->getIsRenderRelationFields(),
-            'rowOptions' => $rowOptions,
-        ], $field);
+        if (empty($field['type'])) {
+            $field = ArrayHelper::merge([
+                'type' => $type,
+                'value' => $this->getRelationObject()->getColumnValue($this->model),
+                'format' => 'raw',
+                'widgetOptions' => $widgetOptions,
+                'fieldConfig' => [
+                    //                'template' => "{input}$createButton\n{error}\n{hint}",
+                ],
+                'displayOnly' => $this->getIsRenderRelationFields(),
+                'rowOptions' => $rowOptions,
+            ], $field);
+        }
 
         return $field;
     }
