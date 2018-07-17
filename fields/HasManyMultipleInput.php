@@ -172,6 +172,10 @@ class HasManyMultipleInput extends Field
             return $query;
         }
 
+        if (!empty($this->model->errors)) {
+            return $query->andWhere('false');
+        }
+
         $relatedModelClass = $this->getRelationObject()->getRelationModelClass();
         $relatedModel = new $relatedModelClass;
         foreach ($this->value as $row) {
