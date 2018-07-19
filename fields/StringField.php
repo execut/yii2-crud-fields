@@ -12,14 +12,19 @@ use yii\helpers\Inflector;
 
 class StringField extends Field
 {
+//    public $isPartially = true;
     public function applyScopes(ActiveQuery $query) {
         $value = $this->getValue();
         if ($value) {
+//            if ($this->isPartially) {
+//                $value = '%' . $value . '%';
+//            }
+
             $attribute = $this->attribute;
             $query->andWhere([
                 'ILIKE',
                 $attribute,
-                $this->model->$attribute,
+                $value,
             ]);
         }
 

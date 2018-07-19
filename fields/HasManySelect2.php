@@ -132,6 +132,13 @@ class HasManySelect2 extends HasOneSelect2
     protected function getRules(): array
     {
         $rules = parent::getRules();
+        if ($this->getRelationObject()->isVia()) {
+            $viaRelationName = $this->getRelationObject()->getViaRelation();
+            $rules[$viaRelationName] = [
+                $viaRelationName,
+                'safe',
+            ];
+        }
 
         unset($rules[$this->attribute . '_limit']);
 
