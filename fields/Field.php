@@ -47,6 +47,7 @@ class Field extends BaseObject
     public $url = null;
     public $updateUrl = null;
     public $isNoRenderRelationLink = false;
+    public $defaultScenario = [self::SCENARIO_FORM];
 
     /**
      * @var \Closure|null
@@ -57,7 +58,7 @@ class Field extends BaseObject
     public $order = 0;
 
     public function attach() {
-        if ($this->defaultValue !== null && $this->model->scenario === self::SCENARIO_FORM) {
+        if ($this->defaultValue !== null && in_array($this->model->scenario, $this->defaultScenario)) {
             $attribute = $this->attribute;
             if ($this->model->$attribute === null || $this->model->$attribute === []) {
                 $defaultValue = $this->defaultValue;
