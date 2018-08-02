@@ -253,7 +253,7 @@ class Field extends BaseObject
 
                 if (!empty($value) || $value === '0') {
                     $query->andFilterWhere([
-                        $attribute => $value,
+                        $this->model->tableName() . '.' . $attribute => $value,
                     ]);
                 }
             }

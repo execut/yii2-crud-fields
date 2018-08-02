@@ -25,6 +25,10 @@ class HasOneRadioList extends HasOneSelect2
     public $widgetOptions = [];
     public $fieldWidgetOptions = [];
     public function getField() {
+        if ($this->_field === false) {
+            return false;
+        }
+
         $data = $this->getRelationObject()->getData(true);
         unset($data['']);
         if (empty($data)) {
