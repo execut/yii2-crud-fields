@@ -252,8 +252,14 @@ class Field extends BaseObject
                 }
 
                 if (!empty($value) || $value === '0') {
+                    if (!empty($query->join) || !empty($query->joinWith)) {
+                        $whereAttribute = $this->model->tableName() . '.' . $attribute;
+                    } else {
+                        $whereAttribute = $attribute;
+                    }
+
                     $query->andFilterWhere([
-                        $this->model->tableName() . '.' . $attribute => $value,
+                        $whereAttribute => $value,
                     ]);
                 }
             }
