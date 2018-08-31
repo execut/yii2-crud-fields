@@ -44,7 +44,7 @@ class Behavior extends BaseBehavior
             }
 
             foreach ($relations as $relation => $relationParams) {
-                if (!in_array($relation, $relationsSaver->relations)) {
+                if (!in_array($relation, $relationsSaver->relations) && empty($relationParams['isNoSave'])) {
                     $params = [];
                     if (!empty($relationParams['scenario'])) {
                         $params['scenario'] = $relationParams['scenario'];

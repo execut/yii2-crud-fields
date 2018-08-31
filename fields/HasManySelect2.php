@@ -78,6 +78,7 @@ class HasManySelect2 extends HasOneSelect2
                 'defaultValue' => $this->model->primaryKey,
             ],
             'to' => [
+                'title' => \yii::t('execut/' . $this->module, $this->model->getAttributeLabel($toAttribute)),
                 'name' => $toAttribute,
                 'type' => Select2::class,
                 'defaultValue' => null,
