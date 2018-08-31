@@ -17,6 +17,10 @@ class RadiobuttonGroup extends DropDown
     public function getField()
     {
         $field = parent::getField();
+        if ($field === false ) {
+            return false;
+        }
+
         $field['items'] = array_filter($field['items']);
 
         return ArrayHelper::merge($field, [

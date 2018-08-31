@@ -17,6 +17,11 @@ class DropDown extends Field
 {
     public $multipleInputType = MultipleInputColumn::TYPE_DROPDOWN;
     public function getField() {
+        $field = parent::getField();
+        if ($field === false) {
+            return false;
+        }
+
         $model = $this->model;
         $attribute = $this->attribute;
         $value = null;
