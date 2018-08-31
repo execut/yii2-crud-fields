@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
 
 class RadiobuttonGroup extends DropDown
 {
+    public $emptyDataStub = [];
     public function getField()
     {
         $field = parent::getField();
