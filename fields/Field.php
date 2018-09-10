@@ -12,6 +12,8 @@ use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\Connection;
+use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -62,7 +64,7 @@ class Field extends BaseObject
             $attribute = $this->attribute;
             if ($this->model->$attribute === null || $this->model->$attribute === []) {
                 $defaultValue = $this->defaultValue;
-                if ($attribute === $this->relation && is_callable($defaultValue)) {
+                if (is_callable($defaultValue)) {
                     $defaultValue = $defaultValue();
                 }
 
@@ -252,7 +254,7 @@ class Field extends BaseObject
                 }
 
                 if (!empty($value) || $value === '0') {
-                    if (!empty($query->join) || !empty($query->joinWith)) {
+                    if ($this->model->getDb()->getSchema() instanceof Schema) {
                         $whereAttribute = $this->model->tableName() . '.' . $attribute;
                     } else {
                         $whereAttribute = $attribute;

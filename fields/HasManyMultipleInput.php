@@ -15,6 +15,7 @@ use unclead\multipleinput\MultipleInputColumn;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -188,13 +189,20 @@ class HasManyMultipleInput extends Field
 
                 $relationQuery->select(key($relationQuery->link));
                 $relationQuery->indexBy = key($relationQuery->link);
-                $relatedAttribute = current($relationQuery->link);
 
+
+                if ($this->model->getDb()->getSchema() instanceof Schema) {
+                    $attributePrefix = $this->model->tableName() . '.';
+                } else {
+                    $attributePrefix = '';
+                }
+
+                $relatedAttribute = current($relationQuery->link);
                 $relationQuery->link = null;
                 $relationQuery->primaryModel = null;
 
                 $query->andWhere([
-                    $relatedAttribute => $relationQuery,
+                    $attributePrefix . $relatedAttribute => $relationQuery,
                 ]);
             }
         }

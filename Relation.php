@@ -14,6 +14,7 @@ use yii\base\BaseObject;
 use yii\base\Exception;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
@@ -73,6 +74,12 @@ class Relation extends BaseObject
                     $value = array_values($value);
                 }
 
+                if ($this->field->model->getDb()->getSchema() instanceof Schema) {
+                    $attributePrefix = $this->field->model->tableName() . '.';
+                } else {
+                    $attributePrefix = '';
+                }
+
                 if ($this->isVia()) {
                     $viaRelationQuery = $this->getViaRelationQuery();
                     $viaRelationQuery->select(key($viaRelationQuery->link))
@@ -93,7 +100,7 @@ class Relation extends BaseObject
                 }
 
                 $query->andWhere([
-                    $pk => $viaRelationQuery,
+                    $attributePrefix . $pk => $viaRelationQuery,
                 ]);
             }
         }
@@ -190,6 +197,11 @@ class Relation extends BaseObject
                 }
 
                 foreach ($sourceIds as $key => $sourceId) {
+                    if (is_callable($sourceId)) {
+                        $sourceIds[$key] = $sourceId();
+                        continue;
+                    }
+
                     if ($sourceId instanceof ActiveRecord) {
                         $sourceInitText[$sourceId->primaryKey] = ArrayHelper::getValue($sourceId, $nameAttribute);
                     }
