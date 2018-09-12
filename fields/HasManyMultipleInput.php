@@ -6,6 +6,7 @@ namespace execut\crudFields\fields;
 
 
 use detalika\clients2\models\Contacts;
+use execut\oData\ActiveRecord;
 use kartik\detail\DetailView;
 use kartik\grid\BooleanColumn;
 use kartik\grid\GridView;
@@ -191,7 +192,7 @@ class HasManyMultipleInput extends Field
                 $relationQuery->indexBy = key($relationQuery->link);
 
 
-                if ($this->model->getDb()->getSchema() instanceof Schema) {
+                if (!($this->model instanceof ActiveRecord)) {
                     $attributePrefix = $this->model->tableName() . '.';
                 } else {
                     $attributePrefix = '';
