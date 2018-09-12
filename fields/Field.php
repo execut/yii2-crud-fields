@@ -254,7 +254,7 @@ class Field extends BaseObject
                 }
 
                 if (!empty($value) || $value === '0') {
-                    if ($this->model->getDb()->getSchema() instanceof Schema) {
+                    if (!($this->model instanceof \execut\oData\ActiveRecord)) {
                         $whereAttribute = $this->model->tableName() . '.' . $attribute;
                     } else {
                         $whereAttribute = $attribute;
