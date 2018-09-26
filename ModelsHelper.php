@@ -72,7 +72,14 @@ class ModelsHelper extends Component
             unset($fields[$key]);
         }
 
-        $fields = ArrayHelper::merge($fields, $this->other);
+        $other = $this->other;
+//        foreach ($other as $key => &$value) {
+//            if (is_array($value) && empty($value['attribute'])) {
+//                $value['attribute'] = $key;
+//            }
+//        }
+
+        $fields = ArrayHelper::merge($fields, $other);
 
         return $fields;
     }

@@ -54,7 +54,35 @@ class Behavior extends BaseBehavior
                 }
             }
         }
+
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->attach();
+        }
     }
+
+    public function events()
+    {
+        return [
+            ActiveRecord::EVENT_BEFORE_VALIDATE => 'setRelationsScenarioFromOwner',
+        ];
+    }
+
+    public function setRelationsScenarioFromOwner() {
+        /**
+         * @var SaveRelationsBehavior $saver
+         */
+        $saver = $this->owner->getBehavior(self::RELATIONS_SAVER_KEY);
+        foreach ($this->getRelations() as $name => $relation) {
+            if (empty($relation['scenario'])) {
+                if (!empty($relation['name'])) {
+                    $name = $relation['name'];
+                }
+
+                $saver->setRelationScenario($name, $this->owner->getScenario());
+            }
+        }
+    }
+
 
     public function setPlugins($plugins) {
         $this->_plugins = $plugins;

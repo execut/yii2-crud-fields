@@ -66,7 +66,10 @@ class Action extends Field
 
         $column['template'] = $template;
 
-        return ArrayHelper::merge($parentColumn, $column);
+        $column = ArrayHelper::merge($parentColumn, $column);
+        unset($column['attribute']);
+
+        return $column;
     }
 
     public function getColumns()

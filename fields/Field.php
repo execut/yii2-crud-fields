@@ -312,12 +312,8 @@ class Field extends BaseObject
             return $this->_label;
         }
 
-        $attribute = Inflector::humanize($this->attribute, '_');
-        if ($this->module === null) {
-            return $attribute;
-        }
-
-        return \Yii::t('execut/' . $this->module, $attribute);
+        $attribute = $this->attribute;
+        return $this->translateAttribute($attribute);
     }
 
     /**
@@ -377,5 +373,19 @@ class Field extends BaseObject
             }
         }
         return $rules;
+    }
+
+    /**
+     * @param $attribute
+     * @return string
+     */
+    protected function translateAttribute($attribute): string
+    {
+        $attribute = Inflector::humanize($attribute, '_');
+        if ($this->module === null) {
+            return $attribute;
+        }
+
+        return \Yii::t('execut/' . $this->module, $attribute);
     }
 }

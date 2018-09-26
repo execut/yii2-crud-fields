@@ -8,6 +8,7 @@ namespace execut\crudFields\fields;
 use execut\crudFields\Relation;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 
 class StringField extends Field
@@ -29,5 +30,13 @@ class StringField extends Field
         }
 
         return $query;
+    }
+
+    protected function getRules():array
+    {
+        $rules = parent::getRules();
+        $rules['maxLength_' . $this->attribute] = [[$this->attribute], 'string', 'max' => 255];
+
+        return $rules;
     }
 }

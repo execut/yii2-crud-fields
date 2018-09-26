@@ -48,4 +48,7 @@ abstract class Plugin
 
     public function applyScopes(ActiveQuery $q) {
     }
+
+    public function attach() {
+    }
 }

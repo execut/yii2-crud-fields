@@ -143,6 +143,11 @@ class File extends Field
                 $dataAttribute = $this->dataAttribute;
                 $data = $this->model->$dataAttribute;
                 if (!empty($data)) {
+                    if (is_resource($data)) {
+                        $data = stream_get_contents($data);
+                        fseek($this->model->$dataAttribute, 0);
+                    }
+
                     return md5($data);
                 }
             }],
