@@ -4,10 +4,8 @@
 
 namespace execut\crudFields\fields;
 
-
-use dosamigos\ckeditor\CKEditor;
+use execut\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
-
 class Editor extends Field
 {
     public function getField()
@@ -19,6 +17,7 @@ class Editor extends Field
                 'class' => CKEditor::class,
                 'preset' => 'full',
                 'clientOptions' => [
+                    'language' => \yii::$app->language,
                     'allowedContent' => true,
                 ],
             ],
