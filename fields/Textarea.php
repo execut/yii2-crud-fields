@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
 
 class Textarea extends StringField
 {
+    public $maxLength = false;
     public function getField()
     {
         $parentField = parent::getField();

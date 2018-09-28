@@ -13,6 +13,7 @@ use yii\helpers\Inflector;
 
 class StringField extends Field
 {
+    public $maxLength = 255;
 //    public $isPartially = true;
     public function applyScopes(ActiveQuery $query) {
         $value = $this->getValue();
@@ -35,7 +36,9 @@ class StringField extends Field
     protected function getRules():array
     {
         $rules = parent::getRules();
-        $rules['maxLength_' . $this->attribute] = [[$this->attribute], 'string', 'max' => 255];
+        if ($this->maxLength) {
+            $rules['maxLength_' . $this->attribute] = [[$this->attribute], 'string', 'max' => $this->maxLength];
+        }
 
         return $rules;
     }
