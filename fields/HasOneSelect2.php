@@ -13,6 +13,7 @@ use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
+use yii\helpers\UnsetArrayValue;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
@@ -143,6 +144,18 @@ class HasOneSelect2 extends Field
             throw new Exception('Attribute is required');
         }
 
+        $filterWidgetOptions = ArrayHelper::merge($this->getSelect2WidgetOptions(), [
+            'initValueText' => [
+                '' => new UnsetArrayValue(),
+            ],
+            'data' => [
+                '' => new UnsetArrayValue(),
+            ],
+            'options' => [
+                'multiple' => true
+            ],
+        ]);
+
         return ArrayHelper::merge([
             'attribute' => $this->attribute,
             'format' => 'raw',
@@ -155,11 +168,7 @@ class HasOneSelect2 extends Field
 //                },
             'filter' => $sourceInitText,
             'filterType' => GridView::FILTER_SELECT2,
-            'filterWidgetOptions' => ArrayHelper::merge($this->getSelect2WidgetOptions(), [
-                'options' => [
-                    'multiple' => true
-                ],
-            ]),
+            'filterWidgetOptions' => $filterWidgetOptions,
         ], $column);
     }
 
@@ -243,10 +252,12 @@ JS
      */
     protected function getSourcesText(): array
     {
-        if ($relation = $this->getRelationObject()) {
+        if ($this->url !== null && ($relation = $this->getRelationObject())) {
             return $relation->getSourcesText();
         }
 
-        return $this->getData();
+        $result = $this->getData();
+
+        return $result;
     }
 }

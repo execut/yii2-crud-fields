@@ -336,8 +336,9 @@ class Field extends BaseObject
     protected function getRules(): array
     {
         $rules = [];
+        $uniqueId = $this->attribute . $this->relation;
         if ($this->defaultValue !== null) {
-            $rules[$this->attribute . 'DefaultValue'] = [
+            $rules[$uniqueId . 'DefaultValue'] = [
                 [$this->attribute],
                 'default',
                 'value' => $this->defaultValue,
@@ -345,7 +346,7 @@ class Field extends BaseObject
             ];
         }
 
-        $rules[$this->attribute . 'SafeOnGrid'] = [
+        $rules[$uniqueId . 'SafeOnGrid'] = [
             [$this->attribute],
             'safe',
             'on' => self::SCENARIO_GRID,
@@ -359,13 +360,13 @@ class Field extends BaseObject
             }
 
             if ($this->getIsRenderRelationFields()) {
-                $rules[$this->relation . $rule . 'onFormAndDefault'] = [
+                $rules[$uniqueId . 'onFormAndDefault'] = [
                     [$this->relation],
                     $rule,
                     'on' => [self::SCENARIO_FORM, 'default'],
                 ];
             } else {
-                $rules[$this->attribute . $rule . 'onFormAndDefault'] = [
+                $rules[$uniqueId . $rule . 'onFormAndDefault'] = [
                     [$this->attribute],
                     $rule,
                     'on' => [self::SCENARIO_FORM, 'default'],
