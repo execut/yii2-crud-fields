@@ -145,12 +145,6 @@ class HasOneSelect2 extends Field
         }
 
         $filterWidgetOptions = ArrayHelper::merge($this->getSelect2WidgetOptions(), [
-            'initValueText' => [
-                '' => new UnsetArrayValue(),
-            ],
-            'data' => [
-                '' => new UnsetArrayValue(),
-            ],
             'options' => [
                 'multiple' => true
             ],
