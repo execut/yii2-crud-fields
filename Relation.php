@@ -214,7 +214,8 @@ class Relation extends BaseObject
         }
 
         if (!empty($sourceIds)) {
-            $pk = current($modelClass::primaryKey());
+            $relationQuery = $this->getRelationQuery();
+            $pk = key($relationQuery->link);
             $q = $modelClass::find()->andWhere([$pk => $sourceIds]);
             $models = $q->all();
             $sourceInitText = ArrayHelper::map($models, $pk, $nameAttribute);

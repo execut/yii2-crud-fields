@@ -50,6 +50,7 @@ class Field extends BaseObject
     public $updateUrl = null;
     public $isNoRenderRelationLink = false;
     public $defaultScenario = [self::SCENARIO_FORM];
+    public $name = null;
 
     /**
      * @var \Closure|null
@@ -130,6 +131,7 @@ class Field extends BaseObject
 
         if ($this->attribute !== null) {
             $column['attribute'] = $this->attribute;
+            $column['label'] = $this->getLabel();
         }
 
         return $column;
@@ -201,11 +203,19 @@ class Field extends BaseObject
         } else {
             $field = $this->getField();
             if ($field !== false) {
-                $fields = [$this->attribute => $field];
+                $fields = [$this->getName() => $field];
             }
         }
 
         return $fields;
+    }
+
+    public function getName() {
+        if ($this->name !== null) {
+            return $this->name;
+        }
+
+        return $this->attribute;
     }
 
     public function getColumns() {
@@ -214,7 +224,7 @@ class Field extends BaseObject
             return [];
         }
 
-        return [$this->attribute => $column];
+        return [$this->getName() => $column];
     }
 
     public function getMultipleInputField() {

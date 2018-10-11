@@ -352,7 +352,7 @@ class Behavior extends BaseBehavior
     public function attributesLabels() {
         $result = [];
         foreach ($this->getFields() as $field) {
-            $result[$field->attribute] = $field->getLabel($this->module);
+            $result[$field->getName()] = $field->getLabel($this->module);
         }
 
         return $result;
