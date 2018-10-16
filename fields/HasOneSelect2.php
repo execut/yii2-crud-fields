@@ -200,6 +200,7 @@ class HasOneSelect2 extends Field
 
         if ($this->url !== null) {
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
+                'showToggleAll' => false,
                 'pluginOptions' => [
                     'ajax' => [
                         'url' => Url::to($this->url),
