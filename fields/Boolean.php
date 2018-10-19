@@ -34,11 +34,7 @@ class Boolean extends Field
 
         if ($this->getDisplayOnly()) {
             $value = function () {
-                if ($this->getValue()) {
-                    return 'Да';
-                } else {
-                    return 'Нет';
-                }
+                return $this->getValueString();
             };
         } else {
             $value = null;
@@ -53,5 +49,13 @@ class Boolean extends Field
         }
 
         return array_merge($field, $result);
+    }
+
+    protected function getValueString() {
+        if ($this->getValue() === 'True') {
+            return 'Да';
+        } else if ($this->getValue() === 'False') {
+            return 'Нет';
+        }
     }
 }

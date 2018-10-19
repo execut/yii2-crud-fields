@@ -47,6 +47,19 @@ trait BehaviorStub
                  $query->viaTable($relation['viaTable'], $relation['viaLink']);
             }
 
+            if (!empty($relation['scopes'])) {
+                foreach ($relation['scopes'] as $scope) {
+                    if (is_callable($scope)) {
+                        $r = $scope($query);
+                        if ($r) {
+                            $query = $r;
+                        }
+                    } else {
+                        $query->$scope();
+                    }
+                }
+            }
+
             return $query;
         }
 
