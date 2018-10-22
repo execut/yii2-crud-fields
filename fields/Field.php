@@ -59,6 +59,7 @@ class Field extends BaseObject
 
     protected $_relationObject = null;
     public $order = 0;
+    public $columnRecordsLimit = null;
 
     public function attach() {
         if ($this->defaultValue !== null && in_array($this->model->scenario, $this->defaultScenario)) {

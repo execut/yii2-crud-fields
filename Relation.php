@@ -273,11 +273,25 @@ class Relation extends BaseObject
             $models = $row->{$this->getName()};
             $result = [];
             $nameAttribute = $this->nameAttribute;
-            foreach ($models as $model) {
+            $limitIsReached = false;
+            foreach ($models as $key => $model) {
+                if ($key === $this->field->columnRecordsLimit) {
+                    $limitIsReached = true;
+                    break;
+                }
+
                 $result[] = $this->getLink($model, $nameAttribute, 'primaryKey');
             }
 
             $result = implode(', ', $result);
+            if ($limitIsReached) {
+//                $toAttribute = $this->getRelationNameFromAttribute();
+                $count = count($models);
+                $url = $this->field->url;
+                $attribute = key($this->getRelationQuery()->link);
+                $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
+                $result .= ' ' . Html::a('ещё ' . ($count - $this->field->columnRecordsLimit) . ' >>>', Url::to($url));
+            }
 
             return $result;
         }
