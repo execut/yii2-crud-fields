@@ -159,7 +159,9 @@ class HasOneSelect2 extends Field
             'format' => 'raw',
 //            'value' => $this->getData(),
             'value' => function ($row) {
-                return $this->getRelationObject()->getColumnValue($row);
+                $value = $this->getRelationObject()->getColumnValue($row);
+
+                return $value;
             },
 //                'value' => function () {
 //                    return 'asdasd';
@@ -189,6 +191,10 @@ class HasOneSelect2 extends Field
     protected function getSelect2WidgetOptions(): array
     {
         $sourceInitText = $this->getSourcesText();
+        if (empty($sourceInitText)) {
+            $sourceInitText = null;
+        }
+
         $nameParam = $this->getNameParam();
         $widgetOptions = [
             'theme' => Select2::THEME_BOOTSTRAP,
@@ -252,7 +258,12 @@ JS
     protected function getSourcesText(): array
     {
         if (($relation = $this->getRelationObject())) {
-            return $relation->getSourcesText();
+            $sourcesText = $relation->getSourcesText();
+            if (empty($sourcesText) && ($value = $this->getValue())) {
+                $sourcesText = [$value => $value];
+            }
+
+            return $sourcesText;
         }
 
         $result = $this->getData();
