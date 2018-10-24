@@ -33,7 +33,7 @@ class Date extends Field
 
     public function getField()
     {
-        if (empty($this->getValue())) {
+        if (empty($this->getValue()) && $this->displayOnly) {
             return false;
         }
 
@@ -129,6 +129,7 @@ class Date extends Field
     {
         $format = $this->getFormat();
         $pluginOptions = [
+            'format' => $this->getFormat(true),
             'locale' => ['format' => $format, 'separator' => ' - '],
             'todayHightlight' => true,
         ];
@@ -155,7 +156,7 @@ class Date extends Field
     protected function getFormat($forJs = false): string
     {
         if ($forJs) {
-            $format = 'yyyy-mm-dd';
+            $format = 'yyyy-MM-dd';
         } else {
             $format = 'Y-m-d';
         }

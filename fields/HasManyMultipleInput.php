@@ -48,7 +48,6 @@ class HasManyMultipleInput extends Field
 
     public $isGridForOldRecords = false;
 
-
     public function getFields($isWithRelationsFields = true)
     {
         if ($this->isGridForOldRecords && !$this->model->isNewRecord) {
@@ -227,31 +226,62 @@ class HasManyMultipleInput extends Field
             'attribute' => $this->attribute,
             'format' => 'html',
             'value' => function ($row) {
-                /**
-                 * @TODO Equal functional from HasOneSelect2
-                 */
-                $attribute = $this->attribute;
-                $result = [];
-                $pk = $this->getRelationObject()->getRelationPrimaryKey();
-                foreach ($row->$attribute as $vsKeyword) {
-                    $value = ArrayHelper::getValue($vsKeyword, $this->nameAttribute);
-
-                    if (($url = $this->url) !== null) {
-                        if (is_array($url)) {
-                            $url = $url[0];
-                        } else {
-                            $url = str_replace('/index', '', $url);
-                        }
-
-                        $currentUrl = [$url . '/update', 'id' => $vsKeyword->$pk];
-                        $value = $value . '&nbsp;' . Html::a('>>>', Url::to($currentUrl));
-                    }
-
-                    $result[] = $value;
+                $relationName = $this->getRelationObject()->getName();
+                $dataProvider = new ActiveDataProvider([
+                    'query' => $row->getRelation($relationName),
+                ]);
+//                $models = $model->$relationName;
+//                $models = ArrayHelper::map($models, function ($row) {
+//                    return $row->primaryKey;
+//                }, function ($row) {
+//                    return $row;
+//                });
+//                $dataProvider = new ArrayDataProvider([
+//                    'allModels' => $models,
+//                ]);
+                $widgetClass = GridView::class;
+                if (!empty($this->gridOptions['class'])) {
+                    $widgetClass = $this->gridOptions['class'];
                 }
 
-                return implode(', ', $result);
+                return $widgetClass::widget(ArrayHelper::merge([
+                    'dataProvider' => $dataProvider,
+                    'layout' => '{toolbar}{summary}{items}{pager}',
+                    'bordered' => false,
+                    'toolbar' => '',
+//                    'caption' => $this->getLabel(),
+//                    'captionOptions' => [
+//                        'class' => 'success',
+//                    ],
+                    'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
+                    'showOnEmpty' => true,
+                ], $this->gridOptions));
             },
+//                /**
+//                 * @TODO Equal functional from HasOneSelect2
+//                 */
+//                $attribute = $this->attribute;
+//                $result = [];
+//                $pk = $this->getRelationObject()->getRelationPrimaryKey();
+//                foreach ($row->$attribute as $vsKeyword) {
+//                    $value = ArrayHelper::getValue($vsKeyword, $this->nameAttribute);
+//
+//                    if (($url = $this->url) !== null) {
+//                        if (is_array($url)) {
+//                            $url = $url[0];
+//                        } else {
+//                            $url = str_replace('/index', '', $url);
+//                        }
+//
+//                        $currentUrl = [$url . '/update', 'id' => $vsKeyword->$pk];
+//                        $value = $value . '&nbsp;' . Html::a('>>>', Url::to($currentUrl));
+//                    }
+//
+//                    $result[] = $value;
+//                }
+//
+//                return implode(', ', $result);
+
 //            'value' => function ($row) {
 //                $url = $this->url;
 //                if (is_array($url)) {

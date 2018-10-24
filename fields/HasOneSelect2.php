@@ -23,6 +23,7 @@ class HasOneSelect2 extends Field
     public $createUrl = null;
     public $widgetOptions = [];
     public $existsValidatorOptions = [];
+
     public function getField() {
         $field = parent::getField();
         if ($field === false) {
@@ -144,11 +145,14 @@ class HasOneSelect2 extends Field
             throw new Exception('Attribute is required');
         }
 
-        $filterWidgetOptions = ArrayHelper::merge($this->getSelect2WidgetOptions(), [
-            'options' => [
-                'multiple' => true
-            ],
-        ]);
+        $filterWidgetOptions = [];
+        if (!array_key_exists('filter', $column)) {
+            $filterWidgetOptions = ArrayHelper::merge($this->getSelect2WidgetOptions(), [
+                'options' => [
+                    'multiple' => true
+                ],
+            ]);
+        }
 
         return ArrayHelper::merge([
             'attribute' => $this->attribute,
@@ -247,7 +251,7 @@ JS
      */
     protected function getSourcesText(): array
     {
-        if ($this->url !== null && ($relation = $this->getRelationObject())) {
+        if (($relation = $this->getRelationObject())) {
             return $relation->getSourcesText();
         }
 
