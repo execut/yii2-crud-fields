@@ -466,7 +466,7 @@ class Relation extends BaseObject
     protected function getLink($row, $nameAttribute, $keyAttribute = null)
     {
         $value = ArrayHelper::getValue($row, $nameAttribute);
-        if (!$value) {
+        if ($value === null) {
             return ArrayHelper::getValue($row, $this->field->attribute);
         }
 

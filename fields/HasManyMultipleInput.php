@@ -41,6 +41,8 @@ class HasManyMultipleInput extends Field
 
     public $mainAttribute = 'name';
 
+    public $isGridInColumn = false;
+
     public $toAttribute = null;
 
     public $viaColumns = [
@@ -222,23 +224,21 @@ class HasManyMultipleInput extends Field
 //        $sourceInitText = $this->getRelationObject()->getSourcesText();
 
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
-        return ArrayHelper::merge([
-            'attribute' => $this->attribute,
-            'format' => 'html',
-            'value' => function ($row) {
+        if ($this->isGridInColumn) {
+            $valueClosure = function ($row) {
                 $relationName = $this->getRelationObject()->getName();
                 $dataProvider = new ActiveDataProvider([
                     'query' => $row->getRelation($relationName),
                 ]);
-//                $models = $model->$relationName;
-//                $models = ArrayHelper::map($models, function ($row) {
-//                    return $row->primaryKey;
-//                }, function ($row) {
-//                    return $row;
-//                });
-//                $dataProvider = new ArrayDataProvider([
-//                    'allModels' => $models,
-//                ]);
+                //                $models = $model->$relationName;
+                //                $models = ArrayHelper::map($models, function ($row) {
+                //                    return $row->primaryKey;
+                //                }, function ($row) {
+                //                    return $row;
+                //                });
+                //                $dataProvider = new ArrayDataProvider([
+                //                    'allModels' => $models,
+                //                ]);
                 $widgetClass = GridView::class;
                 if (!empty($this->gridOptions['class'])) {
                     $widgetClass = $this->gridOptions['class'];
@@ -249,14 +249,47 @@ class HasManyMultipleInput extends Field
                     'layout' => '{toolbar}{summary}{items}{pager}',
                     'bordered' => false,
                     'toolbar' => '',
-//                    'caption' => $this->getLabel(),
-//                    'captionOptions' => [
-//                        'class' => 'success',
-//                    ],
+                    //                    'caption' => $this->getLabel(),
+                    //                    'captionOptions' => [
+                    //                        'class' => 'success',
+                    //                    ],
                     'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
                     'showOnEmpty' => true,
                 ], $this->gridOptions));
-            },
+            };
+        } else {
+            $valueClosure = function ($row) {
+                /**
+                 * @TODO Equal functional from HasOneSelect2
+                 */
+                $attribute = $this->attribute;
+                $result = [];
+                $pk = $this->getRelationObject()->getRelationPrimaryKey();
+                foreach ($row->$attribute as $vsKeyword) {
+                    $value = ArrayHelper::getValue($vsKeyword, $this->nameAttribute);
+
+                    if (($url = $this->url) !== null) {
+                        if (is_array($url)) {
+                            $url = $url[0];
+                        } else {
+                            $url = str_replace('/index', '', $url);
+                        }
+
+                        $currentUrl = [$url . '/update', 'id' => $vsKeyword->$pk];
+                        $value = $value . '&nbsp;' . Html::a('>>>', Url::to($currentUrl));
+                    }
+
+                    $result[] = $value;
+                }
+
+                return implode(', ', $result);
+            };
+        }
+
+        return ArrayHelper::merge([
+            'attribute' => $this->attribute,
+            'format' => 'html',
+            'value' => $valueClosure,
 //                /**
 //                 * @TODO Equal functional from HasOneSelect2
 //                 */
