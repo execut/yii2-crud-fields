@@ -12,6 +12,7 @@ use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
+use yii\helpers\UnsetArrayValue;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
@@ -23,6 +24,10 @@ class HasOneDepDrop extends HasOneSelect2
     public function getField()
     {
         $field = parent::getField();
+        if ($this->displayOnly) {
+            return $field;
+        }
+
         $widgetOptions = $field['widgetOptions'];
         unset($field['widgetOptions']);
         unset($widgetOptions['pluginOptions']['ajax']);
@@ -55,37 +60,29 @@ class HasOneDepDrop extends HasOneSelect2
         ]);
     }
 
+    public function getColumn()
+    {
+        $column = parent::getColumn();
+        if ($column == false) {
+            return $column;
+        }
+
+        $column = ArrayHelper::merge($column, [
+            'filterWidgetOptions' => [
+                'showToggleAll' => true,
+                'pluginOptions' => [
+                    'ajax' => new UnsetArrayValue(),
+                ],
+                'data' => $this->getData(),
+            ],
+        ]);
+
+        return $column;
+    }
+
     public function getMultipleInputField()
     {
         throw new Exception(__METHOD__ . ' is not implemented');
-        $widgetOptions = $this->getSelect2WidgetOptions();
-        unset($widgetOptions['pluginOptions']['ajax']);
-        $data = $this->getData();
-
-        return [
-            'type' => DepDrop::class,
-            'name' => $this->attribute,
-            'value' => $this->value,
-            'options' => [
-                'type' => DepDrop::TYPE_SELECT2,
-                'data' => $data,
-                'pluginOptions' => [
-                    'loadingText' => 'Загрузка...',
-                    //                    'initialize' => true,
-                    'nameParam' => 'text',
-                    'allParam' => $this->dependedAttribute,
-                    'ajaxSettings' => [
-                        'method' => 'get',
-                    ],
-                    'url' => Url::to($this->url),
-                    'depends' => $this->getDepends(),
-                ],
-                'select2Options' => ArrayHelper::merge($widgetOptions,
-                    [
-                    ]
-                )
-            ],
-        ];
     }
 
     protected function getDepends() {
