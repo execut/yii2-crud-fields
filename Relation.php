@@ -365,7 +365,7 @@ class Relation extends BaseObject
             $orderByAttribute = $this->nameAttribute;
         }
 
-        if ($orderByAttribute !== null) {
+        if ($orderByAttribute !== null && $orderByAttribute !== false) {
             $relationQuery->orderBy($orderByAttribute);
         }
 

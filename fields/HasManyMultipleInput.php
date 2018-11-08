@@ -132,8 +132,13 @@ class HasManyMultipleInput extends Field
 //                    'allModels' => $models,
 //                ]);
                 $widgetClass = GridView::class;
-                if (!empty($this->gridOptions['class'])) {
-                    $widgetClass = $this->gridOptions['class'];
+                $gridOptions = $this->gridOptions;
+                if (is_callable($gridOptions)) {
+                    $gridOptions = $gridOptions();
+                }
+
+                if (!empty($gridOptions['class'])) {
+                    $widgetClass = $gridOptions['class'];
                 }
 
                 return $widgetClass::widget(ArrayHelper::merge([
@@ -147,7 +152,7 @@ class HasManyMultipleInput extends Field
 //                    ],
                     'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
                     'showOnEmpty' => true,
-                ], $this->gridOptions));
+                ], $gridOptions));
             },
         ];
     }
