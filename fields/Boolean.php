@@ -52,9 +52,9 @@ class Boolean extends Field
     }
 
     protected function getValueString() {
-        if ($this->getValue() === 'True') {
+        if ($this->getValue()) {
             return 'Да';
-        } else if ($this->getValue() === 'False') {
+        } else if (!$this->getValue() && $this->getValue() !== '') {
             return 'Нет';
         }
     }
