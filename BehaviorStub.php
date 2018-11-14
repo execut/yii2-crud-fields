@@ -35,7 +35,8 @@ trait BehaviorStub
     }
     
     public function getRelation($name, $throwException = true) {
-        $relation = $this->getBehavior('fields')->getRelation($name);
+        $relation = $this->_getRelationFromCache($name);
+
         if ($relation) {
             /**
              * @var ActiveQuery $query
@@ -66,9 +67,10 @@ trait BehaviorStub
         return parent::getRelation($name, $throwException);
     }
 
+    protected static $relationsCache = [];
     public function __get($name)
     {
-        $relation = $this->getBehavior('fields')->getRelation($name);
+        $relation = $this->_getRelationFromCache($name);
         if ($relation && !$this->isRelationPopulated($name)) {
             $relation = $this->getRelation($name);
             $relation = $relation->findFor($name, $this);
@@ -80,6 +82,20 @@ trait BehaviorStub
 
     public function getRowOptions() {
         return $this->getBehavior('fields')->getRowOptions();
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    protected function _getRelationFromCache($name)
+    {
+        if (!array_key_exists($name, self::$relationsCache)) {
+            self::$relationsCache[$name] = $relation = $this->getBehavior('fields')->getRelation($name);
+        } else {
+            $relation = self::$relationsCache[$name];
+        }
+        return $relation;
     }
 
 //    protected $_formName = null;
