@@ -467,7 +467,9 @@ class Relation extends BaseObject
     {
         $value = ArrayHelper::getValue($row, $nameAttribute);
         if ($value === null) {
-            return ArrayHelper::getValue($row, $this->field->attribute);
+            if ($row->hasProperty($this->field->attribute)) {
+                return ArrayHelper::getValue($row, $this->field->attribute);
+            }
         }
 
         $url = $this->getUpdateUrl($row, $keyAttribute);
