@@ -19,6 +19,7 @@ class Behavior extends BaseBehavior
     protected $_plugins = [];
     protected $_module = null;
     public $relations = [];
+    public $rules = [];
     const RELATIONS_SAVER_KEY = 'relationsSaver';
 
     /**
@@ -324,7 +325,7 @@ class Behavior extends BaseBehavior
             $rules[$relation . 'Safe'] = [$relation, 'safe'];
         }
 
-        return $rules;
+        return ArrayHelper::merge($this->rules, $rules);
     }
 
     public function setModule($module) {
