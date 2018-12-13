@@ -97,6 +97,8 @@ class HasOneSelect2 extends Field
                 if ($column) {
                     return $column->phpTypecast($v);
                 }
+            } else if (is_array($v)) {
+                $v = array_filter($v);
             }
 
             return $v;
