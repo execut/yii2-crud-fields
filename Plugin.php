@@ -51,4 +51,7 @@ abstract class Plugin
 
     public function attach() {
     }
+
+    public function beforeDelete() {
+    }
 }
