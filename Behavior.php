@@ -65,8 +65,31 @@ class Behavior extends BaseBehavior
     {
         return [
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'setRelationsScenarioFromOwner',
-            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete'
+            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
+            ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
+            ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
         ];
+    }
+
+    public function afterInsert() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->afterInsert();
+        }
+
+        $this->afterSave();
+    }
+
+    public function afterUpdate() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->afterUpdate();
+        }
+        $this->afterSave();
+    }
+
+    public function afterSave() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->afterSave();
+        }
     }
 
     public function beforeDelete() {

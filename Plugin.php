@@ -52,6 +52,15 @@ abstract class Plugin
     public function attach() {
     }
 
+    public function afterUpdate() {
+    }
+
+    public function afterInsert() {
+    }
+
+    public function afterSave() {
+    }
+
     public function beforeDelete() {
     }
 }
