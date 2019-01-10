@@ -355,7 +355,31 @@ class Behavior extends BaseBehavior
             $rules[$relation . 'Safe'] = [$relation, 'safe'];
         }
 
-        return ArrayHelper::merge($this->rules, $rules);
+        $rules = ArrayHelper::merge($this->rules, $rules);
+
+        uasort($rules, function ($a, $b) {
+            if (!empty($a['order'])) {
+                if (empty($b['order'])) {
+                    return -1;
+                }
+
+                if ($a['order'] > $b['order']) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
+            return 1;
+        });
+
+        foreach ($rules as &$rule) {
+            if (array_key_exists('order', $rule)) {
+                unset($rule['order']);
+            }
+        }
+
+        return $rules;
     }
 
     public function setModule($module) {

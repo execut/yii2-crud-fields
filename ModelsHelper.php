@@ -32,6 +32,7 @@ class ModelsHelper extends Component
             'class' => Boolean::class,
             'order' => 75,
             'attribute' => 'visible',
+            'defaultValue' => true,
         ],
         'name' => [
             'class' => StringField::class,

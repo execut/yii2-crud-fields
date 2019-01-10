@@ -12,6 +12,7 @@ abstract class Plugin
      */
     public $owner = null;
     public $fields = [];
+    public $rules = [];
     public function getFields() {
         return ArrayHelper::merge($this->_getFields(), $this->fields);
     }
@@ -40,7 +41,7 @@ abstract class Plugin
     }
 
     public function rules() {
-        return [];
+        return $this->rules;
     }
 
     public function initDataProvider($dataProvider) {

@@ -155,7 +155,9 @@ class HasOneSelect2 extends Field
                 ],
             ]);
         }
-
+//        var_dump($sourceInitText);
+//        var_dump($filterWidgetOptions);
+//        exit;
         return ArrayHelper::merge([
             'attribute' => $this->attribute,
             'format' => 'raw',
