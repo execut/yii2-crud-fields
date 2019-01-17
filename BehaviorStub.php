@@ -49,6 +49,14 @@ trait BehaviorStub
             }
 
             if (!empty($relation['scopes'])) {
+                if (is_callable($relation['scopes'])) {
+                    $scope = $relation['scopes'];
+                    $r = $scope($query);
+                    if ($r) {
+                        $query = $r;
+                    }
+                }
+
                 foreach ($relation['scopes'] as $scope) {
                     if (is_callable($scope)) {
                         $r = $scope($query);

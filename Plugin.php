@@ -41,7 +41,11 @@ abstract class Plugin
     }
 
     public function rules() {
-        return $this->rules;
+        return ArrayHelper::merge($this->rules, $this->_rules());
+    }
+
+    protected function _rules() {
+        return [];
     }
 
     public function initDataProvider($dataProvider) {
