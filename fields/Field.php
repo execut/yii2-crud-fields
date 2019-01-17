@@ -49,7 +49,7 @@ class Field extends BaseObject
     public $url = null;
     public $updateUrl = null;
     public $isNoRenderRelationLink = false;
-    public $defaultScenario = [self::SCENARIO_FORM];
+    public $defaultScenario = [self::SCENARIO_FORM, 'default'];
     public $name = null;
 
     /**
