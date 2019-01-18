@@ -68,7 +68,30 @@ class Behavior extends BaseBehavior
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
+            ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
+            ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
         ];
+    }
+
+    public function beforeUpdate() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->beforeUpdate();
+        }
+
+        $this->beforeSave();
+    }
+
+    public function beforeInsert() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->beforeInsert();
+        }
+        $this->beforeSave();
+    }
+
+    public function beforeSave() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->beforeSave();
+        }
     }
 
     public function afterInsert() {

@@ -63,6 +63,15 @@ abstract class Plugin
     public function afterInsert() {
     }
 
+    public function beforeUpdate() {
+    }
+
+    public function beforeInsert() {
+    }
+
+    public function beforeSave() {
+    }
+
     public function afterSave() {
     }
 
