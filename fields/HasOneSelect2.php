@@ -71,9 +71,9 @@ class HasOneSelect2 extends Field
 
 //        $sourceInitText = $this->getRelationObject()->getSourceText();
 //        if (empty($field['type'])) {
-        if (!empty($field['widgetOptions'])) {
-            $widgetOptions = $field['widgetOptions'];
-        }
+//        if (!empty($field['widgetOptions'])) {
+//            $widgetOptions = $field['widgetOptions'];
+//        }
 
             $field = ArrayHelper::merge([
                 'type' => $type,
