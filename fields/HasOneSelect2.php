@@ -23,6 +23,7 @@ class HasOneSelect2 extends Field
     public $createUrl = null;
     public $widgetOptions = [];
     public $existsValidatorOptions = [];
+    public $isRedefineWidgetOptions = false;
 
     public function getField() {
         $field = parent::getField();
@@ -74,19 +75,21 @@ class HasOneSelect2 extends Field
 //        if (!empty($field['widgetOptions'])) {
 //            $widgetOptions = $field['widgetOptions'];
 //        }
+        if ($this->isRedefineWidgetOptions) {
+            $widgetOptions = [];
+        }
 
-            $field = ArrayHelper::merge([
-                'type' => $type,
-                'value' => $this->getRelationObject()->getColumnValue($this->model),
-                'format' => 'raw',
-                'widgetOptions' => $widgetOptions,
-                'fieldConfig' => [
-                    //                'template' => "{input}$createButton\n{error}\n{hint}",
-                ],
-                'displayOnly' => $this->getIsRenderRelationFields(),
-                'rowOptions' => $rowOptions,
-            ], $field);
-//        }
+        $field = ArrayHelper::merge([
+            'type' => $type,
+            'value' => $this->getRelationObject()->getColumnValue($this->model),
+            'format' => 'raw',
+            'widgetOptions' => $widgetOptions,
+            'fieldConfig' => [
+                //                'template' => "{input}$createButton\n{error}\n{hint}",
+            ],
+            'displayOnly' => $this->getIsRenderRelationFields(),
+            'rowOptions' => $rowOptions,
+        ], $field);
 
         return $field;
     }
