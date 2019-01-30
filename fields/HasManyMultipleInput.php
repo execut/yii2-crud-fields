@@ -214,7 +214,10 @@ class HasManyMultipleInput extends Field
             }
         }
 
-        $query->with($this->getRelationObject()->getWith());
+        if ($this->columnRecordsLimit === null) {
+            $query->with($this->getRelationObject()->getWith());
+        }
+
 //        return $query;
         return $query;
     }
@@ -233,7 +236,7 @@ class HasManyMultipleInput extends Field
             $valueClosure = function ($row) {
                 $relationName = $this->getRelationObject()->getName();
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $row->getRelation($relationName),
+                    'query' => $row->getRelation($relationName)->limit(10),
                 ]);
                 //                $models = $model->$relationName;
                 //                $models = ArrayHelper::map($models, function ($row) {
@@ -264,6 +267,7 @@ class HasManyMultipleInput extends Field
             };
         } else {
             $valueClosure = function ($row) {
+                return $this->getRelationObject()->getColumnValue($row);
                 /**
                  * @TODO Equal functional from HasOneSelect2
                  */
@@ -291,7 +295,7 @@ class HasManyMultipleInput extends Field
             };
         }
 
-        return ArrayHelper::merge([
+        $column = ArrayHelper::merge([
             'attribute' => $this->attribute,
             'format' => 'html',
             'value' => $valueClosure,
@@ -373,6 +377,8 @@ class HasManyMultipleInput extends Field
 //                ],
 //            ],
         ], $column);
+
+        return $column;
     }
 
     /**

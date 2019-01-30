@@ -105,7 +105,7 @@ class Relation extends BaseObject
             }
         }
 
-        if ($this->getWith()) {
+        if ($this->getWith() && $this->field->columnRecordsLimit === null) {
             $query->with($this->getWith());
         }
 
@@ -270,12 +270,27 @@ class Relation extends BaseObject
 
             return $this->getLink($row, $attribute);
         } else {
-            $models = $row->{$this->getName()};
+            if ($this->field->columnRecordsLimit === null) {
+                $models = $row->{$this->getName()};
+                $count = count($models);
+            } else {
+                /**
+                 * @var ActiveQuery $relation
+                 */
+                $relation = $row->getRelation($this->getName());
+                if (!empty($relation->via)) {
+                    $relation->via[1]->limit($this->field->columnRecordsLimit);
+                }
+
+                $models = $relation->limit($this->field->columnRecordsLimit)->all();
+                $count = $relation->count();
+            }
+
             $result = [];
             $nameAttribute = $this->nameAttribute;
             $limitIsReached = false;
             foreach ($models as $key => $model) {
-                if ($key === $this->field->columnRecordsLimit) {
+                if ($key === ($this->field->columnRecordsLimit - 1)) {
                     $limitIsReached = true;
                     break;
                 }
@@ -286,11 +301,20 @@ class Relation extends BaseObject
             $result = implode(', ', $result);
             if ($limitIsReached) {
 //                $toAttribute = $this->getRelationNameFromAttribute();
-                $count = count($models);
                 $url = $this->field->url;
+                if (is_string($url)) {
+                    $url = [$url];
+                }
+
                 $attribute = key($this->getRelationQuery()->link);
+                if (empty($url[$this->getRelationFormName()])) {
+                    $url[$this->getRelationFormName()] = [];
+                }
+
                 $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
-                $result .= ' ' . Html::a('ещё ' . ($count - $this->field->columnRecordsLimit) . ' >>>', Url::to($url));
+                $label = 'все ' . $count;
+
+                $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
             }
 
             return $result;
