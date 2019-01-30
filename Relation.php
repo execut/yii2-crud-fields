@@ -295,7 +295,6 @@ class Relation extends BaseObject
 
             $result = [];
             $nameAttribute = $this->nameAttribute;
-            $limitIsReached = false;
             foreach ($models as $key => $model) {
                 $result[] = $this->getLink($model, $nameAttribute, 'primaryKey');
             }
