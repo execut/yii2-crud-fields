@@ -279,8 +279,13 @@ class Relation extends BaseObject
                  */
                 $relation = $row->getRelation($this->getName());
                 if (!empty($relation->via)) {
-                    $count = $relation->via[1]->select('DataSupplierArticleNumber,supplierId')->groupBy('DataSupplierArticleNumber,supplierId')->count();
-                    $relation->via[1]->limit($this->field->columnRecordsLimit);
+                    $via = $relation->via[1];
+                    if ($this->field->groupByVia) {
+                        $via->select($this->field->groupByVia)->groupBy($this->field->groupByVia);
+                    }
+
+                    $count = $via->count();
+                    $via->limit($this->field->columnRecordsLimit);
                 } else {
                     $count = $relation->count();
                 }
