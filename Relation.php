@@ -279,43 +279,38 @@ class Relation extends BaseObject
                  */
                 $relation = $row->getRelation($this->getName());
                 if (!empty($relation->via)) {
+                    $count = $relation->via[1]->select('DataSupplierArticleNumber,supplierId')->groupBy('DataSupplierArticleNumber,supplierId')->count();
                     $relation->via[1]->limit($this->field->columnRecordsLimit);
+                } else {
+                    $count = $relation->count();
                 }
 
                 $models = $relation->limit($this->field->columnRecordsLimit)->all();
-                $count = $relation->count();
             }
 
             $result = [];
             $nameAttribute = $this->nameAttribute;
             $limitIsReached = false;
             foreach ($models as $key => $model) {
-                if ($key === ($this->field->columnRecordsLimit - 1)) {
-                    $limitIsReached = true;
-                    break;
-                }
-
                 $result[] = $this->getLink($model, $nameAttribute, 'primaryKey');
             }
 
             $result = implode(', ', $result);
-            if ($limitIsReached) {
-//                $toAttribute = $this->getRelationNameFromAttribute();
-                $url = $this->field->url;
-                if (is_string($url)) {
-                    $url = [$url];
-                }
 
-                $attribute = key($this->getRelationQuery()->link);
-                if (empty($url[$this->getRelationFormName()])) {
-                    $url[$this->getRelationFormName()] = [];
-                }
-
-                $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
-                $label = 'все ' . $count;
-
-                $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
+            $url = $this->field->url;
+            if (is_string($url)) {
+                $url = [$url];
             }
+
+            $attribute = key($this->getRelationQuery()->link);
+            if (empty($url[$this->getRelationFormName()])) {
+                $url[$this->getRelationFormName()] = [];
+            }
+
+            $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
+            $label = 'все ' . $count;
+
+            $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
 
             return $result;
         }
