@@ -285,7 +285,6 @@ class Relation extends BaseObject
                     }
 
                     $count = $via->count();
-                    $via->limit($this->field->columnRecordsLimit);
                 } else {
                     $count = $relation->count();
                 }
@@ -301,20 +300,24 @@ class Relation extends BaseObject
 
             $result = implode(', ', $result);
 
-            $url = $this->field->url;
-            if (is_string($url)) {
-                $url = [$url];
+            $label = 'всего ' . $count;
+
+            if (!empty($relation->via)) {
+                $result .= ' ' . $label;
+            } else {
+                $url = $this->field->url;
+                if (is_string($url)) {
+                    $url = [$url];
+                }
+
+                $attribute = key($this->getRelationQuery()->link);
+                if (empty($url[$this->getRelationFormName()])) {
+                    $url[$this->getRelationFormName()] = [];
+                }
+
+                $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
+                $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
             }
-
-            $attribute = key($this->getRelationQuery()->link);
-            if (empty($url[$this->getRelationFormName()])) {
-                $url[$this->getRelationFormName()] = [];
-            }
-
-            $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
-            $label = 'все ' . $count;
-
-            $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
 
             return $result;
         }

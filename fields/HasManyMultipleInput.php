@@ -344,13 +344,6 @@ class HasManyMultipleInput extends Field
 //                'value' => function () {
 //                    return 'asdasd';
 //                },
-            'filter' => '',//$sourceInitText,
-            'filterType' => MultipleInput::class,
-            'filterWidgetOptions' => ArrayHelper::merge($this->getMultipleInputWidgetOptions(), [
-                'max' => 1,
-                'min' => 1,
-                'addButtonPosition' => MultipleInput::POS_ROW,
-            ]),
 //                [
 ////                'language' => $this->getLanguage(),
 //                'initValueText' => $sourceInitText,
@@ -378,8 +371,25 @@ class HasManyMultipleInput extends Field
 //            ],
         ], $column);
 
+        if (!array_key_exists('filter', $column) || $column['filter'] !== false) {
+            $column = ArrayHelper::merge([
+                'filter' => '',//$sourceInitText,
+                'filterType' => MultipleInput::class,
+                'filterWidgetOptions' => ArrayHelper::merge($this->getMultipleInputWidgetOptions(), [
+                    'max' => 1,
+                    'min' => 1,
+                    'addButtonPosition' => MultipleInput::POS_ROW,
+                ]),
+            ], $column);
+        }
+
         return $column;
     }
+
+//    public function getValue()
+//    {
+//        return false;
+//    }
 
     /**
      * @param $column

@@ -98,6 +98,9 @@ trait BehaviorStub
      */
     protected function _getRelationFromCache($name)
     {
+        if (!is_string($name)) {
+            echo 1;
+        }
         if (!array_key_exists($name, self::$relationsCache)) {
             self::$relationsCache[$name] = $relation = $this->getBehavior('fields')->getRelation($name);
         } else {
