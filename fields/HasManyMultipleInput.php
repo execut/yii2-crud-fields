@@ -98,7 +98,8 @@ class HasManyMultipleInput extends Field
 
     protected function getGrid() {
         return [
-            'attribute' => $this->attribute,
+//            'attribute' => $this->attribute,
+            'value' => '',
             'format' => 'raw',
             'displayOnly' => true,
 //            'labelColOptions' => [
