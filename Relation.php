@@ -315,7 +315,7 @@ class Relation extends BaseObject
                     }
 
                     $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
-                    $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
+                    $result .= ' ' . Html::a('>>>', Url::to($url));
                 }
             }
 
@@ -479,7 +479,12 @@ class Relation extends BaseObject
                 $keyAttribute = $this->field->attribute;
             }
 
-            $url['id'] = $row->$keyAttribute;
+            $pkValue = $row->$keyAttribute;
+            if (is_array($pkValue)) {
+                $url = array_merge($url, $pkValue);
+            } else {
+                $url = array_merge($url, ['id' => $pkValue]);
+            }
         }
         return $url;
     }

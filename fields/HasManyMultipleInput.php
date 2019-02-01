@@ -285,7 +285,14 @@ class HasManyMultipleInput extends Field
                             $url = str_replace('/index', '', $url);
                         }
 
-                        $currentUrl = [$url . '/update', 'id' => $vsKeyword->$pk];
+                        $currentUrl = [$url . '/update'];
+                        $pkValue = $vsKeyword->$pk;
+                        if (is_array($pkValue)) {
+                            $currentUrl = array_merge($currentUrl, $pkValue);
+                        } else {
+                            $currentUrl = array_merge($currentUrl, ['id' => $pkValue]);
+                        }
+
                         $value = $value . '&nbsp;' . Html::a('>>>', Url::to($currentUrl));
                     }
 
