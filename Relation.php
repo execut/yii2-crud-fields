@@ -301,22 +301,22 @@ class Relation extends BaseObject
             $result = implode(', ', $result);
 
             $label = 'всего ' . $count;
-
-            if (!empty($relation->via)) {
-                $result .= ' ' . $label;
-            } else {
+            $result .= ' ' . $label;
+            if (empty($relation->via)) {
                 $url = $this->field->url;
-                if (is_string($url)) {
-                    $url = [$url];
-                }
+                if ($url !== null) {
+                    if (is_string($url)) {
+                        $url = [$url];
+                    }
 
-                $attribute = key($this->getRelationQuery()->link);
-                if (empty($url[$this->getRelationFormName()])) {
-                    $url[$this->getRelationFormName()] = [];
-                }
+                    $attribute = key($this->getRelationQuery()->link);
+                    if (empty($url[$this->getRelationFormName()])) {
+                        $url[$this->getRelationFormName()] = [];
+                    }
 
-                $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
-                $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
+                    $url[$this->getRelationFormName()][$attribute] = $row->primaryKey;
+                    $result .= ' ' . Html::a($label . ' >>>', Url::to($url));
+                }
             }
 
             return $result;
