@@ -305,7 +305,7 @@ class Relation extends BaseObject
             $result = implode(', ', $result);
 
             if ($this->field->columnRecordsLimit !== null) {
-                $label = 'всего ' . $count . ' ';
+                $label = ' всего ' . $count . ' ';
                 $result .= $label;
                 if (empty($relation->via)) {
                     $url = $this->field->url;
