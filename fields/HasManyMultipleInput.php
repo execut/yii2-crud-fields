@@ -40,7 +40,7 @@ class HasManyMultipleInput extends Field
         ],
     ];
 
-    public $isHasRelationAttribute = 'isHasRelation';
+    public $isHasRelationAttribute = false;
     public $isRenderFilter = false;
     public $mainAttribute = 'name';
 
