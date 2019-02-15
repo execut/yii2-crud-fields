@@ -299,11 +299,20 @@ class Behavior extends BaseBehavior
 
     public function getGridColumns() {
         $columns = [];
-        foreach ($this->getFields() as $field) {
+        $fields = $this->getFields();
+        foreach ($fields as $fieldKey => $field) {
             $fieldColumns = $field->getColumns();
             foreach ($fieldColumns as $key => $column) {
                 if ($column !== false) {
-                    $columns[$key] = $column;
+                    if ($key > 0) {
+                        $columns[] = $column;
+                    } else {
+//                        if (array_key_exists($key, $columns)) {
+//                            throw new Exception('Column key "' . $key . '" is already existed. Set other column key for field "' . $fieldKey . '"');
+//                        }
+
+                        $columns[$key] = $column;
+                    }
                 }
             }
         }

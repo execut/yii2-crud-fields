@@ -39,6 +39,8 @@ class HasManyMultipleInput extends Field
         ],
     ];
 
+    public $isHasRelationAttribute = 'isHasRelation';
+    public $isRenderFilter = false;
     public $mainAttribute = 'name';
 
     public $isGridInColumn = false;
@@ -133,10 +135,7 @@ class HasManyMultipleInput extends Field
 //                    'allModels' => $models,
 //                ]);
                 $widgetClass = GridView::class;
-                $gridOptions = $this->gridOptions;
-                if (is_callable($gridOptions)) {
-                    $gridOptions = $gridOptions();
-                }
+                $gridOptions = $this->getGridOptions();
 
                 if (!empty($gridOptions['class'])) {
                     $widgetClass = $gridOptions['class'];
@@ -156,6 +155,15 @@ class HasManyMultipleInput extends Field
                 ], $gridOptions));
             },
         ];
+    }
+
+    protected function getGridOptions() {
+        $gridOptions = $this->gridOptions;
+        if (is_callable($gridOptions)) {
+            $gridOptions = $gridOptions();
+        }
+
+        return $gridOptions;
     }
 
     public $nameParam = null;
@@ -187,11 +195,29 @@ class HasManyMultipleInput extends Field
 
         $relatedModelClass = $this->getRelationObject()->getRelationModelClass();
         $relatedModel = new $relatedModelClass;
-        foreach ($this->value as $row) {
-            $row = array_filter($row->attributes);
-            if (!empty($row) && !empty($row[$this->mainAttribute])) {
-                $relatedModel->attributes = $row;
 
+        foreach ($this->value as $rowModel) {
+            $attribute = $this->isHasRelationAttribute;
+            if ($attribute && in_array($rowModel->$attribute, ['0', '1'])) {
+                $relationQuery = $this->getRelationObject()->getRelationQuery();
+                $relationQuery->primaryModel = null;
+                if ($rowModel->$attribute == '1') {
+                    $operator = 'IN';
+                } else {
+                    $operator = 'NOT IN';
+                }
+
+                $relationQuery->select(key($relationQuery->link));
+                $query->andWhere([
+                    $operator,
+                    current($relationQuery->link),
+                    $relationQuery,
+                ]);
+            }
+
+            $row = array_filter($rowModel->attributes);
+            if (!empty($row)) {
+                $relatedModel->attributes = $row;
                 $relationQuery = $this->getRelationObject()->getRelationQuery();
                 $relationQuery = $relatedModel->applyScopes($relationQuery);
 
@@ -206,8 +232,8 @@ class HasManyMultipleInput extends Field
                 }
 
                 $relatedAttribute = current($relationQuery->link);
-                $relationQuery->link = null;
                 $relationQuery->primaryModel = null;
+                $relationQuery->link = null;
 
                 $query->andWhere([
                     $attributePrefix . $relatedAttribute => $relationQuery,
@@ -249,8 +275,9 @@ class HasManyMultipleInput extends Field
                 //                    'allModels' => $models,
                 //                ]);
                 $widgetClass = GridView::class;
-                if (!empty($this->gridOptions['class'])) {
-                    $widgetClass = $this->gridOptions['class'];
+                $gridOptions = $this->getGridOptions();
+                if (!empty($gridOptions['class'])) {
+                    $widgetClass = $gridOptions['class'];
                 }
 
                 return $widgetClass::widget(ArrayHelper::merge([
@@ -264,7 +291,7 @@ class HasManyMultipleInput extends Field
                     //                    ],
                     'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
                     'showOnEmpty' => true,
-                ], $this->gridOptions));
+                ], $gridOptions));
             };
         } else {
             $valueClosure = function ($row) {
@@ -380,10 +407,24 @@ class HasManyMultipleInput extends Field
         ], $column);
 
         if (!array_key_exists('filter', $column) || $column['filter'] !== false) {
+            $multipleInputWidgetOptions = $this->getMultipleInputWidgetOptions(true);
+            if (!$this->isRenderFilter) {
+                if ($this->isHasRelationAttribute !== false && !empty($multipleInputWidgetOptions['columns'][$this->isHasRelationAttribute])) {
+                    $multipleInputWidgetOptions['columns'] = [
+                        'id' => $multipleInputWidgetOptions['columns']['id'],
+                        $this->isHasRelationAttribute => $multipleInputWidgetOptions['columns'][$this->isHasRelationAttribute],
+                    ];
+                } else {
+                    $column['filter'] = false;
+
+                    return $column;
+                }
+            }
+
             $column = ArrayHelper::merge([
                 'filter' => '',//$sourceInitText,
                 'filterType' => MultipleInput::class,
-                'filterWidgetOptions' => ArrayHelper::merge($this->getMultipleInputWidgetOptions(), [
+                'filterWidgetOptions' => ArrayHelper::merge($multipleInputWidgetOptions, [
                     'max' => 1,
                     'min' => 1,
                     'addButtonPosition' => MultipleInput::POS_ROW,
@@ -403,7 +444,7 @@ class HasManyMultipleInput extends Field
      * @param $column
      * @return array
      */
-    protected function getMultipleInputWidgetOptions(): array
+    protected function getMultipleInputWidgetOptions($isWithoutMainAttribute = false): array
     {
         $nameParam = $this->getNameParam();
         $relation = $this->getRelationObject();
@@ -484,6 +525,10 @@ JS
 //            }
 
             $columns = ArrayHelper::merge($pksFields, $multipleInputColumns, $this->viaColumns);
+        }
+
+        if ($isWithoutMainAttribute && $this->mainAttribute) {
+            unset($columns[$this->mainAttribute]);
         }
 
         $widgetOptions = [
