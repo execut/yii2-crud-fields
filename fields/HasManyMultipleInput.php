@@ -16,6 +16,7 @@ use unclead\multipleinput\MultipleInputColumn;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\Expression;
 use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -203,16 +204,21 @@ class HasManyMultipleInput extends Field
                 $relationQuery->primaryModel = null;
                 if ($rowModel->$attribute == '1') {
                     $operator = 'IN';
+                    $relationQuery->select(key($relationQuery->link));
+                    $query->andWhere([
+                        $operator,
+                        current($relationQuery->link),
+                        $relationQuery,
+                    ]);
                 } else {
-                    $operator = 'NOT IN';
+                    $relationQuery->andWhere([
+                        $relatedModel->tableName() . '.' . key($relationQuery->link) => new Expression($this->model->tableName() . '.' . current($relationQuery->link)),
+                    ])->select(new Expression( '1'));
+                    $query->andWhere([
+                        'NOT EXISTS',
+                        $relationQuery
+                    ]);
                 }
-
-                $relationQuery->select(key($relationQuery->link));
-                $query->andWhere([
-                    $operator,
-                    current($relationQuery->link),
-                    $relationQuery,
-                ]);
             }
 
             $row = array_filter($rowModel->attributes);
