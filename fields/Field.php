@@ -49,7 +49,7 @@ class Field extends BaseObject
     public $url = null;
     public $updateUrl = null;
     public $isNoRenderRelationLink = false;
-    public $defaultScenario = [self::SCENARIO_FORM, 'default'];
+    public $defaultScenario = self::SCENARIO_DEFAULT;
     public $name = null;
 
     /**
@@ -61,6 +61,8 @@ class Field extends BaseObject
     public $order = 0;
     public $columnRecordsLimit = null;
     public $groupByVia = null;
+
+    const SCENARIO_DEFAULT = [self::SCENARIO_FORM, 'default'];
 
     public function attach() {
         if ($this->defaultValue !== null && in_array($this->model->scenario, $this->defaultScenario)) {
@@ -354,7 +356,7 @@ class Field extends BaseObject
                 [$this->attribute],
                 'default',
                 'value' => $this->defaultValue,
-                'on' => [self::SCENARIO_FORM, 'default'],
+                'on' => $this->defaultScenario,
             ];
         }
 
@@ -375,13 +377,13 @@ class Field extends BaseObject
                 $rules[$uniqueId . 'onFormAndDefault'] = [
                     [$this->relation],
                     $rule,
-                    'on' => [self::SCENARIO_FORM, 'default'],
+                    'on' => $this->defaultScenario,
                 ];
             } else {
                 $rules[$uniqueId . $rule . 'onFormAndDefault'] = [
                     [$this->attribute],
                     $rule,
-                    'on' => [self::SCENARIO_FORM, 'default'],
+                    'on' => $this->defaultScenario,
                 ];
             }
         }

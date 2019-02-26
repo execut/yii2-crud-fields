@@ -21,6 +21,7 @@ class Behavior extends BaseBehavior
     public $relations = [];
     public $rules = [];
     const RELATIONS_SAVER_KEY = 'relationsSaver';
+    public $defaultScenario = Field::SCENARIO_DEFAULT;
 
     /**
      * @param ActiveRecord $owner
@@ -254,6 +255,7 @@ class Behavior extends BaseBehavior
                 }
             }
 
+            $field->defaultScenario = $this->defaultScenario;
             $field->model = $this->owner;
             if ($field->module === null) {
                 $field->module = $this->module;

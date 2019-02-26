@@ -533,9 +533,9 @@ JS
             $columns = ArrayHelper::merge($pksFields, $multipleInputColumns, $this->viaColumns);
         }
 
-        if ($isWithoutMainAttribute && $this->mainAttribute) {
-            unset($columns[$this->mainAttribute]);
-        }
+//        if ($isWithoutMainAttribute && $this->mainAttribute) {
+//            unset($columns[$this->mainAttribute]);
+//        }
 
         $widgetOptions = [
             'class' => MultipleInput::className(),
