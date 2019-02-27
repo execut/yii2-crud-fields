@@ -7,7 +7,7 @@ namespace execut\crudFields\fields;
 
 use kartik\detail\DetailView;
 use kartik\grid\GridView;
-use kartik\select2\Select2;
+use execut\crudFields\widgets\Select2;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
@@ -37,7 +37,7 @@ class HasOneSelect2 extends Field
             $type = DetailView::INPUT_HIDDEN;
             $rowOptions['style'] = 'display:none';
         } else {
-            $type = DetailView::INPUT_SELECT2;
+            $type = DetailView::INPUT_WIDGET;
             if ($this->createUrl) {
                 $widgetOptions['addon'] = [
                     'append' => [
@@ -81,6 +81,7 @@ class HasOneSelect2 extends Field
 
         $field = ArrayHelper::merge([
             'type' => $type,
+//            'widgetClass' => Select2::class,
             'value' => $this->getRelationObject()->getColumnValue($this->model),
             'format' => 'raw',
             'widgetOptions' => $widgetOptions,
@@ -162,6 +163,7 @@ class HasOneSelect2 extends Field
                 ],
             ]);
         }
+        $filterWidgetOptions['isRenderLink'] = false;
 //        var_dump($sourceInitText);
 //        var_dump($filterWidgetOptions);
 //        exit;
@@ -178,7 +180,7 @@ class HasOneSelect2 extends Field
 //                    return 'asdasd';
 //                },
             'filter' => $sourceInitText,
-            'filterType' => GridView::FILTER_SELECT2,
+            'filterType' => Select2::class,
             'filterWidgetOptions' => $filterWidgetOptions,
         ], $column);
     }
@@ -208,6 +210,7 @@ class HasOneSelect2 extends Field
 
         $nameParam = $this->getNameParam();
         $widgetOptions = [
+            'class' => Select2::class,
             'theme' => Select2::THEME_BOOTSTRAP,
             'language' => $this->getLanguage(),
             'initValueText' => $sourceInitText,
@@ -217,14 +220,15 @@ class HasOneSelect2 extends Field
             'options' => [
                 'placeholder' => $this->getLabel(),
             ],
+            'isRenderLink' => !$this->isNoRenderRelationLink,
         ];
 
         if ($this->url !== null) {
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'showToggleAll' => false,
+                'url' => $this->url,
                 'pluginOptions' => [
                     'ajax' => [
-                        'url' => Url::to($this->url),
                         'dataType' => 'json',
                         'data' => new JsExpression(<<<JS
             function(params) {

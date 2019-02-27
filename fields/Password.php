@@ -40,6 +40,7 @@ class Password extends Field
     {
         return [
             'type' => 'password',
+            'autocomplete' => 'off',
         ];
     }
 

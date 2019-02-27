@@ -10,7 +10,7 @@ use execut\oData\ActiveRecord;
 use kartik\detail\DetailView;
 use kartik\grid\BooleanColumn;
 use kartik\grid\GridView;
-use kartik\select2\Select2;
+use execut\crudFields\widgets\Select2;
 use unclead\multipleinput\MultipleInput;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\data\ActiveDataProvider;

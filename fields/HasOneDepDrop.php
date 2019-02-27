@@ -30,6 +30,8 @@ class HasOneDepDrop extends HasOneSelect2
 
         $widgetOptions = $field['widgetOptions'];
         unset($field['widgetOptions']);
+        unset($widgetOptions['url']);
+        unset($widgetOptions['isRenderLink']);
         unset($widgetOptions['pluginOptions']['ajax']);
 //        if ($this->getValue()) {
 //            $data = $this->getData();

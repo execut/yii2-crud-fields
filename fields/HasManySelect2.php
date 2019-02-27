@@ -7,7 +7,7 @@ namespace execut\crudFields\fields;
 
 use detalika\cars\models\ModificationsVsEngine;
 use kartik\detail\DetailView;
-use kartik\select2\Select2;
+use execut\crudFields\widgets\Select2;
 use unclead\multipleinput\MultipleInput;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\data\ActiveDataProvider;
