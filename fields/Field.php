@@ -207,7 +207,12 @@ class Field extends BaseObject
         } else {
             $field = $this->getField();
             if ($field !== false) {
-                $fields = [$this->getName() => $field];
+                $fieldKey = $this->getName();
+                if (!$fieldKey) {
+                    $fieldKey = 0;
+                }
+
+                $fields = [$fieldKey => $field];
             }
         }
 
@@ -228,7 +233,12 @@ class Field extends BaseObject
             return [];
         }
 
-        return [$this->getName() => $column];
+        $columnKey = $this->getName();
+        if (!$columnKey) {
+            $columnKey = 0;
+        }
+
+        return [$columnKey => $column];
     }
 
     public function getMultipleInputField() {

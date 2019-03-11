@@ -306,12 +306,12 @@ class Behavior extends BaseBehavior
             $fieldColumns = $field->getColumns();
             foreach ($fieldColumns as $key => $column) {
                 if ($column !== false) {
-                    if ($key > 0) {
+                    if ($key > 0 || $key === 0) {
                         $columns[] = $column;
                     } else {
-//                        if (array_key_exists($key, $columns)) {
-//                            throw new Exception('Column key "' . $key . '" is already existed. Set other column key for field "' . $fieldKey . '"');
-//                        }
+                        if (array_key_exists($key, $columns)) {
+                            throw new Exception('Column key "' . $key . '" is already existed. Set other column key for field "' . $fieldKey . '"');
+                        }
 
                         $columns[$key] = $column;
                     }
