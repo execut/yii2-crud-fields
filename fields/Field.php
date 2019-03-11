@@ -242,7 +242,7 @@ class Field extends BaseObject
     }
 
     public function getMultipleInputField() {
-        if ($this->multipleInputField === false) {
+        if ($this->multipleInputField === false || !$this->attribute) {
             return false;
         }
 
