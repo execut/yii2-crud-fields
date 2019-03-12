@@ -310,7 +310,7 @@ class Behavior extends BaseBehavior
                         $columns[] = $column;
                     } else {
                         if (array_key_exists($key, $columns)) {
-                            throw new Exception('Column key "' . $key . '" is already existed. Set other column key for field "' . $fieldKey . '"');
+//                            throw new Exception('Column key "' . $key . '" is already existed. Set other column key for field "' . $fieldKey . '"');
                         }
 
                         $columns[$key] = $column;
