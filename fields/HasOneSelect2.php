@@ -164,10 +164,11 @@ class HasOneSelect2 extends Field
             ]);
         }
         $filterWidgetOptions['isRenderLink'] = false;
-//        var_dump($sourceInitText);
+
+        //        var_dump($sourceInitText);
 //        var_dump($filterWidgetOptions);
 //        exit;
-        return ArrayHelper::merge([
+        $column = ArrayHelper::merge([
             'attribute' => $this->attribute,
             'format' => 'raw',
 //            'value' => $this->getData(),
@@ -183,6 +184,8 @@ class HasOneSelect2 extends Field
             'filterType' => Select2::class,
             'filterWidgetOptions' => $filterWidgetOptions,
         ], $column);
+
+        return $column;
     }
 
     public function getLanguage() {
