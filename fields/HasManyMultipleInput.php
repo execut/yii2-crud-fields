@@ -53,6 +53,9 @@ class HasManyMultipleInput extends Field
 
     public $isGridForOldRecords = false;
 
+    public function attach() {
+        return parent::attach();
+    }
     public function getFields($isWithRelationsFields = true)
     {
         if ($this->isGridForOldRecords && !$this->model->isNewRecord) {
