@@ -134,10 +134,13 @@ class Field extends BaseObject
         }
 
         if ($this->attribute !== null) {
-            $column = array_merge([
-                'attribute' => $this->attribute,
-                'label' => $this->getLabel(),
-            ], $column);
+            if (empty($column['attribute'])) {
+                $column['attribute'] = $this->attribute;
+            }
+
+            if (empty($column['label'])) {
+                $column['label'] = $this->getLabel();
+            }
         }
 
         return $column;

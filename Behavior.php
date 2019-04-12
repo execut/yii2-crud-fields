@@ -133,7 +133,8 @@ class Behavior extends BaseBehavior
                     $name = $relation['name'];
                 }
 
-                $saver->setRelationScenario($name, $this->owner->getScenario());
+                $scenario = $this->owner->getScenario();
+                $saver->setRelationScenario($name, $scenario);
             }
         }
     }

@@ -164,7 +164,8 @@ class HasOneSelect2 extends Field
             ]);
         }
         $filterWidgetOptions['isRenderLink'] = false;
-//        var_dump($sourceInitText);
+
+        //        var_dump($sourceInitText);
 //        var_dump($filterWidgetOptions);
 //        exit;
         $column = ArrayHelper::merge([
