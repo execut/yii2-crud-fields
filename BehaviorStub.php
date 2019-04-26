@@ -48,6 +48,10 @@ trait BehaviorStub
                  $query->viaTable($relation['viaTable'], $relation['viaLink']);
             }
 
+            if (!empty($relation['inverseOf'])) {
+                $query->inverseOf($relation['inverseOf']);
+            }
+
             if (!empty($relation['scopes'])) {
                 if (is_callable($relation['scopes'])) {
                     $scope = $relation['scopes'];
