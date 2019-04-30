@@ -222,31 +222,31 @@ class HasManyMultipleInput extends Field
                         $relationQuery
                     ]);
                 }
-            }
+            } else {
+                $row = array_filter($rowModel->attributes);
+                if (!empty($row)) {
+                    $relatedModel->attributes = $row;
+                    $relationQuery = $this->getRelationObject()->getRelationQuery();
+                    $relationQuery = $relatedModel->applyScopes($relationQuery);
 
-            $row = array_filter($rowModel->attributes);
-            if (!empty($row)) {
-                $relatedModel->attributes = $row;
-                $relationQuery = $this->getRelationObject()->getRelationQuery();
-                $relationQuery = $relatedModel->applyScopes($relationQuery);
-
-                $relationQuery->select(key($relationQuery->link));
-                $relationQuery->indexBy = key($relationQuery->link);
+                    $relationQuery->select(key($relationQuery->link));
+                    $relationQuery->indexBy = key($relationQuery->link);
 
 
-                if (!($this->model instanceof ActiveRecord)) {
-                    $attributePrefix = $this->model->tableName() . '.';
-                } else {
-                    $attributePrefix = '';
+                    if (!($this->model instanceof ActiveRecord)) {
+                        $attributePrefix = $this->model->tableName() . '.';
+                    } else {
+                        $attributePrefix = '';
+                    }
+
+                    $relatedAttribute = current($relationQuery->link);
+                    $relationQuery->primaryModel = null;
+                    $relationQuery->link = null;
+
+                    $query->andWhere([
+                        $attributePrefix . $relatedAttribute => $relationQuery,
+                    ]);
                 }
-
-                $relatedAttribute = current($relationQuery->link);
-                $relationQuery->primaryModel = null;
-                $relationQuery->link = null;
-
-                $query->andWhere([
-                    $attributePrefix . $relatedAttribute => $relationQuery,
-                ]);
             }
         }
 
