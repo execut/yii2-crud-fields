@@ -13,7 +13,7 @@ use execut\yii\jui\WidgetTrait;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-class Select2 extends \kartik\widgets\Select2
+class Select2 extends \kartik\select2\Select2
 {
     public $idAttribute = 'id';
     public $url = null;
