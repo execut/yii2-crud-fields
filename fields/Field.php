@@ -62,7 +62,7 @@ class Field extends BaseObject
     public $columnRecordsLimit = null;
     public $groupByVia = null;
 
-    const SCENARIO_DEFAULT = [self::SCENARIO_FORM, 'default'];
+    const SCENARIO_DEFAULT = [self::SCENARIO_FORM];
 
     public function attach() {
         if ($this->defaultValue !== null && in_array($this->model->scenario, $this->defaultScenario)) {
