@@ -21,7 +21,7 @@
     "kartik-v/yii2-date-range": "*",
     "kartik-v/yii2-select2": "*",
     "unclead/yii2-multiple-input": "*",
-    "la-haute-societe/yii2-save-relations-behavior": "*",
+    "execut/yii2-save-relations-behavior": "*",
     "execut/yii2-kcfinder": "*"
   },
   "autoload": {
