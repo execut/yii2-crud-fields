@@ -4,7 +4,7 @@
 
 namespace execut\crudFields\fields;
 
-use execut\yii2kcfinder\CKEditor;
+use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 class Editor extends Field
 {
