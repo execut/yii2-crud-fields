@@ -10,7 +10,7 @@ namespace execut\crudFields\fields;
 
 
 use execut\crudFields\columns\RelationColumn;
-use execut\yii\helpers\ArrayHelper;
+use yii\helpers\ArrayHelper;
 use yii\db\ActiveQuery;
 use yii\helpers\Html;
 
