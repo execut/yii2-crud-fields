@@ -110,6 +110,13 @@ trait BehaviorStub
         return $relation;
     }
 
+    public function setScenario($scenario) {
+        parent::setScenario($scenario);
+        $this->getBehavior('fields')->setRelationsScenarioFromOwner();
+
+        return $this;
+    }
+
 //    protected $_formName = null;
 //
 //    public function setFormName($formName) {
