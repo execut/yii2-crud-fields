@@ -135,19 +135,21 @@ class Behavior extends BaseBehavior
          * @var SaveRelationsBehavior $saver
          */
         $saver = $this->owner->getBehavior(self::RELATIONS_SAVER_KEY);
-        foreach ($saver->relations as $relation) {
-            $scenario = $this->owner->getScenario();
-            $saver->setRelationScenario($relation, $scenario);
-        }
-
-        foreach ($this->getRelations() as $name => $relation) {
-            if (empty($relation['scenario'])) {
-                if (!empty($relation['name'])) {
-                    $name = $relation['name'];
-                }
-
+        if ($saver) {
+            foreach ($saver->relations as $relation) {
                 $scenario = $this->owner->getScenario();
-                $saver->setRelationScenario($name, $scenario);
+                $saver->setRelationScenario($relation, $scenario);
+            }
+
+            foreach ($this->getRelations() as $name => $relation) {
+                if (empty($relation['scenario'])) {
+                    if (!empty($relation['name'])) {
+                        $name = $relation['name'];
+                    }
+
+                    $scenario = $this->owner->getScenario();
+                    $saver->setRelationScenario($name, $scenario);
+                }
             }
         }
     }
