@@ -406,30 +406,29 @@ class Behavior extends BaseBehavior
         }
 
         $rules = ArrayHelper::merge($this->rules, $rules);
-
-        uasort($rules, function ($a, $b) {
-            if (!empty($a['order'])) {
-                if (empty($b['order'])) {
-                    return -1;
-                }
-
-                if ($a['order'] > $b['order']) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-
-            return 1;
-        });
-
-        foreach ($rules as &$rule) {
+        $forOrderRules = [];
+        foreach ($rules as $key => $rule) {
             if (array_key_exists('order', $rule)) {
-                unset($rule['order']);
+                $forOrderRules[$key] = $rule;
+                unset($rules[$key]);
             }
         }
 
-        return $rules;
+        uasort($forOrderRules, function ($a, $b) {
+            if ($a['order'] > $b['order']) {
+                return -1;
+            } else {
+                return 1;
+            }
+
+            return;
+        });
+
+        foreach ($forOrderRules as &$rule) {
+            unset($rule['order']);
+        }
+
+        return ArrayHelper::merge($rules, $forOrderRules);
     }
 
     public function setModule($module) {
