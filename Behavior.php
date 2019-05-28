@@ -29,18 +29,21 @@ class Behavior extends BaseBehavior
     {
         parent::attach($owner);
         $relations = $this->getRelations();
-        if (!empty($relations)) {
-            if (!empty($this->relationsSaver)) {
-                /**
-                 * @var SaveRelationsBehavior $relationsSaver
-                 */
-                $relationsSaver = $this->relationsSaver;
-                $relationsSaver = \yii::createObject($relationsSaver);
-                $owner->attachBehavior(self::RELATIONS_SAVER_KEY, $relationsSaver);
-            } else {
-                $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
+        if (!empty($this->relationsSaver)) {
+            /**
+             * @var SaveRelationsBehavior $relationsSaver
+             */
+            $relationsSaver = $this->relationsSaver;
+            if (!isset($relationsSaver['class'])) {
+                $relationsSaver['class'] = SaveRelationsBehavior::class;
             }
 
+            $relationsSaver = \yii::createObject($relationsSaver);
+            $owner->attachBehavior(self::RELATIONS_SAVER_KEY, $relationsSaver);
+        }
+
+        if (!empty($relations)) {
+            $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
             if (!$relationsSaver) {
                 $owner->attachBehavior(self::RELATIONS_SAVER_KEY, [
                     'class' => SaveRelationsBehavior::class,
