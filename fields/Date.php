@@ -25,10 +25,15 @@ class Date extends Field
 
         $widgetOptions = $this->getWidgetOptions();
 
-        return ArrayHelper::merge([
-            'filter' => DateRangePicker::widget($widgetOptions),
+        $column = [
             'format' => ['date', 'dd.MM.yy HH:mm'],
-        ], $parentColumn);
+        ];
+
+        if ($this->rules !== false) {
+            $column['filter'] = DateRangePicker::widget($widgetOptions);
+        }
+
+        return ArrayHelper::merge($column, $parentColumn);
     }
 
     public function getField()

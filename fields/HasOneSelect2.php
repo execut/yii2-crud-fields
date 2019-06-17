@@ -136,6 +136,10 @@ class HasOneSelect2 extends Field
             return $this->nameParam;
         }
 
+        if (!($relation = $this->getRelationObject())) {
+            throw new Exception('Set nameParam or relation for calculating it');
+        }
+
         $formName = $this->getRelationObject()->getRelationFormName();
 
         return $formName . '[' . $this->nameAttribute . ']';
@@ -282,6 +286,10 @@ JS
             }
 
             return $sourcesText;
+        }
+
+        if (!empty($this->url)) {
+            return [$this->value => $this->value];
         }
 
         $result = $this->getData();
