@@ -249,7 +249,10 @@ JS
                     ]
                 ],
             ]);
-        } else {
+        }
+
+
+        if ($this->data !== null || $this->url === null) {
             $data = $this->getData();
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'data' => $data,
