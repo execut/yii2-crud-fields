@@ -109,7 +109,7 @@ class Field extends BaseObject
         if (empty($this->data)) {
             $relationObject = $this->getRelationObject();
             if (!$relationObject) {
-                throw new Exception('Data is required or set relation name');
+                return [];
             }
 
             return $relationObject->getData();
@@ -235,6 +235,8 @@ class Field extends BaseObject
     public function getColumns() {
         $column = $this->getColumn();
         if ($column === false) {
+            /** @TODO Hack for mysql */
+//            throw new Exception('Data is required or set relation name');
             return [];
         }
 

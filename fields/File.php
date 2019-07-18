@@ -154,10 +154,18 @@ class File extends Field
             $this->md5Attribute . 'Default' => [[$this->md5Attribute], 'default', 'value' => function () {
                 $dataAttribute = $this->dataAttribute;
                 $data = $this->model->$dataAttribute;
+//                if (empty($data)) {
+//                    $file = $this->model->{$this->attribute};
+//                    if (!empty($file)) {
+//                        $data = fopen($file->tempName, 'r+');
+//                    }
+//                }
+
                 if (!empty($data)) {
                     if (is_resource($data)) {
+                        $sourceData = $data;
                         $data = stream_get_contents($data);
-                        fseek($this->model->$dataAttribute, 0);
+                        fseek($sourceData, 0);
                     }
 
                     return md5($data);
