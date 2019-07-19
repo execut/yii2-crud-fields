@@ -252,7 +252,7 @@ JS
         }
 
 
-        if ($this->data !== null || $this->url === null) {
+        if (!empty($this->data) || $this->url === null) {
             $data = $this->getData();
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'data' => $data,
