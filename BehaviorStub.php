@@ -29,9 +29,13 @@ trait BehaviorStub
 
     public function rules()
     {
-        $rules = array_merge(parent::rules(), $this->getBehavior('fields')->rules());
+        $rules = array_merge(parent::rules(), $this->getBehavior('fields')->rules(), $this->rulesStub());
 
         return $rules;
+    }
+
+    public function rulesStub() {
+        return [];
     }
     
     public function getRelation($name, $throwException = true) {
