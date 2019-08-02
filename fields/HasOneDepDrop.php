@@ -75,6 +75,7 @@ class HasOneDepDrop extends HasOneSelect2
                 'pluginOptions' => [
                     'ajax' => new UnsetArrayValue(),
                 ],
+                'url' => new UnsetArrayValue(),
                 'data' => $this->getData(),
             ],
         ]);
