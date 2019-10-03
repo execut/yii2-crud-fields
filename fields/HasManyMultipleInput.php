@@ -225,6 +225,7 @@ class HasManyMultipleInput extends Field
             } else {
                 $row = array_filter($rowModel->attributes);
                 if (!empty($row)) {
+       	            $relatedModel->scenario = Field::SCENARIO_GRID;
                     $relatedModel->attributes = $row;
                     $relationQuery = $this->getRelationObject()->getRelationQuery();
                     $relationQuery = $relatedModel->applyScopes($relationQuery);
