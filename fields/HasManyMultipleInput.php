@@ -40,6 +40,7 @@ class HasManyMultipleInput extends Field
         ],
     ];
 
+    public $isHasRelationAttribute = false;
     public $isRenderFilter = false;
     public $mainAttribute = 'name';
 
@@ -200,11 +201,11 @@ class HasManyMultipleInput extends Field
         $relatedModel = new $relatedModelClass;
 
         foreach ($this->value as $rowModel) {
-            $isHasRelationAttribute = $this->isHasRelationAttribute;
-            if ($isHasRelationAttribute && in_array($rowModel->$isHasRelationAttribute, ['0', '1'])) {
+            $attribute = $this->isHasRelationAttribute;
+            if ($attribute && in_array($rowModel->$attribute, ['0', '1'])) {
                 $relationQuery = $this->getRelationObject()->getRelationQuery();
                 $relationQuery->primaryModel = null;
-                if ($rowModel->$isHasRelationAttribute == '1') {
+                if ($rowModel->$attribute == '1') {
                     $operator = 'IN';
                     $relationQuery->select(key($relationQuery->link));
                     $query->andWhere([
@@ -224,7 +225,6 @@ class HasManyMultipleInput extends Field
             } else {
                 $row = array_filter($rowModel->attributes);
                 if (!empty($row)) {
-                    $relatedModel->scenario = Field::SCENARIO_GRID;
                     $relatedModel->attributes = $row;
                     $relationQuery = $this->getRelationObject()->getRelationQuery();
                     $relationQuery = $relatedModel->applyScopes($relationQuery);
