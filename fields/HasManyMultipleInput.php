@@ -200,11 +200,11 @@ class HasManyMultipleInput extends Field
         $relatedModel = new $relatedModelClass;
 
         foreach ($this->value as $rowModel) {
-            $attribute = $this->isHasRelationAttribute;
-            if ($attribute && in_array($rowModel->$attribute, ['0', '1'])) {
+            $isHasRelationAttribute = $this->isHasRelationAttribute;
+            if ($isHasRelationAttribute && in_array($rowModel->$isHasRelationAttribute, ['0', '1'])) {
                 $relationQuery = $this->getRelationObject()->getRelationQuery();
                 $relationQuery->primaryModel = null;
-                if ($rowModel->$attribute == '1') {
+                if ($rowModel->$isHasRelationAttribute == '1') {
                     $operator = 'IN';
                     $relationQuery->select(key($relationQuery->link));
                     $query->andWhere([
