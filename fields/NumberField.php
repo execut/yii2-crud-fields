@@ -13,6 +13,9 @@ use yii\helpers\Inflector;
 
 class NumberField extends Field
 {
+    public $integerOnly = false;
+    public $min = null;
+    public $max = 2147483647;
     public function getField()
     {
         return ArrayHelper::merge(parent::getField(), [
@@ -23,7 +26,7 @@ class NumberField extends Field
     public function rules()
     {
         return ArrayHelper::merge(parent::rules(), [
-            $this->attribute . '_number' => [$this->attribute, 'number']
+            $this->attribute . '_number' => [$this->attribute, 'number', 'integerOnly' => $this->integerOnly, 'min' => $this->min, 'max' => $this->max],
         ]);
     }
 
