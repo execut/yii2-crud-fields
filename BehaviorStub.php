@@ -134,10 +134,11 @@ trait BehaviorStub
 //    }
 
 //    public function attributes() {
-//        $result = [];
+//        $result = parent::attributes();
 //        foreach ($this->getBehavior('fields')->getFields() as $field) {
-//            if ($field->attribute) {
-//                $result[] = $field->attribute;
+//            $attributes = $field->attributes();
+//            if (!empty($attributes)) {
+//                $result = array_merge($result, $attributes);
 //            }
 //        }
 //

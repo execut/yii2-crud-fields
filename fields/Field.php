@@ -6,6 +6,7 @@ namespace execut\crudFields\fields;
 
 
 use execut\crudFields\Relation;
+use execut\crudFields\widgets\HasRelationDropdown;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\base\BaseObject;
 use yii\base\Exception;
@@ -22,7 +23,14 @@ class Field extends BaseObject
 {
     const SCENARIO_GRID = 'grid';
     const SCENARIO_FORM = 'form';
+    const IS_RECORDS_VALUES = [
+        self::IS_NOT_HAS_RECORDS,
+        self::IS_HAS_RECORDS,
+    ];
+    const IS_HAS_RECORDS = 'isHasRecords';
+    const IS_NOT_HAS_RECORDS = 'isNotHasRecords';
     public $module = null;
+    public $isHasRelationAttribute = false;
     /**
      * @var ActiveRecord
      */
@@ -104,6 +112,24 @@ class Field extends BaseObject
 
         return $this->model->$attribute;
     }
+
+//    public function isCheckRecordsValue($value = null) {
+//        if ($value === null) {
+//            $value = $this->getValue();
+//        }
+//
+//        if (!is_array($value)) {
+//            $value = [$value];
+//        }
+//
+//        foreach (self::IS_RECORDS_VALUES as $excludedKey) {
+//            if (in_array($excludedKey, $value)) {
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//    }
 
     public function getData() {
         if (empty($this->data)) {
@@ -197,7 +223,7 @@ class Field extends BaseObject
             $relationObject = $this->getRelationObject();
             $relationFields = $relationObject->getRelationFields();
             foreach ($relationFields as $field) {
-                $formFields = $field->getFields(false);
+                $formFields = $field->getFields();
                 foreach ($formFields as &$formField) {
                     if (empty($formField['valueColOptions'])) {
                         $formField['valueColOptions'] = [];
@@ -245,7 +271,11 @@ class Field extends BaseObject
             $columnKey = 0;
         }
 
-        return [$columnKey => $column];
+        $columns = [
+            $columnKey => $column,
+        ];
+
+        return $columns;
     }
 
     public function getMultipleInputField() {
@@ -260,6 +290,7 @@ class Field extends BaseObject
             'options' => [
                 'placeholder' => $this->getLabel(),
             ],
+            'title' => $this->getLabel(),
         ], $this->multipleInputField);
     }
 
@@ -407,6 +438,16 @@ class Field extends BaseObject
         return $rules;
     }
 
+    protected function renderHasRelationFilter() {
+        if (($relation = $this->getRelationObject()) && $this->isHasRelationAttribute) {
+            return HasRelationDropdown::widget([
+                'model' => $this->model,
+                'attribute' => $this->isHasRelationAttribute,
+                'parentId' => Html::getInputId($this->model, $this->attribute),
+            ]);
+        }
+    }
+
     /**
      * @param $attribute
      * @return string
@@ -420,4 +461,15 @@ class Field extends BaseObject
 
         return \Yii::t('execut/' . $this->module, $attribute);
     }
+
+    public function attributes() {
+        return [];
+    }
+
+//    protected function getRelationConditionData() {
+//        return [
+//            self::IS_HAS_RECORDS => 'Есть',
+//            self::IS_NOT_HAS_RECORDS => 'Нет',
+//        ];
+//    }
 }

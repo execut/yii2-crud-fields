@@ -6,6 +6,7 @@ namespace execut\crudFields\fields;
 
 
 use detalika\cars\models\ModificationsVsEngine;
+use execut\crudFields\widgets\HasRelationDropdown;
 use kartik\detail\DetailView;
 use execut\crudFields\widgets\Select2;
 use unclead\multipleinput\MultipleInput;
@@ -41,6 +42,11 @@ class HasManySelect2 extends HasOneSelect2
 
     public function getField()
     {
+        $field = parent::getField();
+        if ($field === false) {
+            return $field;
+        }
+
         $sourceInitText = $this->getRelationObject()->getSourcesText();
         $relation = $this->getRelationObject();
         if ($relation->isVia()) {
@@ -100,7 +106,7 @@ class HasManySelect2 extends HasOneSelect2
             }
         }
 
-        return [
+        return ArrayHelper::merge([], [
             'type' => DetailView::INPUT_WIDGET,
             'attribute' => $attribute,
             'label' => $this->getLabel(),
@@ -122,7 +128,7 @@ class HasManySelect2 extends HasOneSelect2
                 'addButtonPosition' => MultipleInput::POS_HEADER,
                 'columns' => $columns
             ],
-        ];
+        ]);
     }
 
     public function getMultipleInputField()
@@ -144,5 +150,19 @@ class HasManySelect2 extends HasOneSelect2
         unset($rules[$this->attribute . '_limit']);
 
         return $rules;
+    }
+
+    protected function renderHasRelationFilter() {
+        if (($relation = $this->getRelationObject()) && $this->isHasRelationAttribute) {
+//            $attribute = $this->relation . '[][' . $this->isHasRelationAttribute . ']';
+//            var_dump($this->model->orders[0]->attributes);
+//            var_dump(Html::getAttributeValue($this->model, $attribute));
+//            exit;
+            return HasRelationDropdown::widget([
+                'model' => $this->model,
+                'attribute' => $this->isHasRelationAttribute,
+                'parentId' => Html::getInputId($this->model, $this->attribute),
+            ]);
+        }
     }
 }

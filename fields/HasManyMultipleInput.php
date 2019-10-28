@@ -40,7 +40,6 @@ class HasManyMultipleInput extends Field
         ],
     ];
 
-    public $isHasRelationAttribute = false;
     public $isRenderFilter = false;
     public $mainAttribute = 'name';
 
@@ -52,6 +51,8 @@ class HasManyMultipleInput extends Field
     ];
 
     public $isGridForOldRecords = false;
+    public $multipleInputType = MultipleInput::class;
+    public $defaultMultipleInputColumnConfig = [];
 
     public function attach() {
         return parent::attach();
@@ -129,6 +130,7 @@ class HasManyMultipleInput extends Field
                 $dataProvider = new ActiveDataProvider([
                     'query' => $model->getRelation($relationName),
                 ]);
+
 //                $models = $model->$relationName;
 //                $models = ArrayHelper::map($models, function ($row) {
 //                    return $row->primaryKey;
@@ -201,11 +203,11 @@ class HasManyMultipleInput extends Field
         $relatedModel = new $relatedModelClass;
 
         foreach ($this->value as $rowModel) {
-            $attribute = $this->isHasRelationAttribute;
-            if ($attribute && in_array($rowModel->$attribute, ['0', '1'])) {
+            $isHasRelationAttribute = $this->isHasRelationAttribute;
+            if ($isHasRelationAttribute && in_array($rowModel->$isHasRelationAttribute, ['0', '1'])) {
                 $relationQuery = $this->getRelationObject()->getRelationQuery();
                 $relationQuery->primaryModel = null;
-                if ($rowModel->$attribute == '1') {
+                if ($rowModel->$isHasRelationAttribute == '1') {
                     $operator = 'IN';
                     $relationQuery->select(key($relationQuery->link));
                     $query->andWhere([
@@ -225,7 +227,7 @@ class HasManyMultipleInput extends Field
             } else {
                 $row = array_filter($rowModel->attributes);
                 if (!empty($row)) {
-       	            $relatedModel->scenario = Field::SCENARIO_GRID;
+                    $relatedModel->scenario = Field::SCENARIO_GRID;
                     $relatedModel->attributes = $row;
                     $relationQuery = $this->getRelationObject()->getRelationQuery();
                     $relationQuery = $relatedModel->applyScopes($relationQuery);
@@ -275,6 +277,10 @@ class HasManyMultipleInput extends Field
                 $dataProvider = new ActiveDataProvider([
                     'query' => $row->getRelation($relationName)->limit(10),
                 ]);
+
+                if (!$dataProvider->totalCount) {
+                    return '';
+                }
                 //                $models = $model->$relationName;
                 //                $models = ArrayHelper::map($models, function ($row) {
                 //                    return $row->primaryKey;
@@ -290,16 +296,19 @@ class HasManyMultipleInput extends Field
                     $widgetClass = $gridOptions['class'];
                 }
 
+                $gridColumns = $this->getRelationObject()->getRelationModel()->getGridColumns();
+                unset($gridColumns['actions']);
                 return $widgetClass::widget(ArrayHelper::merge([
                     'dataProvider' => $dataProvider,
-                    'layout' => '{toolbar}{summary}{items}{pager}',
+                    'layout' => '{items}',
+//                    'layout' => '{toolbar}{summary}{items}{pager}',
                     'bordered' => false,
                     'toolbar' => '',
                     //                    'caption' => $this->getLabel(),
                     //                    'captionOptions' => [
                     //                        'class' => 'success',
                     //                    ],
-                    'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
+                    'columns' => $gridColumns,
                     'showOnEmpty' => true,
                 ], $gridOptions));
             };
@@ -541,10 +550,13 @@ JS
 //            unset($columns[$this->mainAttribute]);
 //        }
 
+        foreach ($columns as $key => $column) {
+            $columns[$key] = ArrayHelper::merge($column, $this->defaultMultipleInputColumnConfig);
+        }
+
         $widgetOptions = [
-            'class' => MultipleInput::className(),
+            'class' => MultipleInput::class,
             'allowEmptyList' => true,
-            'enableGuessTitle' => true,
             'model' => $viaRelationModel,
             'addButtonPosition' => MultipleInput::POS_HEADER,
             'columns' => $columns
@@ -553,13 +565,16 @@ JS
     }
 
     public function getMultipleInputField() {
-        $options = $this->getMultipleInputWidgetOptions();
+        if ($this->multipleInputField === false || !$this->attribute) {
+            return false;
+        }
 
-        return [
-            'type' => MultipleInput::class,
-            'name' => $this->attribute,
+        $field = parent::getMultipleInputField();
+        unset($field['options']['placeholder']);
+        $options = $this->getMultipleInputWidgetOptions();
+        return ArrayHelper::merge($field, [
             'options' => $options,
-        ];
+        ]);
     }
 
 //    public function getRelationSourceText($attribute) {

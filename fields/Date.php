@@ -16,6 +16,8 @@ class Date extends Field
     public $isTime = false;
     public $fieldType = null;
     public $displayOnly = true;
+    const DATE_JS_FORMAT = 'dd.MM.yy HH:mm:ss';
+
     public function getColumn()
     {
         $parentColumn = parent::getColumn();
@@ -26,7 +28,7 @@ class Date extends Field
         $widgetOptions = $this->getWidgetOptions();
 
         $column = [
-            'format' => ['date', 'dd.MM.yy HH:mm'],
+            'format' => ['date', self::DATE_JS_FORMAT],
         ];
 
         if ($this->rules !== false) {
@@ -50,7 +52,7 @@ class Date extends Field
         if ($this->displayOnly) {
             return array_merge($field, [
                 'displayOnly' => true,
-                'format' => ['date', 'dd.MM.yy HH:mm'],
+                'format' => ['date', self::DATE_JS_FORMAT],
             ]);
         }
 
@@ -67,7 +69,7 @@ class Date extends Field
         return [
             'type' => $type,
             'attribute' => $this->attribute,
-            'format' => ['date', 'dd.MM.yy HH:mm'],
+            'format' => ['date', self::DATE_JS_FORMAT],
             'widgetOptions' => $this->getWidgetOptions(),
         ];
     }
@@ -137,6 +139,9 @@ class Date extends Field
             'format' => $this->getFormat(true),
             'locale' => ['format' => $format, 'separator' => ' - '],
             'todayHightlight' => true,
+            'showSeconds' => true,
+            'minuteStep' => 1,
+            'secondStep' => 1,
         ];
 
         if ($this->isTime) {

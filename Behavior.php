@@ -82,7 +82,16 @@ class Behavior extends BaseBehavior
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
             ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
+            ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
         ];
+    }
+
+    public function beforeValidate() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->beforeValidate();
+        }
+
+        $this->beforeSave();
     }
 
     public function beforeUpdate() {

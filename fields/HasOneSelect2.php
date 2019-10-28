@@ -5,6 +5,7 @@
 namespace execut\crudFields\fields;
 
 
+use execut\crudFields\widgets\HasRelationDropdown;
 use kartik\detail\DetailView;
 use kartik\grid\GridView;
 use execut\crudFields\widgets\Select2;
@@ -13,6 +14,7 @@ use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
+use yii\helpers\Json;
 use yii\helpers\UnsetArrayValue;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -24,6 +26,7 @@ class HasOneSelect2 extends Field
     public $widgetOptions = [];
     public $existsValidatorOptions = [];
     public $isRedefineWidgetOptions = false;
+    public $multipleInputType = Select2::class;
 
     public function getField() {
         $field = parent::getField();
@@ -167,7 +170,17 @@ class HasOneSelect2 extends Field
                 ],
             ]);
         }
-        $filterWidgetOptions['isRenderLink'] = false;
+
+        $filterWidgetOptions = ArrayHelper::merge($filterWidgetOptions, [
+            'isRenderLink' => false,
+            'attribute' => $this->attribute,
+            'model' => $this->model,
+            'data' => $sourceInitText,
+            'initValueText' => $sourceInitText,
+            'pluginOptions' => [
+                'initValueText' => $sourceInitText,
+            ],
+        ]);
 
         //        var_dump($sourceInitText);
 //        var_dump($filterWidgetOptions);
@@ -184,12 +197,25 @@ class HasOneSelect2 extends Field
 //                'value' => function () {
 //                    return 'asdasd';
 //                },
-            'filter' => $sourceInitText,
-            'filterType' => Select2::class,
-            'filterWidgetOptions' => $filterWidgetOptions,
+            'filter' => Select2::widget($filterWidgetOptions) . $this->renderHasRelationFilter(),
+//            'filterType' => Select2::class,
+//            'filterWidgetOptions' => ,
         ], $column);
 
         return $column;
+    }
+
+    public function rules() {
+        $rules = parent::rules();
+        if ($this->isHasRelationAttribute) {
+            $rules[$this->isHasRelationAttribute . 'safe'] = [
+                [$this->isHasRelationAttribute],
+                'safe',
+                'on' => self::SCENARIO_GRID,
+            ];
+        }
+
+        return $rules;
     }
 
     public function getLanguage() {
@@ -198,11 +224,11 @@ class HasOneSelect2 extends Field
 
     public function getMultipleInputField()
     {
-        return [
-            'type' => Select2::class,
-            'name' => $this->attribute,
+        $multipleInputField = parent::getMultipleInputField();
+        unset($multipleInputField['options']);
+        return ArrayHelper::merge($multipleInputField, [
             'options' => $this->getSelect2WidgetOptions(),
-        ];
+        ]);
     }
 
     /**
@@ -231,6 +257,14 @@ class HasOneSelect2 extends Field
         ];
 
         if ($this->url !== null) {
+//            $scopeStub = [];
+//            foreach ($this->getRelationConditionData() as $key => $name) {
+//                $scopeStub[] = [
+//                    'id' => $key,
+//                    'text' => $name,
+//                ];
+//            }
+//            $scopeStub = Json::encode($scopeStub);
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'showToggleAll' => false,
                 'url' => $this->url,
@@ -245,7 +279,23 @@ class HasOneSelect2 extends Field
                 };
             }
 JS
-                        )
+                        ),
+//                        'processResults' => new JsExpression(<<<JS
+//function (data) {
+//    var items = data.results,
+//        results = $scopeStub;
+//    for (var key in items) {
+//        results[results.length] = items[key];
+//    }
+//
+//    console.debug(results);
+//
+//  return {
+//    results: results
+//  };
+//}
+//JS
+//                        )
                     ]
                 ],
             ]);
@@ -254,15 +304,28 @@ JS
 
         if (!empty($this->data) || $this->url === null) {
             $data = $this->getData();
+//            $data = ArrayHelper::merge($this->getRelationConditionData(), $data);
+//            unset($data['']);
+
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'data' => $data,
             ]);
         }
 
+//        $widgetOptions['data'] = [
+//            'asd' => 'asd',
+//        ];
         $widgetOptions = ArrayHelper::merge($widgetOptions, $this->widgetOptions);
 
         return $widgetOptions;
     }
+
+//    protected function getRelationConditionData() {
+//        return [
+//            self::IS_HAS_RECORDS => 'Есть',
+//            self::IS_NOT_HAS_RECORDS => 'Нет',
+//        ];
+//    }
 
     /**
      * @return string
@@ -285,7 +348,9 @@ JS
         if (($relation = $this->getRelationObject())) {
             $sourcesText = $relation->getSourcesText();
             if (empty($sourcesText) && ($value = $this->getValue())) {
-                $sourcesText = [$value => $value];
+                if (!is_array($value)) {
+                    $sourcesText = [$value => $value];
+                }
             }
 
             return $sourcesText;

@@ -12,10 +12,13 @@ namespace execut\crudFields\fields;
 use kartik\detail\DetailView;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\helpers\UnsetArrayValue;
 
 class DropDown extends Field
 {
     public $multipleInputType = MultipleInputColumn::TYPE_DROPDOWN;
+
     public function getField() {
         $field = parent::getField();
         if ($field === false) {
@@ -56,10 +59,12 @@ class DropDown extends Field
             return false;
         }
 
-        $data = $this->getData();
+        $data = $this->getDataWithEmptyStub();
+//        $data = ArrayHelper::merge($this->getRelationConditionData(), $data);
+//        unset($data['']);
         $config = [
             'attribute' => $this->attribute,
-            'filter' => $data,
+            'filter' => $this->renderHasRelationFilter() . Html::activeDropDownList($this->model, $this->attribute, $data),
         ];
         if ($this->valueAttribute !== null) {
             $config['value'] = $this->valueAttribute;
@@ -72,7 +77,22 @@ class DropDown extends Field
             };
         }
 
-        return ArrayHelper::merge(parent::getColumn(), $config);
+        $config = ArrayHelper::merge(parent::getColumn(), $config);
+
+        return $config;
+    }
+
+    public function rules() {
+        $rules = parent::rules();
+        if ($this->isHasRelationAttribute) {
+            $rules[$this->isHasRelationAttribute . 'safe'] = [
+                [$this->isHasRelationAttribute],
+                'safe',
+                'on' => self::SCENARIO_GRID,
+            ];
+        }
+
+        return $rules;
     }
 
     public function getMultipleInputField() {
@@ -82,7 +102,6 @@ class DropDown extends Field
         }
 
         $data = $this->getDataWithEmptyStub();
-
         $config = [
             'name' => $this->attribute,
             'items' => $data,
