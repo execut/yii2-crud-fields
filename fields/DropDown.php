@@ -126,7 +126,7 @@ class DropDown extends Field
             return $this->emptyDataStub;
         }
 
-        return ['' => $this->getLabel()];
+        return ['' => ''];
     }
 
     /**
