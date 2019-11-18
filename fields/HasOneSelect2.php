@@ -247,6 +247,7 @@ class HasOneSelect2 extends Field
             'theme' => Select2::THEME_BOOTSTRAP,
             'language' => $this->getLanguage(),
             'initValueText' => $sourceInitText,
+            'data' => $sourceInitText,
             'pluginOptions' => [
                 'allowClear' => true,
             ],
