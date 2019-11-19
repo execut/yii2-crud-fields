@@ -16,7 +16,7 @@ class Date extends Field
     public $isTime = false;
     public $fieldType = null;
     public $displayOnly = true;
-    const DATE_JS_FORMAT = 'dd.MM.yy HH:mm:ss';
+    public $isWithMicroseconds = false;
 
     public function getColumn()
     {
@@ -28,7 +28,9 @@ class Date extends Field
         $widgetOptions = $this->getWidgetOptions();
 
         $column = [
-            'format' => ['date', self::DATE_JS_FORMAT],
+            'format' => function ($value) {
+                return $this->formatDateValue($value);
+            },
         ];
 
         if ($this->rules !== false) {
@@ -36,6 +38,17 @@ class Date extends Field
         }
 
         return ArrayHelper::merge($column, $parentColumn);
+    }
+
+    protected function formatDateValue($value) {
+        if (!empty($value)) {
+            $dateTime = \DateTime::createFromFormat($this->getDatabaseFormat(true), $value, new \DateTimeZone(\yii::$app->formatter->defaultTimeZone));
+            if (!$dateTime) {
+                $dateTime = \DateTime::createFromFormat($this->getDatabaseFormat(false), $value, new \DateTimeZone(\yii::$app->formatter->defaultTimeZone));
+            }
+
+            return $dateTime->format($this->getFormat());
+        }
     }
 
     public function getField()
@@ -52,7 +65,12 @@ class Date extends Field
         if ($this->displayOnly) {
             return array_merge($field, [
                 'displayOnly' => true,
-                'format' => ['date', self::DATE_JS_FORMAT],
+                'value' => function () {
+                    $value = $this->getValue();
+                    if (!empty($value)) {
+                        return $this->formatDateValue($value);
+                    }
+                },
             ]);
         }
 
@@ -69,7 +87,7 @@ class Date extends Field
         return [
             'type' => $type,
             'attribute' => $this->attribute,
-            'format' => ['date', self::DATE_JS_FORMAT],
+            'format' => ['date', $this->getFormat()],
             'widgetOptions' => $this->getWidgetOptions(),
         ];
     }
@@ -90,16 +108,15 @@ class Date extends Field
         $t = $modelClass::tableName();
         $value = $this->model->$attribute;
         if (!empty($value) && strpos($value, ' - ') !== false) {
-            $timeFormat = 'H:i:s';
-            $dateTimeFormat = 'Y-m-d '. $timeFormat;
-
             list($from, $to) = explode(' - ', $value);
             if (!$this->isTime) {
                 $from = $from . ' 00:00:00';
                 $to = $to . ' 23:59:59';
             }
 
+            $dateTimeFormat = $this->getFormat(false, false);
             $fromUtc = self::convertToUtc($from, $dateTimeFormat);
+            $dateTimeFormat = $this->getFormat(false, false);
             $toUtc = self::convertToUtc($to, $dateTimeFormat);
 
             $query->andFilterWhere(['>=', $t . '.' . $attribute, $fromUtc])
@@ -116,8 +133,9 @@ class Date extends Field
             $dateTimeStr,
             self::getApplicationTimeZone()
         );
+
         $dateTime->setTimezone(new \DateTimeZone(self::getDatabaseTimeZone()));
-        return $dateTime->format($format);
+        return $dateTime->format('Y-m-d H:i:s.u');
     }
 
     protected static function getDatabaseTimeZone() {
@@ -134,7 +152,7 @@ class Date extends Field
      */
     protected function getWidgetOptions(): array
     {
-        $format = $this->getFormat();
+        $format = $this->getFormat(false, false);
         $pluginOptions = [
             'format' => $this->getFormat(true),
             'locale' => ['format' => $format, 'separator' => ' - '],
@@ -163,21 +181,40 @@ class Date extends Field
     /**
      * @return string
      */
-    protected function getFormat($forJs = false): string
+    protected function getFormat($isForJs = false, $isWithMicroseconds = null): string
     {
-        if ($forJs) {
+        if ($isForJs) {
             $format = 'yyyy-MM-dd';
         } else {
-            $format = 'Y-m-d';
+            $format = 'd.m.Y';
         }
 
         if ($this->isTime) {
-            if ($forJs) {
-                $format .= ' H:i:s';
-            } else {
-                $format .= ' H:i:s';
+            if ($isForJs) {
+                $isWithMicroseconds = false;
             }
+
+            $format .= ' ' . $this->getTimeFormat($isWithMicroseconds);
         }
+
+        return $format;
+    }
+
+    protected function getDatabaseFormat($isWithMicroseconds = null) {
+        $format = 'Y-m-d ' . $this->getTimeFormat($isWithMicroseconds);
+        return $format;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTimeFormat($isWithMicroseconds = null): string
+    {
+        $format = 'H:i:s';
+        if ($isWithMicroseconds || $isWithMicroseconds === null && $this->isWithMicroseconds) {
+            $format .= '.u';
+        }
+
         return $format;
     }
 }

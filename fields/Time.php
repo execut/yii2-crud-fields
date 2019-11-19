@@ -40,9 +40,21 @@ class Time extends Date
     public function getColumn()
     {
         $column = parent::getColumn();
-        unset($column['format']);
+//        unset($column['format']);
 //        unset($column['filter']);
 
         return $column;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFormat($forJs = false, $isWithMicroseconds = null): string
+    {
+        return $this->getTimeFormat($isWithMicroseconds);
+    }
+
+    protected function getDatabaseFormat($isWithMicroseconds = null) {
+        return $this->getTimeFormat($isWithMicroseconds);
     }
 }
