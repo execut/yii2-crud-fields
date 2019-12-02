@@ -14,6 +14,7 @@ use yii\helpers\Inflector;
 
 class StringField extends Field
 {
+    public $minLength = null;
     public $maxLength = 255;
 //    public $isPartially = true;
     public function applyScopes(ActiveQuery $query) {
@@ -43,8 +44,17 @@ class StringField extends Field
     protected function getRules():array
     {
         $rules = parent::getRules();
-        if ($this->maxLength) {
-            $rules['maxLength_' . $this->attribute] = [[$this->attribute], 'string', 'max' => $this->maxLength];
+        if ($this->maxLength || $this->minLength) {
+            $rule = [[$this->attribute], 'string'];
+            if ($this->maxLength) {
+                $rule['max'] = $this->maxLength;
+            }
+
+            if ($this->minLength) {
+                $rule['min'] = $this->minLength;
+            }
+
+            $rules['string_' . $this->attribute] = $rule;
         }
 
         return $rules;

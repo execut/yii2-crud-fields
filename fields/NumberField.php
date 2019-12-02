@@ -25,8 +25,13 @@ class NumberField extends Field
 
     public function rules()
     {
+        $rule = [$this->attribute, 'number', 'integerOnly' => $this->integerOnly, 'max' => $this->max];
+        if ($this->min !== null) {
+            $rule['min'] = $this->min;
+        }
+
         return ArrayHelper::merge(parent::rules(), [
-            $this->attribute . '_number' => [$this->attribute, 'number', 'integerOnly' => $this->integerOnly, 'min' => $this->min, 'max' => $this->max],
+            $this->attribute . '_number' => $rule,
         ]);
     }
 
