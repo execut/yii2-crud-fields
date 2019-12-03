@@ -95,7 +95,7 @@ class BehaviorTest extends TestCase
     public function testApplyScopes() {
         $field = $this->getMockBuilder(Field::class)->setMethods(['applyScopes'])->getMock();
         $model = new Model;
-        $q = $this->getMockBuilder(ActiveQuery::className())->setMethods(['andWhere'])->setConstructorArgs([
+        $q = $this->getMockBuilder(ActiveQuery::class)->setMethods(['andWhere'])->setConstructorArgs([
             'modelClass' => $model->className(),
         ]) ->getMock();
 
@@ -120,7 +120,7 @@ class BehaviorTest extends TestCase
         $model::$query = $q;
         $behavior->method('applyScopes')->with($model::$query)->willReturn($model::$query);
         $result = $behavior->search();
-        $this->assertInstanceOf(ActiveDataProvider::className(), $result);
+        $this->assertInstanceOf(ActiveDataProvider::class, $result);
         $this->assertEquals($q, $result->query);
     }
 

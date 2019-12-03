@@ -55,7 +55,7 @@ class FieldTest extends TestCase
 
     public function testApplyScopes() {
         $model = new Model;
-        $q = $this->getMockBuilder(ActiveQuery::className())->setMethods(['andWhere'])->setConstructorArgs([
+        $q = $this->getMockBuilder(ActiveQuery::class)->setMethods(['andWhere'])->setConstructorArgs([
             'modelClass' => $model->className(),
         ]) ->getMock();
         $q->expects($this->once())->method('andWhere')->with([
@@ -71,7 +71,7 @@ class FieldTest extends TestCase
 
     public function testApplyScopesWithNullValue() {
         $model = new Model;
-        $q = $this->getMockBuilder(ActiveQuery::className())->setMethods(['andWhere'])->setConstructorArgs([
+        $q = $this->getMockBuilder(ActiveQuery::class)->setMethods(['andWhere'])->setConstructorArgs([
             'modelClass' => $model->className(),
         ]) ->getMock();
         $q->expects($this->never())->method('andWhere');
@@ -86,7 +86,7 @@ class FieldTest extends TestCase
 
     public function testApplyScopesWithEmptyValue() {
         $model = new Model;
-        $q = $this->getMockBuilder(ActiveQuery::className())->setMethods(['andWhere'])->setConstructorArgs([
+        $q = $this->getMockBuilder(ActiveQuery::class)->setMethods(['andWhere'])->setConstructorArgs([
             'modelClass' => $model->className(),
         ]) ->getMock();
         $q->expects($this->never())->method('andWhere');
@@ -176,7 +176,7 @@ class Model extends ActiveRecord {
     public function getTestTest()
     {
         if (self::$subQuery === null) {
-            self::$subQuery = new ActiveQuery(Model::className());
+            self::$subQuery = new ActiveQuery(Model::class);
         }
 
         return self::$subQuery;

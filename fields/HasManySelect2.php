@@ -121,7 +121,7 @@ class HasManySelect2 extends HasOneSelect2
 //                ]);
             },
             'widgetOptions' => [
-                'class' => MultipleInput::className(),
+                'class' => MultipleInput::class,
                 'allowEmptyList' => true,
                 'enableGuessTitle' => true,
                 'model' => $viaRelationModel,

@@ -77,8 +77,8 @@ class DropDownTest extends TestCase
             'valueAttribute' => 'name',
         ]);
 
-        $query = Model::$query = $this->getMockBuilder(ActiveQuery::className())
-            ->setConstructorArgs([Model::className()])
+        $query = Model::$query = $this->getMockBuilder(ActiveQuery::class)
+            ->setConstructorArgs([Model::class])
             ->setMethods(['andWhere', 'all'])
             ->getMock();
         $query->method('andWhere')->with(['id' => [2]])->willReturn($query);

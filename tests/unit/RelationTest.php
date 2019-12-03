@@ -24,7 +24,7 @@ class RelationTest extends TestCase
         $relation->with = [
             'testTest2'
         ];
-        $query = $this->getMockBuilder(ActiveQuery::className())
+        $query = $this->getMockBuilder(ActiveQuery::class)
             ->setConstructorArgs(['asdasd'])
             ->setMethods(['with'])
             ->getMock();
