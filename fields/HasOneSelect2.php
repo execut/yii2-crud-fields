@@ -162,29 +162,25 @@ class HasOneSelect2 extends Field
             throw new Exception('Attribute is required');
         }
 
-        $filterWidgetOptions = [];
         if (!array_key_exists('filter', $column)) {
             $filterWidgetOptions = ArrayHelper::merge($this->getSelect2WidgetOptions(), [
+                'isRenderLink' => false,
+                'attribute' => $this->attribute,
+                'model' => $this->model,
+                'data' => $sourceInitText,
+                'initValueText' => $sourceInitText,
+                'pluginOptions' => [
+                    'initValueText' => $sourceInitText,
+                ],
                 'options' => [
                     'multiple' => true
                 ],
             ]);
+            $column['filter'] = Select2::widget($filterWidgetOptions) . $this->renderHasRelationFilter();
         }
 
-        $filterWidgetOptions = ArrayHelper::merge($filterWidgetOptions, [
-            'isRenderLink' => false,
-            'attribute' => $this->attribute,
-            'model' => $this->model,
-            'data' => $sourceInitText,
-            'initValueText' => $sourceInitText,
-            'pluginOptions' => [
-                'initValueText' => $sourceInitText,
-            ],
-        ]);
 
-        //        var_dump($sourceInitText);
-//        var_dump($filterWidgetOptions);
-//        exit;
+
         $column = ArrayHelper::merge([
             'attribute' => $this->attribute,
             'format' => 'raw',
@@ -197,7 +193,6 @@ class HasOneSelect2 extends Field
 //                'value' => function () {
 //                    return 'asdasd';
 //                },
-            'filter' => Select2::widget($filterWidgetOptions) . $this->renderHasRelationFilter(),
 //            'filterType' => Select2::class,
 //            'filterWidgetOptions' => ,
         ], $column);
