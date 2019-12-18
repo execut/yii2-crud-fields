@@ -6,6 +6,7 @@ namespace execut\crudFields\fields;
 
 
 use execut\crudFields\Relation;
+use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
@@ -25,6 +26,10 @@ class NumberField extends Field
 
     public function rules()
     {
+        if (empty($this->attribute)) {
+            throw new Exception('Attribute is required for number field');
+        }
+
         $rule = [$this->attribute, 'number', 'integerOnly' => $this->integerOnly, 'max' => $this->max];
         if ($this->min !== null) {
             $rule['min'] = $this->min;
