@@ -8,6 +8,7 @@ namespace execut\crudFields\fields;
 use detalika\requests\helpers\DateTimeHelper;
 use kartik\daterange\DateRangePicker;
 use kartik\detail\DetailView;
+use yii\base\Exception;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
@@ -45,6 +46,9 @@ class Date extends Field
             $dateTime = \DateTime::createFromFormat($this->getDatabaseFormat(true), $value, new \DateTimeZone(\yii::$app->formatter->defaultTimeZone));
             if (!$dateTime) {
                 $dateTime = \DateTime::createFromFormat($this->getDatabaseFormat(false), $value, new \DateTimeZone(\yii::$app->formatter->defaultTimeZone));
+            }
+            if (!$dateTime) {
+                throw new Exception('Failed to format date ' . $value . ' to format ' . $this->getDatabaseFormat(false));
             }
 
             return $dateTime->format($this->getFormat());
