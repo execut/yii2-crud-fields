@@ -201,7 +201,11 @@ class Date extends Field
     }
 
     protected function getDatabaseFormat($isWithMicroseconds = null) {
-        $format = 'Y-m-d ' . $this->getTimeFormat($isWithMicroseconds);
+        $format = 'Y-m-d';
+        if ($this->isTime) {
+            $format .= ' ' . $this->getTimeFormat($isWithMicroseconds);
+        }
+
         return $format;
     }
 
@@ -210,6 +214,10 @@ class Date extends Field
      */
     protected function getTimeFormat($isWithMicroseconds = null): string
     {
+        if (!$this->isTime) {
+            return false;
+        }
+
         $format = 'H:i:s';
         if ($isWithMicroseconds || $isWithMicroseconds === null && $this->isWithMicroseconds) {
             $format .= '.u';
