@@ -18,6 +18,7 @@ class Time extends Date
 {
     public $fieldType = DetailView::INPUT_TIME;
     public $multipleInputType = DetailView::INPUT_TIME;
+    public $isTime = true;
     public function getWidgetOptions(): array
     {
         return ArrayHelper::merge(parent::getWidgetOptions(), [
