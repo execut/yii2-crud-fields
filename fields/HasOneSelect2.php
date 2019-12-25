@@ -308,9 +308,7 @@ JS
 //            $data = ArrayHelper::merge($this->getRelationConditionData(), $data);
 //            unset($data['']);
 
-            $widgetOptions = ArrayHelper::merge($widgetOptions, [
-                'data' => $data,
-            ]);
+            $widgetOptions['data'] = $data;
         }
 
 //        $widgetOptions['data'] = [
