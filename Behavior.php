@@ -96,12 +96,16 @@ class Behavior extends BaseBehavior
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeUpdate();
         }
+
+        $this->beforeSave();
     }
 
     public function beforeInsert() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeInsert();
         }
+
+        $this->beforeSave();
     }
 
     public function beforeSave() {
