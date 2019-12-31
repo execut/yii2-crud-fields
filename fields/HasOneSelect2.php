@@ -333,7 +333,7 @@ JS
     {
         return Html::a('Создать', $this->createUrl, [
             'class' => 'btn btn-primary',
-            'title' => 'Создать новый автомобиль',
+            'title' => 'Создать',
             'data-toggle' => 'tooltip',
             'target' => '_blank',
         ]);
