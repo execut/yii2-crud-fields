@@ -20,8 +20,14 @@ class Password extends Field
             return false;
         }
 
+        $options = $this->getOptions();
+
+        if (!$this->getValue()) {
+            $options['onload'] = '$(this).val(\'\')';
+        }
+
         return ArrayHelper::merge($field, [
-            'options' => $this->getOptions(),
+            'options' => $options,
         ]);
     }
 
