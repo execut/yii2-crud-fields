@@ -22,8 +22,7 @@
                     } else {
                         t.passwordEl.val('').trigger('keyup');
                     }
-                }, 100);
-            t.passwordEl.val('');
+                }, 1000);
         }
     });
 }());
