@@ -16,13 +16,12 @@
             var t = this,
                 el = t.element,
                 opts = t.options,
-                handle = setTimeout(function () {
-                    if (t.passwordEl.val().length === 0) {
-                        clearInterval(handle);
-                    } else {
-                        t.passwordEl.val('').trigger('keyup');
-                    }
-                }, 1000);
+                handle = setInterval(function () {
+                    t.passwordEl.val('').trigger('keyup');
+                }, 500);
+            el.focus(function () {
+                clearInterval(handle);
+            });
         }
     });
 }());
