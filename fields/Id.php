@@ -35,7 +35,6 @@ class Id extends Field
             ];
         }
 
-
         $rules[$this->attribute . '_filter'] = [
             $this->attribute,
             'filter',
