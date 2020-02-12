@@ -25,7 +25,11 @@ $.widget('execut.Select2Execut', {
                 selectStarted = false;
             }, 500);
         });
+        //
         t._containerEl.unbind('mousedown')
+            .on('mousedown', '.select2-selection__clear', function () {
+                t._select2El.val(null).trigger('change');
+            })
             .on('selectstart', function () {
                 selectStarted = true;
             })
