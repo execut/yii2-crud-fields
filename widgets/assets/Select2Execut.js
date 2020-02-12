@@ -21,6 +21,10 @@ $.widget('execut.Select2Execut', {
                 clearTimeout(selectionEndTimeout);
             }
 
+            if (t.getSelectionText().length) {
+                selectStarted = true;
+            }
+
             selectionEndTimeout = setTimeout(function () {
                 selectStarted = false;
             }, 500);
@@ -31,7 +35,6 @@ $.widget('execut.Select2Execut', {
                 t._select2El.val(null).trigger('change');
             })
             .on('selectstart', function () {
-                selectStarted = true;
             })
             .click(function () {
                 if (!selectStarted) {
@@ -43,4 +46,13 @@ $.widget('execut.Select2Execut', {
                 }
             });
     },
+    getSelectionText: function() {
+        var text = "";
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type != "Control") {
+            text = document.selection.createRange().text;
+        }
+        return text;
+    }
 });
