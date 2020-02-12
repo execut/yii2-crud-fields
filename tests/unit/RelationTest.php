@@ -47,9 +47,16 @@ class RelationTest extends TestCase
     public function testGetSourceText() {
         $relation = $this->getRelation();
         $model = $relation->field->model;
-        $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([$model::className()]) ->setMethods(['andWhere', 'all'])->getMock();
-        $q->method('andWhere')->willReturn($q);
-        $q->method('all')->willReturn([$model]);
+        $q = $this->getMockBuilder(ActiveQuery::class)
+            ->setConstructorArgs([get_class($model)])
+            ->getMock();
+        $q->method('andWhere')
+            ->willReturn($q);
+        $q->method('all')
+            ->willReturn([$model]);
+        $model::$subQuery->link = [
+            'id' => 'id',
+        ];
         $model::$query = $q;
 
         $this->assertEquals('test', $relation->getSourceText());

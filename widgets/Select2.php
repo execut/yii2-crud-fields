@@ -26,7 +26,15 @@ class Select2 extends \kartik\select2\Select2
             $this->pluginOptions['ajax']['url'] = Url::to($this->url);
         }
 
+        $id = $this->id . '-execut';
+        Select2ExecutAsset::register($this->view);
+        echo '<div class="select2-execut" id="' . $id . '">';
         parent::run();
+        echo '<div class="select-label"></div></div>';
+        $this->view->registerJs(<<<JS
+$("#$id").Select2Execut();
+JS
+        );
     }
 
     protected function initDropDownLinkAddon(): void

@@ -15,7 +15,7 @@ class Action extends Field
     public $view = false;
     public $delete = null;
     public $order = 1000;
-    public $_column = [];
+    protected $_column = [];
 
     public function getField()
     {

@@ -18,17 +18,14 @@ class ActionTest extends TestCase
 
     public function testGetColumn() {
         $field = new Action([
-            'update' => false,
+            'update' => true,
             'delete' => false,
             'view' => false,
         ]);
+        $column = $field->getColumn();
         $this->assertEquals([
             'class' => ActionColumn::class,
-            'template' => '',
-            'updateOptions' => [
-                'class' => 'btn btn-primary',
-                'label' => 'Просмотр',
-            ],
+            'template' => '{update}',
             'deleteOptions' => [
                 'class' => 'btn btn-danger glyphicon glyphicon-remove',
                 'label' => '',
@@ -38,7 +35,17 @@ class ActionTest extends TestCase
                     'min-width' => '156px',
                 ],
             ],
-        ], $field->getColumn());
+        ], $column);
+    }
+
+    public function testGetEmptyColumn() {
+        $field = new Action([
+            'update' => false,
+            'delete' => false,
+            'view' => false,
+        ]);
+        $column = $field->getColumn();
+        $this->assertFalse($column);
     }
 
     public function testApplyScopes() {

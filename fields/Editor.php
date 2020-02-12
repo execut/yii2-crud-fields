@@ -17,7 +17,7 @@ class Editor extends Field
                 'class' => CKEditor::class,
                 'preset' => 'full',
                 'clientOptions' => [
-                    'language' => \yii::$app->language,
+                    'language' => \yii::$app ? \yii::$app->language : null,
                     'allowedContent' => true,
                 ],
             ],

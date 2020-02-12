@@ -32,7 +32,8 @@ class FieldTest extends TestCase
         $this->assertEquals([
             'name' => [
                 'class' => 'test',
-                'attribute' => 'name'
+                'attribute' => 'name',
+                'label' => 'Name'
             ],
         ], $field->columns);
     }
@@ -59,7 +60,7 @@ class FieldTest extends TestCase
             'modelClass' => $model->className(),
         ]) ->getMock();
         $q->expects($this->once())->method('andWhere')->with([
-            'name' => 'test'
+            'test_model_table.name' => 'test'
         ])->will($this->returnValue($q));
 
         $field = new Field([
@@ -125,7 +126,7 @@ class FieldTest extends TestCase
             'namesafeonFormAndDefault' => [
                 ['name'],
                 'safe',
-                'on' => [Field::SCENARIO_FORM, 'default'],
+                'on' => [Field::SCENARIO_FORM],
             ],
         ], $field->rules());
     }
@@ -146,7 +147,7 @@ class FieldTest extends TestCase
             'namerequiredonFormAndDefault' => [
                 ['name'],
                 'required',
-                'on' => [Field::SCENARIO_FORM, 'default'],
+                'on' => [Field::SCENARIO_FORM,],
             ],
         ], $field->rules());
     }
@@ -189,5 +190,10 @@ class Model extends ActiveRecord {
         } else {
             return parent::getRelation($name, $throwException);
         }
+    }
+
+    public static function tableName()
+    {
+        return 'test_model_table';
     }
 }

@@ -17,7 +17,8 @@ class BooleanTest extends TestCase
         ]);
         $this->assertEquals($field->getColumn(), [
             'class' => BooleanColumn::class,
-            'attribute' => 'visible'
+            'attribute' => 'visible',
+            'label' => 'Visible'
         ]);
     }
 

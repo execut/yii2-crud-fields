@@ -4,9 +4,8 @@
 
 namespace execut\crudFields\fields;
 
-
-use dosamigos\ckeditor\CKEditor;
 use execut\crudFields\TestCase;
+use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 use kartik\grid\GridView;
 use yii\i18n\Formatter;
@@ -26,6 +25,7 @@ class EditorTest extends TestCase
                 'preset' => 'full',
                 'clientOptions' => [
                     'allowedContent' => true,
+                    'language' => null
                 ],
             ],
         ], $field->getField());
@@ -38,6 +38,7 @@ class EditorTest extends TestCase
         $this->assertEquals([
             'attribute' => 'text',
             'value' => function () {},
+            'label' => 'Text',
         ], $field->getColumn());
     }
 }

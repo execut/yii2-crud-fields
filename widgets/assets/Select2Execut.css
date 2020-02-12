@@ -1,0 +1,4 @@
+.select2-execut .select2-container .select2-selection--single {
+  user-select: auto;
+  -webkit-user-select: auto;
+}

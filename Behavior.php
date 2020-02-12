@@ -457,6 +457,10 @@ class Behavior extends BaseBehavior
     }
 
     public function detectModule() {
+        if (!$this->owner) {
+            return;
+        }
+
         $ownerClass = get_class($this->owner);
         $parts = explode('\\', $ownerClass);
         if (!empty($parts[1])) {

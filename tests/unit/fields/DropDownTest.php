@@ -46,6 +46,7 @@ class DropDownTest extends TestCase
             'options' => [
                 'placeholder' => 'Test Test',
             ],
+            'title' => 'Test Test',
         ], $field);
     }
 
@@ -55,10 +56,13 @@ class DropDownTest extends TestCase
         $this->assertEquals([
             'attribute' => 'test_test_id',
             'value' => 'name',
-            'filter' => [
-                '' => '',
-                2 => 'test',
-            ],
+            'filter' => <<<HTML
+<select id="model-test_test_id" name="Model[test_test_id]">
+<option value=""></option>
+<option value="2" selected>test</option>
+</select>
+HTML,
+            'label' => 'Test Test'
         ], $field->getColumn());
     }
 

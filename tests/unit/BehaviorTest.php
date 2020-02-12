@@ -14,6 +14,18 @@ use yii\db\ActiveRecord;
 
 class BehaviorTest extends TestCase
 {
+    public function testGetModuleWithoutOwner() {
+        $behavior = new Behavior();
+        $this->assertNull($behavior->getModule());
+    }
+
+    public function testGetModuleDetectModule() {
+        $behavior = new Behavior([
+            'owner' => new Model()
+        ]);
+        $this->assertEquals('crudFields', $behavior->getModule());
+    }
+
     public function testSetFields() {
         $model = new Model;
         $behavior = new Behavior([
@@ -68,39 +80,43 @@ class BehaviorTest extends TestCase
             ],
         ]);
         $this->assertEquals([
-            '' => [
+            [
                 'test' => 'test'
             ]
         ], $behavior->getGridColumns());
     }
 
     public function testGetFormFields() {
-        $field = $this->getMockBuilder(Field::class)->setMethods(['getField'])->getMock();
+        $field = $this->getMockBuilder(Field::class)->getMock();
         $fieldConfig = [
-            'test' => 'test',
+            'test' => [
+                'test' => 'test',
+            ]
         ];
-        $field->expects($this->once())->method('getField')->willReturn($fieldConfig);
+        $field->expects($this->once())->method('getFields')->willReturn($fieldConfig);
         $behavior = new Behavior([
             'fields' => [
                 $field
             ],
         ]);
+        $formFields = $behavior->getFormFields();
         $this->assertEquals([
-            '0_' => [
-                'test' => 'test'
+            '0_test' => [
+                'test' => 'test',
             ]
-        ], $behavior->getFormFields());
+        ], $formFields);
     }
 
     public function testApplyScopes() {
         $field = $this->getMockBuilder(Field::class)->setMethods(['applyScopes'])->getMock();
         $model = new Model;
         $q = $this->getMockBuilder(ActiveQuery::class)->setMethods(['andWhere'])->setConstructorArgs([
-            'modelClass' => $model->className(),
+            'modelClass' => Model::class,
         ]) ->getMock();
 
         $field->expects($this->once())->method('applyScopes')->with($q)->willReturn($q);
         $behavior = new Behavior([
+            'owner' => $model,
             'fields' => [
                 $field
             ],
