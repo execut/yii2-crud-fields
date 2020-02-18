@@ -125,12 +125,28 @@ class BehaviorTest extends TestCase
         $this->assertEquals($q, $result);
     }
 
+    public function testApplyScopesFromConfig() {
+        $q = new ActiveQuery([
+            'modelClass' => Model::class,
+        ]);
+        $isScopeApplied = false;
+        $behavior = new Behavior([
+            'scopes' => [
+                function () use (&$isScopeApplied) {
+                    $isScopeApplied = true;
+                }
+            ],
+        ]);
+        $behavior->applyScopes($q);
+        $this->assertTrue($isScopeApplied);
+    }
+
     public function testSearch() {
         $behavior = $this->getMockBuilder(Behavior::class)->setMethods(['applyScopes'])->getMock();
         $model = new Model();
         $behavior->owner = $model;
         $q = new ActiveQuery([
-            'modelClass' => $model::className(),
+            'modelClass' => Model::class,
         ]);
 
         $model::$query = $q;
@@ -174,6 +190,56 @@ class BehaviorTest extends TestCase
         $this->assertEquals([], $behavior->getFormFields());
         $this->assertEquals([], $behavior->getGridColumns());
     }
+
+    public function testGetNotExistedField() {
+        $behavior = new Behavior();
+        $this->assertNull($behavior->getField('test'));
+    }
+
+    public function testGetFieldsViaRoles() {
+        $behavior = new Behavior([
+            'roles' => [
+                'testRole' => [
+                    'fields' => [
+                        'test2' => Field::class,
+                    ]
+                ],
+            ]
+        ]);
+        $this->assertCount(0, $behavior->getFields());
+        $behavior->setRole('testRole');
+        $this->assertCount(1, $behavior->getFields());
+    }
+
+    public function testGetScopes() {
+        $behavior = new Behavior([
+            'role' => 'testRole',
+            'roles' => [
+                'testRole' => [
+                    'scopes' => [
+                        function ($q) {
+                        }
+                    ]
+                ],
+            ]
+        ]);
+        $this->assertCount(1, $behavior->getScopes());
+    }
+
+//    public function testGetScopesViaRoles() {
+//        $behavior = new Behavior([
+//            'roles' => [
+//                'testRole' => [
+//                    'scopes' => [
+//                        function ($q) {
+//                        }
+//                    ]
+//                ],
+//            ]
+//        ]);
+//        $behavior->setRole('testRole');
+//        $this->assertCount(1, $behavior->getScopes());
+//    }
 }
 
 class Model extends ActiveRecord {

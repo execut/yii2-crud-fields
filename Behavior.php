@@ -18,9 +18,16 @@ class Behavior extends BaseBehavior
     protected $_module = null;
     public $relations = [];
     public $rules = [];
+    public $roles = [];
+    protected $role = null;
     const RELATIONS_SAVER_KEY = 'relationsSaver';
     public $defaultScenario = Field::SCENARIO_DEFAULT;
     public $relationsSaver = [];
+
+    public function setRole($role) {
+        $this->role = $role;
+        $this->fieldsIsInitied = false;
+    }
 
     /**
      * @param ActiveRecord $owner
@@ -224,14 +231,17 @@ class Behavior extends BaseBehavior
     }
 
     protected $_fields = [];
+    protected $_fieldsConfig = [];
     public function setFields($fields) {
-        $this->_fields = $fields;
+        $this->_fieldsConfig = $fields;
         return $this;
     }
 
     public function getField($name) {
         $fields = $this->getFields();
-        return $fields[$name];
+        if (array_key_exists($name, $fields)) {
+            return $fields[$name];
+        }
     }
 
     public function getRowOptions() {
@@ -247,13 +257,17 @@ class Behavior extends BaseBehavior
     }
 
     protected $fieldsIsInitied = false;
+
+    /**
+     * @return Field[]
+     * @throws Exception
+     */
     public function getFields() {
         if ($this->fieldsIsInitied) {
             return $this->_fields;
         }
 
-        $fields = $this->_fields;
-        $fields = array_merge($fields, $this->getPluginsFields());
+        $fields = $this->getFieldsConfig();
         foreach ($fields as $key => $field) {
             if (is_string($field)) {
                 if (@class_exists($field)) {
@@ -363,7 +377,24 @@ class Behavior extends BaseBehavior
         return $columns;
     }
 
+    public function getScopes() {
+        $scopes = $this->scopes;
+//        $scopes = array_merge($scopes, $this->getPluginsScopes());
+        if ($this->role !== null && !empty($this->roles[$this->role]) && !empty($this->roles[$this->role]['scopes'])) {
+            $scopes = ArrayHelper::merge($scopes, $this->roles[$this->role]['scopes']);
+        }
+
+        return $scopes;
+    }
+
+    public $scopes = [];
     public function applyScopes($query) {
+        if (!empty($this->scopes)) {
+            $scopes = $this->scopes;
+            foreach ($scopes as $scope) {
+                $scope($query);
+            }
+        }
         foreach ($this->getFields() as $field) {
             $query = $field->applyScopes($query);
         }
@@ -496,5 +527,19 @@ class Behavior extends BaseBehavior
         }
 
         throw new Exception('Field "' . $key . '" must bee instance of ' . Field::class . '. Instance of ' . $field . ' instead');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFieldsConfig(): array
+    {
+        $fields = $this->_fieldsConfig;
+        $fields = array_merge($fields, $this->getPluginsFields());
+        if ($this->role !== null && !empty($this->roles[$this->role]) && !empty($this->roles[$this->role]['fields'])) {
+            $fields = ArrayHelper::merge($fields, $this->roles[$this->role]['fields']);
+        }
+
+        return $fields;
     }
 }
