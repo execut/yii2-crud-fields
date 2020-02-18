@@ -26,7 +26,12 @@ class Editor extends Field
 
     public function getColumn()
     {
-        return array_merge(parent::getColumn(), [
+        $column = parent::getColumn();
+        if ($column === false) {
+            return $column;
+        }
+
+        return array_merge($column, [
             'value' => function ($row) {
                 $attribute = $this->attribute;
 

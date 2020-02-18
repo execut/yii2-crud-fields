@@ -51,7 +51,7 @@ class DropDown extends Field
             'items' => $data,
         ];
 
-        return ArrayHelper::merge(parent::getField(), $config);
+        return ArrayHelper::merge($config, parent::getField());
     }
 
     public function getColumn() {

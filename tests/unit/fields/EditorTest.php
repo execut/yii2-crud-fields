@@ -41,4 +41,14 @@ class EditorTest extends TestCase
             'label' => 'Text',
         ], $field->getColumn());
     }
+
+    public function testGetEmptyColumn() {
+        $model = new Model();
+        $field = new Editor([
+            'attribute' => 'name',
+            'model' => $model,
+            'column' => false,
+        ]);
+        $this->assertFalse($field->getColumn());
+    }
 }
