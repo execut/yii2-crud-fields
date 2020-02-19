@@ -273,14 +273,23 @@ class HasManyMultipleInput extends Field
 //        $sourcesNameAttribute = $modelClass::getFormAttributeName('name');
         if ($this->isGridInColumn) {
             $valueClosure = function ($row) {
+                /**
+                 * @var \yii\db\ActiveRecord $row
+                 */
                 $relationName = $this->getRelationObject()->getName();
-                $dataProvider = new ActiveDataProvider([
-                    'query' => $row->getRelation($relationName)->limit(10),
-                ]);
+                if ($row->isRelationPopulated($relationName)) {
+                    $allModels = $row->$relationName;
+                } else {
+                    $allModels = $row->getRelation($relationName)->limit(10)->all();
+                }
 
-                if (!$dataProvider->totalCount) {
+                if (!$allModels) {
                     return '';
                 }
+                $dataProvider = new ArrayDataProvider([
+                    'allModels' => $allModels,
+                ]);
+
                 //                $models = $model->$relationName;
                 //                $models = ArrayHelper::map($models, function ($row) {
                 //                    return $row->primaryKey;
@@ -301,6 +310,8 @@ class HasManyMultipleInput extends Field
                 return $widgetClass::widget(ArrayHelper::merge([
                     'dataProvider' => $dataProvider,
                     'layout' => '{items}',
+                    'export' => false,
+                    'resizableColumns' => false,
 //                    'layout' => '{toolbar}{summary}{items}{pager}',
                     'bordered' => false,
                     'toolbar' => '',
