@@ -225,6 +225,10 @@ class HasOneSelect2 extends Field
     public function getMultipleInputField()
     {
         $multipleInputField = parent::getMultipleInputField();
+        if ($multipleInputField == false) {
+            return $multipleInputField;
+        }
+
         unset($multipleInputField['options']);
         return ArrayHelper::merge($multipleInputField, [
             'options' => $this->getSelect2WidgetOptions(),
