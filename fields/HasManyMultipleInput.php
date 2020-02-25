@@ -191,6 +191,10 @@ class HasManyMultipleInput extends Field
 
     public function applyScopes(ActiveQuery $query)
     {
+        if ($this->columnRecordsLimit === null || $this->columnRecordsLimit === false) {
+            $query->with($this->getRelationObject()->getWith());
+        }
+
         if ($this->scope === false) {
             return $query;
         }
@@ -251,10 +255,6 @@ class HasManyMultipleInput extends Field
                     ]);
                 }
             }
-        }
-
-        if ($this->columnRecordsLimit === null || $this->columnRecordsLimit === false) {
-            $query->with($this->getRelationObject()->getWith());
         }
 
 //        return $query;
