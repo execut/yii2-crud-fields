@@ -253,7 +253,7 @@ class HasManyMultipleInput extends Field
             }
         }
 
-        if ($this->columnRecordsLimit === null) {
+        if ($this->columnRecordsLimit === null || $this->columnRecordsLimit === false) {
             $query->with($this->getRelationObject()->getWith());
         }
 
