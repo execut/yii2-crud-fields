@@ -280,7 +280,17 @@ class HasManyMultipleInput extends Field
                 if ($row->isRelationPopulated($relationName)) {
                     $allModels = $row->$relationName;
                 } else {
-                    $allModels = $row->getRelation($relationName)->limit(10)->all();
+                    $limit = $this->columnRecordsLimit;
+                    $q = $row->getRelation($relationName);
+                    if ($limit !== false) {
+                        if ($limit === null) {
+                            $limit = 10;
+                        }
+
+                        $q->limit($limit);
+                    }
+
+                    $allModels = $q->all();
                 }
 
                 if (!$allModels) {
