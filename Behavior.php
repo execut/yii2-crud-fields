@@ -82,18 +82,20 @@ class Behavior extends BaseBehavior
 
     public function events()
     {
-        return [
-            ActiveRecord::EVENT_BEFORE_VALIDATE => 'setRelationsScenarioFromOwner',
+        $events = [
+            ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
             ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
-            ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
         ];
+
+        return $events;
     }
 
     public function beforeValidate() {
+        $this->setRelationsScenarioFromOwner();
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeValidate();
         }
@@ -197,9 +199,20 @@ class Behavior extends BaseBehavior
         }
     }
 
+    /**
+     * @return Plugin[]
+     * @throws Exception
+     */
     public function getPlugins() {
         $this->initPlugins();
         return $this->_plugins;
+    }
+
+    public function getPlugin($key) {
+        $plugins = $this->getPlugins();
+        if (array_key_exists($key, $plugins)) {
+            return $plugins[$key];
+        }
     }
 
     public function getRelations() {
@@ -388,6 +401,21 @@ class Behavior extends BaseBehavior
     }
 
     public $scopes = [];
+    protected $query = null;
+    public function setQuery($q) {
+        $this->query = $q;
+
+        return $this;
+    }
+
+    public function getQuery() {
+        if ($this->query === null) {
+            $modelClass = get_class($this->owner);
+            $this->query = $modelClass::find();
+        }
+
+        return $this->query;
+    }
     public function applyScopes($query) {
         if (!empty($this->scopes)) {
             $scopes = $this->scopes;
@@ -410,8 +438,7 @@ class Behavior extends BaseBehavior
     }
 
     public function search() {
-        $modelClass = $this->owner->className();
-        $q = $modelClass::find();
+        $q = $this->getQuery();
         $q = $this->applyScopes($q);
         $dataProvider = new ActiveDataProvider([
             'query' => $q,

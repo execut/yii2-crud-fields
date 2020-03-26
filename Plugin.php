@@ -2,10 +2,11 @@
 namespace execut\crudFields;
 
 
+use yii\base\BaseObject;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
-abstract class Plugin
+abstract class Plugin extends BaseObject
 {
     /**
      * @var Behavior

@@ -10,6 +10,8 @@ namespace execut\crudFields;
 
 
 use execut\crudFields\fields\Field;
+use execut\crudFields\LinkRenderer;
+use execut\crudFields\relation\UrlMaker;
 use yii\base\BaseObject;
 use yii\base\Exception;
 use yii\db\ActiveQuery;
@@ -27,16 +29,39 @@ class Relation extends BaseObject
      * @var Field
      */
     public $field = null;
+    public $model = null;
     public $nameAttribute = 'name';
     public $valueAttribute = null;
     public $with = null;
     public $orderByAttribute = null;
+    public $updateUrl = null;
+    public $attribute = null;
+    public $columnRecordsLimit = null;
+    public $url = null;
+    public $isHasRelationAttribute = false;
+    public $isNoRenderRelationLink = false;
+    public $linkRenderer = null;
+    public $value = null;
+    public $urlMaker = null;
+    public $label = null;
+    public $idAttribute = null;
     protected $_name = null;
 
     public function setName($relation) {
         $this->_name = $relation;
 
         return $this;
+    }
+
+    public function getIdAttribute() {
+        if ($this->idAttribute !== null) {
+            return $this->idAttribute;
+        }
+
+        $relationQuery = $this->getRelationQuery();
+        if ($relationQuery) {
+            return $this->attribute;
+        }
     }
 
     public function getName() {
@@ -57,8 +82,9 @@ class Relation extends BaseObject
 
     public function applyScopes(ActiveQuery $query)
     {
-        if ($this->getRelationQuery()->multiple) {
-            $value = $this->field->value;
+        $relationQuery = $this->getRelationQuery();
+        if ($relationQuery && $relationQuery->multiple) {
+            $value = $this->getValue();
             if (!empty($value)) {
                 if ($this->isVia()) {
                     $pk = $this->getPrimaryKey();
@@ -74,8 +100,8 @@ class Relation extends BaseObject
 
                 $value = array_filter($value);
                 if (!empty($value)) {
-                    if ($this->field->model->getDb()->getSchema() instanceof Schema) {
-                        $attributePrefix = $this->field->model->tableName() . '.';
+                    if ($this->model->getDb()->getSchema() instanceof Schema) {
+                        $attributePrefix = $this->model->tableName() . '.';
                     } else {
                         $attributePrefix = '';
                     }
@@ -109,7 +135,7 @@ class Relation extends BaseObject
             }
         }
 
-        if ($this->getWith() && $this->field->columnRecordsLimit === null) {
+        if ($this->getWith() && $this->columnRecordsLimit === null) {
             $query->with($this->getWith());
         }
 
@@ -153,9 +179,10 @@ class Relation extends BaseObject
     {
         $sourceInitText = [];
         $nameAttribute = $this->nameAttribute;
-        $model = $this->field->model;
+        $model = $this->model;
         $modelClass = $this->getRelationModelClass();
-        if (empty($this->field->value)) {
+        $value = $this->getValue();
+        if (empty($value)) {
             return [];
         }
 
@@ -169,10 +196,10 @@ class Relation extends BaseObject
                 $sourceIds = $via->select('id');
             } else {
                 $viaRelationName = $via[0];
-                $viaModels = $this->field->model->$viaRelationName;
-                $viaAttribute = $this->field->attribute;
-                if (!empty($this->field->model->$viaAttribute)) {
-                    $sourceIds = $this->field->model->$viaAttribute;
+                $viaModels = $this->model->$viaRelationName;
+                $viaAttribute = $this->attribute;
+                if (!empty($this->model->$viaAttribute)) {
+                    $sourceIds = $this->model->$viaAttribute;
                     foreach ($sourceIds as $key => $sourceId) {
                         if ($sourceId instanceof ActiveRecord) {
                             $sourceIds[$key] = $sourceId->primaryKey;
@@ -186,7 +213,7 @@ class Relation extends BaseObject
                 }
             }
         } else {
-            $attribute = $this->field->attribute;
+            $attribute = $this->attribute;
             if (!empty($model->$attribute)) {
                 $sourceIds = [];
                 if (is_array($model->$attribute)) {
@@ -213,8 +240,7 @@ class Relation extends BaseObject
         }
 
         if (!empty($sourceIds)) {
-            $relationQuery = $this->getRelationQuery();
-            $pk = key($relationQuery->link);
+            $pk = $this->getRelationPrimaryKey();
             $q = $modelClass::find()->andWhere([$pk => $sourceIds]);
             $models = $q->all();
             $sourceInitText = ArrayHelper::map($models, $pk, $nameAttribute);
@@ -239,7 +265,7 @@ class Relation extends BaseObject
         $idAttribute = key($relationQuery->link);
         if ($asLink) {
             $nameAttribute = function ($model) {
-                return $this->getLink($model, $this->nameAttribute, 'primaryKey');
+                return $this->getLink($model, $this->nameAttribute);
             };
         } else {
             $nameAttribute = $this->nameAttribute;
@@ -263,13 +289,13 @@ class Relation extends BaseObject
 
 //            $q = $this->getRelationQuery();
 //            $fromAttribute = current($q->link);
-//            if (empty($this->field->model->$fromAttribute)) {
+//            if (empty($this->model->$fromAttribute)) {
 //                return;
 //            }
 
             return $this->getLink($row, $attribute);
         } else {
-            if ($this->field->columnRecordsLimit === null) {
+            if ($this->columnRecordsLimit === null) {
                 $models = $row->{$this->getName()};
                 $count = count($models);
             } else {
@@ -283,31 +309,31 @@ class Relation extends BaseObject
                         $via->select($this->field->groupByVia)->groupBy($this->field->groupByVia);
                     }
 
-                    if ($this->field->columnRecordsLimit !== null) {
+                    if ($this->columnRecordsLimit !== null) {
                         $count = $via->count();
                     }
                 } else {
-                    if ($this->field->columnRecordsLimit !== null) {
+                    if ($this->columnRecordsLimit !== null) {
                         $count = $relation->count();
                     }
                 }
 
-                $models = $relation->limit($this->field->columnRecordsLimit)->all();
+                $models = $relation->limit($this->columnRecordsLimit)->all();
             }
 
             $result = [];
             $nameAttribute = $this->nameAttribute;
             foreach ($models as $key => $model) {
-                $result[] = $this->getLink($model, $nameAttribute, 'primaryKey');
+                $result[] = $this->getLink($model, $nameAttribute);
             }
 
             $result = implode(', ', $result);
 
-            if ($this->field->columnRecordsLimit !== null) {
+            if ($this->columnRecordsLimit !== null) {
                 $label = ' всего ' . $count . ' ';
                 $result .= $label;
                 if (empty($relation->via)) {
-                    $url = $this->field->url;
+                    $url = $this->url;
                     if ($url !== null) {
                         if (is_string($url)) {
                             $url = [$url];
@@ -335,7 +361,11 @@ class Relation extends BaseObject
      */
     public function getRelationQuery()
     {
-        $relationQuery = $this->field->model->getRelation($this->getName());
+        if (!$this->model) {
+            return;
+        }
+
+        $relationQuery = $this->model->getRelation($this->getName());
 
         return $relationQuery;
     }
@@ -362,7 +392,7 @@ class Relation extends BaseObject
     public function getViaRelationQuery()
     {
         $viaRelation = $this->getViaRelation();
-        $viaRelationQuery = $this->field->model->getRelation($viaRelation);
+        $viaRelationQuery = $this->model->getRelation($viaRelation);
         return $viaRelationQuery;
     }
 
@@ -439,7 +469,7 @@ class Relation extends BaseObject
     public function getRelationModel($isFirst = false)
     {
         $name = $this->getName();
-        if ((!$this->isHasMany() || $isFirst) && ($model = $this->field->model->$name)) { //$this->field->getValue() &&
+        if ((!$this->isHasMany() || $isFirst) && ($model = $this->model->$name)) { //$this->field->getValue() &&
             if ($isFirst) {
                 if (current($model)) {
                     return current($model);
@@ -459,36 +489,11 @@ class Relation extends BaseObject
      * @param $row
      * @return array|null
      */
-    protected function getUpdateUrl($row, $keyAttribute)
+    public function getUpdateUrlParamsForModel($row)
     {
-        if (!empty($this->field->updateUrl)) {
-            return $this->field->updateUrl;
-        }
+        $urlMaker = $this->getUrlMaker();
 
-        $url = $this->field->url;
-        if ($url === null) {
-            return;
-        }
-
-        if (!is_array($url)) {
-            $url = [$url];
-        } else {
-            $url[0] = str_replace('/index', '', $url[0]) . '/update';
-        }
-
-        if (!array_key_exists('id', $url)) {
-            if ($keyAttribute === null) {
-                $keyAttribute = $this->field->attribute;
-            }
-
-            $pkValue = $row->$keyAttribute;
-            if (is_array($pkValue)) {
-                $url = array_merge($url, $pkValue);
-            } else {
-                $url = array_merge($url, ['id' => $pkValue]);
-            }
-        }
-        return $url;
+        return $urlMaker->make($row, $this->getIdAttribute());
     }
 
     /**
@@ -496,29 +501,23 @@ class Relation extends BaseObject
      * @param $attribute
      * @return mixed|string|void
      */
-    protected function getLink($row, $nameAttribute, $keyAttribute = null)
+    public function getLink($row, $nameAttribute, $idAttribute = null)
     {
-        $value = ArrayHelper::getValue($row, $nameAttribute);
-        if ($value === null) {
-            if ($row->hasProperty($this->field->attribute)) {
-                return ArrayHelper::getValue($row, $this->field->attribute);
-            }
+        if ($idAttribute === null) {
+            $idAttribute = $this->getIdAttribute();
         }
 
-        $url = $this->getUpdateUrl($row, $keyAttribute);
-        if ($this->field->isNoRenderRelationLink || $url === null) {
-            return $value;
-        }
+        $linkRenderer = $this->configureLinkRenderer($row, $nameAttribute, $idAttribute);
 
-        return $value . '&nbsp;' . Html::a('>>>', Url::to($url), ['title' => $this->field->getLabel() . ' - перейти к редактированию']);
+        return $linkRenderer->render();
     }
 
     protected function getPrimaryKey() {
-        return current($this->field->model::primaryKey());
+        return current($this->model::primaryKey());
     }
 
     protected function getRelationNameFromAttribute() {
-        $attribute = $this->field->attribute;
+        $attribute = $this->attribute;
         $relationName = lcfirst(Inflector::id2camel(str_replace('_id', '', $attribute), '_'));
 
         return $relationName;
@@ -532,7 +531,7 @@ class Relation extends BaseObject
 
 
     public function applyScopeIsExistRecords(ActiveQuery $query) {
-        $attribute = $this->field->isHasRelationAttribute;
+        $attribute = $this->isHasRelationAttribute;
         if (!$attribute) {
             return;
         }
@@ -562,7 +561,7 @@ class Relation extends BaseObject
             }
         } else if ($this->isHasMany()) {
             $model = $this->getRelationModel(true);
-            $value = $this->field->model->$attribute;
+            $value = $this->model->$attribute;
             $relationQuery = $this->getRelationQuery();
             $relationQuery->primaryModel = null;
             if ($value == '1') {
@@ -575,7 +574,7 @@ class Relation extends BaseObject
                 ]);
             } else if ($value == '0') {
                 $relationQuery->andWhere([
-                    $model->tableName() . '.' . key($relationQuery->link) => new Expression($this->field->model->tableName() . '.' . current($relationQuery->link)),
+                    $model->tableName() . '.' . key($relationQuery->link) => new Expression($this->model->tableName() . '.' . current($relationQuery->link)),
                 ])->select(new Expression('1'));
                 $query->andWhere([
                     'NOT EXISTS',
@@ -583,9 +582,9 @@ class Relation extends BaseObject
                 ]);
             }
         } else {
-            $model = $this->field->model;
+            $model = $this->model;
             $value = $model->$attribute;
-            $whereAttribute = $model->tableName() . '.' . $this->field->attribute;
+            $whereAttribute = $model->tableName() . '.' . $this->attribute;
             if ($value === '1') {
                 $query->andWhere([
                     'NOT',
@@ -618,5 +617,63 @@ class Relation extends BaseObject
 //                $whereAttribute => null,
 //            ]);
 //        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        if ($this->value !== null) {
+            return $this->value;
+        }
+
+        if ($this->field === null) {
+            return;
+        }
+
+        $value = $this->field->getValue();
+        return $value;
+    }
+
+    /**
+     * @return UrlMaker|null
+     */
+    public function getUrlMaker()
+    {
+        if ($this->urlMaker !== null) {
+            $urlMaker = $this->urlMaker;
+        } else {
+            $urlMaker = new UrlMaker($this->url, $this->updateUrl, $this->isNoRenderRelationLink);
+        }
+        return $urlMaker;
+    }
+
+    /**
+     * @param $row
+     * @param $nameAttribute
+     * @param $isByPrimary
+     *
+     * @return \execut\crudFields\LinkRendererInterface
+     */
+    public function configureLinkRenderer($row, $nameAttribute): \execut\crudFields\LinkRenderer
+    {
+        $url = $this->getUpdateUrlParamsForModel($row);
+        $linkRenderer = $this->getLinkRenderer();
+        $linkRenderer->setModel($row)
+            ->setNameAttribute($nameAttribute)
+            ->setIdAttribute($this->getIdAttribute())
+            ->setUrl($url);
+
+//        $linkRenderer = new LinkRenderer($row, $nameAttribute, $keyAttribute, $this->label, $url);
+        return $linkRenderer;
+    }
+
+    public function getLinkRenderer() {
+        if ($this->linkRenderer === null) {
+            $this->linkRenderer = new LinkRenderer(null, null, null, $this->label);
+        }
+
+        return $this->linkRenderer;
     }
 }

@@ -1,7 +1,17 @@
 namespace: execut\crudFields
 paths:
     tests: tests
-    log: tests/_output
+    output: tests/_output
     data: tests/_data
     support: tests/_support
     envs: tests/_envs
+actor_suffix: Tester
+settings:
+    bootstrap: _bootstrap.php
+    suite_class: \PHPUnit_Framework_TestSuite
+    colors: true
+    memory_limit: 1024M
+    log: true
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed

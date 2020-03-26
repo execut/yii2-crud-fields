@@ -43,10 +43,12 @@ class Field extends BaseObject
     protected $_column = [];
     protected $_field = [];
     protected $_label = null;
-    public $displayOnly = false;
+    protected $displayOnly = false;
+    protected $readOnly = null;
     public $isRenderRelationFields = false;
     public $isRenderInRelationForm = true;
 
+    public $idAttribute = null;
     public $nameAttribute = 'name';
     public $orderByAttribute = null;
     public $with = null;
@@ -72,6 +74,14 @@ class Field extends BaseObject
 
     const SCENARIO_DEFAULT = [self::SCENARIO_FORM];
 
+    public function getReadOnly() {
+        if ($this->readOnly === null) {
+            return $this->displayOnly;
+        }
+
+        return $this->readOnly;
+    }
+
     public function attach() {
         if ($this->defaultValue !== null && in_array($this->model->scenario, $this->defaultScenario)) {
             $attribute = $this->attribute;
@@ -92,6 +102,7 @@ class Field extends BaseObject
         return $this;
     }
 
+    public $urlMaker = null;
     public function getRelationObject() {
         if ($this->_relationObject === null && $this->relation !== null) {
             $this->_relationObject = new Relation([
@@ -101,6 +112,16 @@ class Field extends BaseObject
                 'orderByAttribute' => $this->orderByAttribute,
                 'with' => $this->with,
                 'valueAttribute' => $this->valueAttribute,
+                'updateUrl' => $this->updateUrl,
+                'url' => $this->url,
+                'attribute' => $this->attribute,
+                'model' => $this->model,
+                'columnRecordsLimit' => $this->columnRecordsLimit,
+                'isHasRelationAttribute' => $this->isHasRelationAttribute,
+                'isNoRenderRelationLink' => $this->isNoRenderRelationLink,
+                'label' => $this->getLabel(),
+                'idAttribute' => $this->idAttribute,
+                'urlMaker' => $this->urlMaker,
             ]);
         }
 
@@ -202,19 +223,40 @@ class Field extends BaseObject
         $displayOnly = $this->getDisplayOnly();
         if ($displayOnly) {
             $field['displayOnly'] = true;
+//            $field['hideIfEmpty'] = false;
         }
 
         return $field;
+    }
+
+    public function setFieldConfig($config) {
+        $this->_field = $config;
+
+        return $this;
+    }
+
+    public function getFieldConfig() {
+        return $this->_field;
+    }
+
+    public function setDisplayOnly($displayOnly) {
+        $this->displayOnly = $displayOnly;
+        return $this;
+    }
+
+    public function setReadOnly($readOnly) {
+        $this->readOnly = $readOnly;
+        return $this;
     }
 
     public function getDisplayOnly() {
         if ($this->displayOnly) {
             if (is_callable($this->displayOnly)) {
                 return call_user_func($this->displayOnly);
-            } else {
-                return true;
             }
         }
+
+        return $this->displayOnly;
     }
 
     public function getFields($isWithRelationsFields = true) {
@@ -301,35 +343,21 @@ class Field extends BaseObject
     }
 
     public function applyScopes(ActiveQuery $query) {
+        $scopeResult = true;
         if ($this->scope !== false) {
-            $attribute = $this->attribute;
-            $scopeResult = true;
             if ($this->scope !== null) {
                 $scope = $this->scope;
                 $scopeResult = $scope($query, $this->model);
             }
 
             if ($scopeResult && $this->attribute) {
-                $value = $this->getValue();
-                if (is_array($value)) {
-                    $value = array_filter($value);
-                }
-
-                if (!empty($value) || $value === '0') {
-                    if (!($this->model instanceof \execut\oData\ActiveRecord)) {
-                        $whereAttribute = $this->model->tableName() . '.' . $attribute;
-                    } else {
-                        $whereAttribute = $attribute;
-                    }
-
-                    $query->andFilterWhere([
-                        $whereAttribute => $value,
-                    ]);
-                }
+                $this->_applyScopes($query);
             }
         }
 
-        $this->applyRelationScopes($query);
+        if ($scopeResult) {
+            $this->applyRelationScopes($query);
+        }
 
         return $query;
     }
@@ -414,7 +442,7 @@ class Field extends BaseObject
             'on' => self::SCENARIO_GRID,
         ];
 
-        if (!$this->getDisplayOnly()) {
+        if (!$this->getReadOnly()) {
             if ($this->required) {
                 $rule = 'required';
             } else {
@@ -466,10 +494,27 @@ class Field extends BaseObject
         return [];
     }
 
-//    protected function getRelationConditionData() {
-//        return [
-//            self::IS_HAS_RECORDS => 'Есть',
-//            self::IS_NOT_HAS_RECORDS => 'Нет',
-//        ];
-//    }
+    /**
+     * @param ActiveQuery $query
+     */
+    protected function _applyScopes(ActiveQuery $query)
+    {
+        $attribute = $this->attribute;
+        $value = $this->getValue();
+        if (is_array($value)) {
+            $value = array_filter($value);
+        }
+
+        if (!empty($value) || $value === '0') {
+            if (!($this->model instanceof \execut\oData\ActiveRecord)) {
+                $whereAttribute = $this->model->tableName() . '.' . $attribute;
+            } else {
+                $whereAttribute = $attribute;
+            }
+
+            $query->andFilterWhere([
+                $whereAttribute => $value,
+            ]);
+        }
+    }
 }

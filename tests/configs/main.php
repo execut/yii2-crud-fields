@@ -10,6 +10,12 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'enableStrictParsing' => true,
+            'showScriptName' => false,
+            'baseUrl' => ''
+        ],
         'assetManager' => [
             'basePath' => __DIR__ . '/../../tests/assets/',
             'bundles' => [
@@ -38,6 +44,9 @@ return [
                 ],
             ],
         ],
+//        'view' => [
+//            'class' => \yii\web\View::class,
+//        ],
 //        'cache' => [
 //            'class' => 'yii\caching\FileCache',
 //        ],

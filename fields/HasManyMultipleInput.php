@@ -191,6 +191,9 @@ class HasManyMultipleInput extends Field
 
     public function applyScopes(ActiveQuery $query)
     {
+        /**
+         * @TODO Учесть with=false
+         */
         if ($this->columnRecordsLimit === null || $this->columnRecordsLimit === false) {
             $query->with($this->getRelationObject()->getWith());
         }
@@ -282,6 +285,7 @@ class HasManyMultipleInput extends Field
                 } else {
                     $limit = $this->columnRecordsLimit;
                     $q = $row->getRelation($relationName);
+
                     if ($limit !== false) {
                         if ($limit === null) {
                             $limit = 10;

@@ -107,10 +107,42 @@ class BehaviorTest extends TestCase
         ], $formFields);
     }
 
+    public function testGetQueryDefault() {
+        $model = new Model();
+        $behavior = new Behavior([
+            'owner' => $model
+        ]);
+
+        $q = new ActiveQuery([
+            'modelClass' => Model::class,
+        ]);
+        $model::$query = $q;
+        $this->assertEquals($q, $behavior->getQuery());
+    }
+
+    public function testSetQueryFromConstructor() {
+        $q = new ActiveQuery([
+            'modelClass' => Model::class,
+        ]);
+        $behavior = new Behavior([
+            'query' => $q,
+        ]);
+        $this->assertEquals($q, $behavior->getQuery());
+    }
+
+    public function testSetQuery() {
+        $behavior = new Behavior();
+        $q = new ActiveQuery([
+            'modelClass' => Model::class,
+        ]);
+        $this->assertEquals($behavior, $behavior->setQuery($q));
+        $this->assertEquals($q, $behavior->getQuery());
+    }
+
     public function testApplyScopes() {
-        $field = $this->getMockBuilder(Field::class)->setMethods(['applyScopes'])->getMock();
+        $field = $this->getMockBuilder(Field::class)->getMock();
         $model = new Model;
-        $q = $this->getMockBuilder(ActiveQuery::class)->setMethods(['andWhere'])->setConstructorArgs([
+        $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'modelClass' => Model::class,
         ]) ->getMock();
 
@@ -142,15 +174,13 @@ class BehaviorTest extends TestCase
     }
 
     public function testSearch() {
-        $behavior = $this->getMockBuilder(Behavior::class)->setMethods(['applyScopes'])->getMock();
-        $model = new Model();
-        $behavior->owner = $model;
         $q = new ActiveQuery([
             'modelClass' => Model::class,
         ]);
 
-        $model::$query = $q;
-        $behavior->method('applyScopes')->with($model::$query)->willReturn($model::$query);
+        $behavior = $this->getMockBuilder(Behavior::class)->onlyMethods(['applyScopes'])->setConstructorArgs([['query' => $q]])->getMock();
+
+        $behavior->method('applyScopes')->with($q)->willReturn($q);
         $result = $behavior->search();
         $this->assertInstanceOf(ActiveDataProvider::class, $result);
         $this->assertEquals($q, $result->query);
@@ -177,7 +207,7 @@ class BehaviorTest extends TestCase
     }
 
     public function testReturnFalse() {
-        $field = $this->getMockBuilder(Field::class)->setMethods(['rules', 'getField', 'getColumn'])->getMock();
+        $field = $this->getMockBuilder(Field::class)->onlyMethods(['rules', 'getField', 'getColumn'])->getMock();
         $field->expects($this->once())->method('rules')->willReturn(false);
         $field->expects($this->once())->method('getField')->willReturn(false);
         $field->expects($this->once())->method('getColumn')->willReturn(false);
@@ -226,6 +256,33 @@ class BehaviorTest extends TestCase
         $this->assertCount(1, $behavior->getScopes());
     }
 
+    public function testGetPlugins() {
+        $behavior = new Behavior([
+            'plugins' => [
+                'test' => [
+                    'class' => BehaviorTestPlugin::class,
+                ]
+            ]
+        ]);
+        $this->assertCount(1, $behavior->getPlugins());
+    }
+
+    public function testGetPluginByKey() {
+        $behavior = new Behavior([
+            'plugins' => [
+                'test' => [
+                    'class' => BehaviorTestPlugin::class,
+                ]
+            ]
+        ]);
+        $this->assertInstanceOf(BehaviorTestPlugin::class, $behavior->getPlugin('test'));
+    }
+
+    public function testGetPluginByNull() {
+        $behavior = new Behavior();
+        $this->assertNull($behavior->getPlugin('test'));
+    }
+
 //    public function testGetScopesViaRoles() {
 //        $behavior = new Behavior([
 //            'roles' => [
@@ -248,4 +305,7 @@ class Model extends ActiveRecord {
     {
         return self::$query;
     }
+}
+
+class BehaviorTestPlugin extends Plugin {
 }
