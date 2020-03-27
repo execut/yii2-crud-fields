@@ -59,4 +59,15 @@ class Select2Test extends TestCase
             'There should be Select2Execut asset registered.'
         );
     }
+
+    public function testWidgetWithArrayValue() {
+        Select2::widget([
+            'id' => 'test-widget',
+            'name' => 'test',
+            'value' => [],
+            'initValueText' => [
+                'test'
+            ]
+        ]);
+    }
 }
