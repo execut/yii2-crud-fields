@@ -12,14 +12,14 @@ use \yii\base\Model;
 
 class LinkRenderer
 {
-    protected ?string $nameAttribute = null;
+    protected $nameAttribute = null;
     protected ?string $idAttribute = null;
     protected ?Model $model = null;
 
     protected $url = null;
     protected ?string $label = null;
 
-    public function __construct(Model $model = null, string $nameAttribute = null, string $idAttribute = null, string $label = null, $url = null)
+    public function __construct(Model $model = null, $nameAttribute = null, string $idAttribute = null, string $label = null, $url = null)
     {
         $this->nameAttribute = $nameAttribute;
         $this->idAttribute = $idAttribute;
@@ -35,7 +35,9 @@ class LinkRenderer
     }
 
     public function getNameAttribute() {
-        return $this->nameAttribute;
+        $name = $this->nameAttribute;
+
+        return $name;
     }
 
     public function setIdAttribute($name) {
