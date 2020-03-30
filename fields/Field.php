@@ -229,6 +229,11 @@ class Field extends BaseObject
         return $field;
     }
 
+    public function getDetailViewField() {
+        $detailViewField = new DetailViewField($this->model, $this->_field, $this->attribute, $this->displayOnly);
+        return $detailViewField;
+    }
+
     public function setFieldConfig($config) {
         $this->_field = $config;
 

@@ -51,7 +51,7 @@ class RelationTest extends \Codeception\Test\Unit
     }
 
     public function testGetColumnValue() {
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
         $model->testTest = $model;
         $relation = new Relation([
             'name' => 'testTest',
@@ -63,7 +63,7 @@ class RelationTest extends \Codeception\Test\Unit
     }
 
     public function testGetSourceText() {
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
         $model->testTest = $model;
 
         $relation = new Relation([
@@ -117,7 +117,7 @@ class RelationTest extends \Codeception\Test\Unit
      */
     protected function getRelation()
     {
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
         $model->testTest = $model;
         $field = new Field([
             'url' => ['test/test'],
@@ -146,7 +146,7 @@ class RelationTest extends \Codeception\Test\Unit
 
     public function testGetUpdateUrlParamsViaUrlMaker() {
         $urlMaker = $this->getMockBuilder(UrlMaker::class)->getMock();
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
         $urlMaker->expects($this->once())
             ->method('make')
             ->with($model, 'id')
@@ -170,7 +170,7 @@ class RelationTest extends \Codeception\Test\Unit
     }
 
     public function testGetLink() {
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
         $nameAttribute = 'test name attribute';
         $renderer = $this->getMockBuilder(LinkRenderer::class)->onlyMethods(['render'])->getMock();
         $renderer->expects($this->once())
@@ -193,7 +193,7 @@ class RelationTest extends \Codeception\Test\Unit
 
     public function testConfigureLinkRenderer() {
         $testUrl = ['test'];
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
         $nameAttribute = 'test name attribute';
         $idAttribute = 'test id attribute';
 
@@ -240,7 +240,7 @@ class RelationTest extends \Codeception\Test\Unit
     }
 
     public function testGetIdAttributeCalculateForHasMany() {
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
 
         $relation = new Relation([
             'model' => $model,
@@ -251,7 +251,7 @@ class RelationTest extends \Codeception\Test\Unit
     }
 
     public function testGetIdAttributeCalculateForDirectSetWhenExistedRelation() {
-        $model = new fields\Model();
+        $model = new fields\FieldTestModel();
 
         $relation = new Relation([
             'model' => $model,

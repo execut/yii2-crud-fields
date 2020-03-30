@@ -11,7 +11,7 @@ use kartik\detail\DetailView;
 class IdTest extends TestCase
 {
     public function testGetField() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $field = new Id([
             'attribute' => 'name',
             'model' => $model

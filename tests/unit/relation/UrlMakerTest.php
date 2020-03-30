@@ -10,7 +10,7 @@ class UrlMakerTest extends TestCase
 {
     public function testGetUpdateUrlWithoutUrl() {
         $urlMaker = new UrlMaker();
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertNull($urlMaker->make($model, ''));
     }
 
@@ -19,7 +19,7 @@ class UrlMakerTest extends TestCase
             'test',
             'id' => 1,
         ]);
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertEquals([
             'test/update',
             'id' => 1,
@@ -30,7 +30,7 @@ class UrlMakerTest extends TestCase
         $urlMaker = new UrlMaker([
             'test',
         ]);
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $model->id = 1;
         $this->assertEquals([
             'test/update',
@@ -42,7 +42,7 @@ class UrlMakerTest extends TestCase
         $urlMaker = new UrlMaker([
             'test',
         ]);
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $model->badAttribute = 1;
         $this->assertNull($urlMaker->make($model, 'badAttribute'));
     }
@@ -51,7 +51,7 @@ class UrlMakerTest extends TestCase
         $urlMaker = new UrlMaker([
             'test',
         ]);
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $model->id = [
             'pk1' => 'pk1_value',
             'pk2' => 'pk2_value',
@@ -75,7 +75,7 @@ class UrlMakerTest extends TestCase
 
     public function testMakeFromUpdateUrl() {
         $maker = new UrlMaker(null, ['test']);
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertEquals(['test'], $maker->make($model, 'id'));
     }
 
@@ -86,7 +86,7 @@ class UrlMakerTest extends TestCase
 
     public function testMakeWhenIsNoRenderRelationLink() {
         $maker = new UrlMaker(null, ['test'], true);
-        $model = new \execut\crudFields\fields\Model();
+        $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertNull($maker->make($model, 'id'));
     }
 }

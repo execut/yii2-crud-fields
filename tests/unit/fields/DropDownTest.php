@@ -57,7 +57,7 @@ class DropDownTest extends TestCase
             'attribute' => 'test_test_id',
             'value' => 'name',
             'filter' => <<<HTML
-<select id="model-test_test_id" name="Model[test_test_id]">
+<select id="fieldtestmodel-test_test_id" name="FieldTestModel[test_test_id]">
 <option value=""></option>
 <option value="2" selected>test</option>
 </select>
@@ -71,7 +71,7 @@ HTML,
      */
     protected function getField()
     {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->testTest = $model;
 
         $field = new DropDown([
@@ -81,14 +81,14 @@ HTML,
             'valueAttribute' => 'name',
         ]);
 
-        $query = Model::$query = $this->getMockBuilder(ActiveQuery::class)
-            ->setConstructorArgs([Model::class])
+        $query = FieldTestModel::$query = $this->getMockBuilder(ActiveQuery::class)
+            ->setConstructorArgs([FieldTestModel::class])
             ->setMethods(['andWhere', 'all'])
             ->getMock();
         $query->method('andWhere')->with(['id' => [2]])->willReturn($query);
         $query->method('all')->willReturn([$field->model]);
-        Model::$subQuery = clone Model::$query;
-        Model::$subQuery->link = [
+        FieldTestModel::$subQuery = clone FieldTestModel::$query;
+        FieldTestModel::$subQuery->link = [
             'id' => 'test_test_id',
         ];
 

@@ -218,7 +218,7 @@ class HasOneSelect2 extends Field
         return $rules;
     }
 
-    public function getLanguage() {
+    protected function getLanguage() {
         return substr(\yii::$app->language, 0, 2);
     }
 

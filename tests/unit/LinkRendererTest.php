@@ -3,11 +3,11 @@
 
 namespace execut\crudFields;
 
-use \execut\crudFields\fields\Model;
+use \execut\crudFields\fields\FieldTestModel;
 class LinkRendererTest extends \Codeception\Test\Unit
 {
     public function testRenderWithEmptyName() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->test_test_id = 2;
         $model->name = null;
 
@@ -17,7 +17,7 @@ class LinkRendererTest extends \Codeception\Test\Unit
     }
 
     public function testRenderWithoutIdAttribute() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->name = 'test';
 
         $renderer = new LinkRenderer($model, 'name');
@@ -26,7 +26,7 @@ class LinkRendererTest extends \Codeception\Test\Unit
     }
 
     public function testRenderWithoutUrlMaker() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->name = 'test';
 
         $renderer = new LinkRenderer($model, 'name', 'test_test_id');
@@ -34,7 +34,7 @@ class LinkRendererTest extends \Codeception\Test\Unit
     }
 
     public function testRenderByAttribute() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->name = 'test';
         $model->test_test_id = 3;
 
@@ -44,7 +44,7 @@ class LinkRendererTest extends \Codeception\Test\Unit
     }
 
     public function testRenderByAttributeWithLabel() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->name = 'test';
         $model->test_test_id = 3;
 
@@ -54,13 +54,13 @@ class LinkRendererTest extends \Codeception\Test\Unit
     }
 
     public function testGetModel() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $renderer = new LinkRenderer($model);
         $this->assertEquals($model, $renderer->getModel());
     }
 
     public function testSetModel() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $renderer = new LinkRenderer();
         $this->assertEquals($renderer, $renderer->setModel($model));
         $this->assertEquals($model, $renderer->getModel());
@@ -98,7 +98,7 @@ class LinkRendererTest extends \Codeception\Test\Unit
     }
 
     public function testTryWithoutNameAttributeRenderException() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $renderer = new LinkRenderer($model);
         $this->expectExceptionMessage('nameAttribute is required for render');
         $renderer->render();

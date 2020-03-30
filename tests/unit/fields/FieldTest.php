@@ -17,7 +17,7 @@ class FieldTest extends TestCase
         $this->assertEquals([], $field->rules());
         $this->assertEquals([], $field->getColumn());
         $this->assertEquals([], $field->getField());
-        $query = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([Model::class])->getMock();
+        $query = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([FieldTestModel::class])->getMock();
         $this->assertEquals($query, $field->applyScopes($query));
     }
 
@@ -73,6 +73,85 @@ class FieldTest extends TestCase
             'fieldConfig' => $formField,
         ]);
         $this->assertEquals($formField, $field->getFieldConfig());
+    }
+
+    public function testGetFieldSimple() {
+        $field = new Field([
+            'field' => [
+                'test' => 'test',
+            ]
+        ]);
+
+        $result = $field->getField();
+        $this->assertEquals([
+            'test' => 'test'
+        ], $result);
+    }
+
+    public function testGetFieldFalse() {
+        $field = new Field([
+            'field' => false,
+        ]);
+
+        $result = $field->getField();
+        $this->assertFalse($result);
+    }
+
+    public function testGetFieldCallable() {
+        $fieldTestModel = new FieldTestModel();
+        $field = new Field([
+            'model' => $fieldTestModel,
+            'field' => function ($factModel, $factField) use ($fieldTestModel) {
+                $this->assertEquals($factModel, $fieldTestModel);
+                $this->assertInstanceOf(Field::class, $factField);
+                return [
+                    'test' => 'test'
+                ];
+            }
+        ]);
+
+        $this->assertEquals([
+            'viewModel' => $fieldTestModel,
+            'editModel' => $fieldTestModel,
+            'test' => 'test'
+        ], $field->getField());
+    }
+
+    public function testGetFieldWithAttribute() {
+        $field = new Field([
+            'attribute' => 'test',
+        ]);
+
+        $this->assertEquals([
+            'attribute' => 'test',
+        ], $field->getField());
+    }
+
+    public function testGetFieldWithDisplayOnly() {
+        $field = new Field([
+            'displayOnly' => true,
+        ]);
+
+        $this->assertEquals([
+            'displayOnly' => true,
+        ], $field->getField());
+    }
+
+    public function testGetDetailViewField() {
+        $fieldTestModel = new FieldTestModel();
+        $field = new Field([
+            'model' => $fieldTestModel,
+            'fieldConfig' => false,
+            'attribute' => 'testAttribute',
+            'displayOnly' => true,
+        ]);
+        $detailViewField = $field->getDetailViewField();
+        $this->assertInstanceOf(DetailViewField::class, $detailViewField);
+        $this->assertFalse($detailViewField->getFieldConfig());
+        $this->assertEquals('testAttribute', $detailViewField->getAttribute());
+        $this->assertTrue($detailViewField->getDisplayOnly());
+        $this->assertEquals($fieldTestModel, $detailViewField->getModel());
+
     }
 
     public function testGetReadOnlyByDefault() {
@@ -136,7 +215,7 @@ class FieldTest extends TestCase
     }
 
     public function testApplyScopes() {
-        $model = new Model;
+        $model = new FieldTestModel;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'a',
         ]) ->getMock();
@@ -152,7 +231,7 @@ class FieldTest extends TestCase
     }
 
     public function testApplyScopesWithNullValue() {
-        $model = new Model;
+        $model = new FieldTestModel;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'a',
         ]) ->getMock();
@@ -167,7 +246,7 @@ class FieldTest extends TestCase
     }
 
     public function testApplyScopesWithEmptyValue() {
-        $model = new Model;
+        $model = new FieldTestModel;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'a',
         ]) ->getMock();
@@ -206,7 +285,7 @@ class FieldTest extends TestCase
     }
 
     public function testApplyScopesWithScopeFalseCallback() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $model->name = 'test';
 
         $relation = $this->getMockBuilder(Relation::class)->getMock();
@@ -230,7 +309,7 @@ class FieldTest extends TestCase
     }
 
     public function testGetRules() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $field = new Field([
             'model' => $model,
             'attribute' => 'name',
@@ -250,7 +329,7 @@ class FieldTest extends TestCase
     }
 
     public function testGetRulesWhileRequired() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $field = new Field([
             'model' => $model,
             'attribute' => 'name',
@@ -271,7 +350,7 @@ class FieldTest extends TestCase
     }
 
     public function testGetRulesWhenReadOnly() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $field = new Field([
             'model' => $model,
             'attribute' => 'name',
@@ -287,7 +366,7 @@ class FieldTest extends TestCase
     }
 
     public function testGetRelationObject() {
-        $model = new Model;
+        $model = new FieldTestModel;
         $field = new Field([
             'relation' => 'relationName',
             'nameAttribute' => 'nameAttribute',
@@ -345,7 +424,7 @@ class FieldTest extends TestCase
     }
 }
 
-class Model extends ActiveRecord {
+class FieldTestModel extends ActiveRecord {
     public $id = 2;
     public $name = 'test';
     public $test_test_id = 2;
@@ -368,7 +447,7 @@ class Model extends ActiveRecord {
     public function getTestTest()
     {
         if (self::$subQuery === null) {
-            self::$subQuery = new ActiveQuery(Model::class);
+            self::$subQuery = new ActiveQuery(FieldTestModel::class);
         }
 
         return self::$subQuery;
@@ -377,7 +456,7 @@ class Model extends ActiveRecord {
     public function getTestTests()
     {
         if (self::$hasManySubQuery === null) {
-            self::$hasManySubQuery = new ActiveQuery(Model::class);
+            self::$hasManySubQuery = new ActiveQuery(FieldTestModel::class);
             self::$hasManySubQuery->multiple = true;
         }
 

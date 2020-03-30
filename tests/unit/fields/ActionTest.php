@@ -51,7 +51,7 @@ class ActionTest extends TestCase
     public function testApplyScopes() {
         $field = new Action();
         $q = new ActiveQuery([
-            'modelClass' => Model::class,
+            'modelClass' => FieldTestModel::class,
         ]);
         $this->assertEquals($q, $field->applyScopes($q));
     }

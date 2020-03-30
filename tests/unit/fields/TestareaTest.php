@@ -13,7 +13,7 @@ use yii\db\ActiveRecord;
 class TextareaTest extends TestCase
 {
     public function testGetColumn() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $field = new Textarea([
             'attribute' => 'name',
             'model' => $model

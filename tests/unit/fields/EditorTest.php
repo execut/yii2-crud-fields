@@ -43,7 +43,7 @@ class EditorTest extends TestCase
     }
 
     public function testGetEmptyColumn() {
-        $model = new Model();
+        $model = new FieldTestModel();
         $field = new Editor([
             'attribute' => 'name',
             'model' => $model,
