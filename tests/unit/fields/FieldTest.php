@@ -54,49 +54,6 @@ class FieldTest extends TestCase
         ], $field->getFields());
     }
 
-    public function testGetFieldConfig() {
-        $formField = [
-            'class' => 'test'
-        ];
-        $field = new Field([
-            'field' => $formField,
-            'attribute' => 'name'
-        ]);
-        $this->assertEquals($formField, $field->getFieldConfig());
-    }
-
-    public function testSetFieldConfigFromConstructor() {
-        $formField = [
-            'class' => 'test'
-        ];
-        $field = new Field([
-            'fieldConfig' => $formField,
-        ]);
-        $this->assertEquals($formField, $field->getFieldConfig());
-    }
-
-    public function testGetFieldSimple() {
-        $field = new Field([
-            'field' => [
-                'test' => 'test',
-            ]
-        ]);
-
-        $result = $field->getField();
-        $this->assertEquals([
-            'test' => 'test'
-        ], $result);
-    }
-
-    public function testGetFieldFalse() {
-        $field = new Field([
-            'field' => false,
-        ]);
-
-        $result = $field->getField();
-        $this->assertFalse($result);
-    }
-
     public function testGetFieldCallable() {
         $fieldTestModel = new FieldTestModel();
         $field = new Field([

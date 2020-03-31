@@ -15,8 +15,9 @@ class DetailViewField
     protected $attribute = null;
     protected $displayOnly = null;
     protected $model = null;
-    public function __construct($model = null, $fieldConfig = null, $attribute = null, $displayOnly = null)
+    public function __construct($model = null, $fieldConfig = [], $attribute = null, $displayOnly = null)
     {
+        $this->model = $model;
         $this->fieldConfig = $fieldConfig;
         $this->attribute = $attribute;
         $this->displayOnly = $displayOnly;
@@ -87,7 +88,32 @@ class DetailViewField
     }
 
     public function getConfig() {
-        return [];
+        $field = $this->getFieldConfig();
+        if (is_callable($field)) {
+            $field = $field($this->getModel(), $this);
+        }
+
+        if ($field === false) {
+            return false;
+        }
+
+        if ($model = $this->getModel()) {
+            $field['viewModel'] = $model;
+            $field['editModel'] = $model;
+        }
+
+        if (($attribute = $this->getAttribute()) !== null) {
+            $field['attribute'] = $attribute;
+        }
+
+        $displayOnly = $this->getDisplayOnly();
+        if ($displayOnly) {
+            $field['displayOnly'] = true;
+//            $field['hideIfEmpty'] = false;
+        }
+
+        return $field;
+
         return [
             /**
              * Field

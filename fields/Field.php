@@ -202,35 +202,17 @@ class Field extends BaseObject
     }
 
     public function getField() {
-        $field = $this->_field;
-        if (is_callable($field)) {
-            $field = $field($this->model, $this);
-        }
-
-        if ($field === false) {
-            return false;
-        }
-
-        if ($this->model !== null) {
-            $field['viewModel'] = $this->model;
-            $field['editModel'] = $this->model;
-        }
-
-        if ($this->attribute !== null) {
-            $field['attribute'] = $this->attribute;
-        }
-
-        $displayOnly = $this->getDisplayOnly();
-        if ($displayOnly) {
-            $field['displayOnly'] = true;
-//            $field['hideIfEmpty'] = false;
-        }
-
-        return $field;
+        return $this->getDetailViewField()->getConfig();
     }
 
     public function getDetailViewField() {
-        $detailViewField = new DetailViewField($this->model, $this->_field, $this->attribute, $this->displayOnly);
+        $fieldConfig = $this->_field;
+        if (is_callable($fieldConfig)) {
+            $fieldConfig = function ($model, $detailViewField) use ($fieldConfig) {
+                return $fieldConfig($model, $this, $detailViewField);
+            };
+        }
+        $detailViewField = new DetailViewField($this->model, $fieldConfig, $this->attribute, $this->displayOnly);
         return $detailViewField;
     }
 

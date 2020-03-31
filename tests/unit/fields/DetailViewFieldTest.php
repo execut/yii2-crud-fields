@@ -16,7 +16,7 @@ class DetailViewFieldTest extends TestCase
 
 
     public function testGetConfigSimple() {
-        $field = new DetailViewField([
+        $field = new DetailViewField(null, [
             'test' => 'test',
         ]);
 
@@ -27,7 +27,7 @@ class DetailViewFieldTest extends TestCase
     }
 
     public function testGetFieldFalse() {
-        $field = new DetailViewField(false);
+        $field = new DetailViewField(null, false);
 
         $result = $field->getConfig();
         $this->assertFalse($result);
@@ -36,8 +36,8 @@ class DetailViewFieldTest extends TestCase
     public function testGetFieldCallable() {
         $fieldTestModel = new FieldTestModel();
         $field = new DetailViewField($fieldTestModel, function ($factModel, $factField) use ($fieldTestModel) {
-                $this->assertEquals($factModel, $fieldTestModel);
-                $this->assertInstanceOf(Field::class, $factField);
+                $this->assertEquals($fieldTestModel, $factModel);
+                $this->assertInstanceOf(DetailViewField::class, $factField);
                 return [
                     'test' => 'test'
                 ];
@@ -51,9 +51,7 @@ class DetailViewFieldTest extends TestCase
     }
 
     public function testGetConfigWithAttribute() {
-        $field = new Field([
-            'attribute' => 'test',
-        ]);
+        $field = new DetailViewField(null, [], 'test');
 
         $this->assertEquals([
             'attribute' => 'test',
