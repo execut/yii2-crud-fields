@@ -74,41 +74,30 @@ class FieldTest extends TestCase
         ], $field->getField());
     }
 
-    public function testGetFieldWithAttribute() {
-        $field = new Field([
-            'attribute' => 'test',
-        ]);
-
-        $this->assertEquals([
-            'attribute' => 'test',
-        ], $field->getField());
-    }
-
-    public function testGetFieldWithDisplayOnly() {
-        $field = new Field([
-            'displayOnly' => true,
-        ]);
-
-        $this->assertEquals([
-            'displayOnly' => true,
-        ], $field->getField());
-    }
-
     public function testGetDetailViewField() {
         $fieldTestModel = new FieldTestModel();
         $field = new Field([
             'model' => $fieldTestModel,
             'fieldConfig' => false,
             'attribute' => 'testAttribute',
-            'displayOnly' => true,
+            'displayOnly' => function () {
+                return false;
+            },
         ]);
         $detailViewField = $field->getDetailViewField();
+        $this->assertEquals(spl_object_hash($detailViewField), spl_object_hash($field->getDetailViewField()));
+
         $this->assertInstanceOf(DetailViewField::class, $detailViewField);
         $this->assertFalse($detailViewField->getFieldConfig());
         $this->assertEquals('testAttribute', $detailViewField->getAttribute());
-        $this->assertTrue($detailViewField->getDisplayOnly());
-        $this->assertEquals($fieldTestModel, $detailViewField->getModel());
+        $this->assertFalse($detailViewField->getDisplayOnly());
+    }
 
+    public function testSetDetailViewField() {
+        $detailViewField = new DetailViewField();
+        $field = new Field();
+        $this->assertEquals($field, $field->setDetailViewField($detailViewField));
+        $this->assertEquals(spl_object_hash($detailViewField), spl_object_hash($field->getDetailViewField()));
     }
 
     public function testGetReadOnlyByDefault() {

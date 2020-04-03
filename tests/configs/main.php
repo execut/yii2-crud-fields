@@ -16,6 +16,9 @@ return [
             'showScriptName' => false,
             'baseUrl' => ''
         ],
+        'view' => [
+            'class' => \yii\web\View::class,
+        ],
         'assetManager' => [
             'basePath' => __DIR__ . '/../../tests/assets/',
             'bundles' => [

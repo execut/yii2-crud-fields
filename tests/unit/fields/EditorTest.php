@@ -12,23 +12,9 @@ use yii\i18n\Formatter;
 
 class EditorTest extends TestCase
 {
-    public function testGetField() {
-        $field = new Editor([
-            'attribute' => 'text',
-        ]);
-        $this->assertEquals([
-            'attribute' => 'text',
-            'type' => DetailView::INPUT_WIDGET,
-            'format' => 'html',
-            'widgetOptions' => [
-                'class' => CKEditor::class,
-                'preset' => 'full',
-                'clientOptions' => [
-                    'allowedContent' => true,
-                    'language' => null
-                ],
-            ],
-        ], $field->getField());
+    public function testGetDetailViewField() {
+        $field = new Editor();
+        $this->assertInstanceOf(\execut\crudFields\fields\detailViewField\Editor::class, $field->getDetailViewField());
     }
 
     public function testGetColumn() {

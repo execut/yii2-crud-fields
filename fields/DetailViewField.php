@@ -5,6 +5,7 @@ namespace execut\crudFields\fields;
 
 
 use execut\autosizeTextarea\TextareaWidget;
+use execut\crudFields\fields\detailViewField\addon\AddonInterface;
 use execut\iconsCheckboxList\IconsCheckboxList;
 use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
@@ -14,29 +15,29 @@ class DetailViewField
     protected $fieldConfig = null;
     protected $attribute = null;
     protected $displayOnly = null;
-    protected $model = null;
-    public function __construct($model = null, $fieldConfig = [], $attribute = null, $displayOnly = null)
+    protected $addon = null;
+    public function __construct($fieldConfig = [], $attribute = null, $displayOnly = null, AddonInterface $addon = null)
     {
-        $this->model = $model;
         $this->fieldConfig = $fieldConfig;
         $this->attribute = $attribute;
         $this->displayOnly = $displayOnly;
+        $this->addon = $addon;
     }
 
     /**
-     * @return null
+     * @return array
      */
-    public function getModel()
+    public function getAddon(): ?AddonInterface
     {
-        return $this->model;
+        return $this->addon;
     }
 
     /**
-     * @param null $model
+     * @param array $addons
      */
-    public function setModel($model): void
+    public function setAddon(?AddonInterface $addon): void
     {
-        $this->model = $model;
+        $this->addon = $addon;
     }
 
     /**
@@ -87,17 +88,17 @@ class DetailViewField
         return $this->displayOnly;
     }
 
-    public function getConfig() {
+    public function getConfig($model = null) {
         $field = $this->getFieldConfig();
         if (is_callable($field)) {
-            $field = $field($this->getModel(), $this);
+            $field = $field($model, $this);
         }
 
         if ($field === false) {
             return false;
         }
 
-        if ($model = $this->getModel()) {
+        if ($model) {
             $field['viewModel'] = $model;
             $field['editModel'] = $model;
         }
@@ -110,6 +111,12 @@ class DetailViewField
         if ($displayOnly) {
             $field['displayOnly'] = true;
 //            $field['hideIfEmpty'] = false;
+        }
+
+        if (!empty($this->addon)) {
+            $field['fieldConfig'] = [
+                'addon' => $this->addon->getConfig(),
+            ];
         }
 
         return $field;

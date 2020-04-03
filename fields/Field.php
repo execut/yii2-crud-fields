@@ -45,6 +45,7 @@ class Field extends BaseObject
     protected $_label = null;
     protected $displayOnly = false;
     protected $readOnly = null;
+    protected $detailViewFieldClass = DetailViewField::class;
     public $isRenderRelationFields = false;
     public $isRenderInRelationForm = true;
 
@@ -202,18 +203,32 @@ class Field extends BaseObject
     }
 
     public function getField() {
-        return $this->getDetailViewField()->getConfig();
+        return $this->getDetailViewField()->getConfig($this->model);
     }
 
+
+    protected $detailViewField = null;
+    public function setDetailViewField($detailViewField) {
+        $this->detailViewField = $detailViewField;
+        return $this;
+    }
+
+    /**
+     * @return DetailViewField|null
+     */
     public function getDetailViewField() {
-        $fieldConfig = $this->_field;
-        if (is_callable($fieldConfig)) {
-            $fieldConfig = function ($model, $detailViewField) use ($fieldConfig) {
-                return $fieldConfig($model, $this, $detailViewField);
-            };
+        if ($this->detailViewField === null) {
+            $fieldConfig = $this->_field;
+            if (is_callable($fieldConfig)) {
+                $fieldConfig = function ($model, $detailViewField) use ($fieldConfig) {
+                    return $fieldConfig($model, $this, $detailViewField);
+                };
+            }
+
+            $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute, $this->getDisplayOnly());
         }
-        $detailViewField = new DetailViewField($this->model, $fieldConfig, $this->attribute, $this->displayOnly);
-        return $detailViewField;
+
+        return $this->detailViewField;
     }
 
     public function setFieldConfig($config) {
