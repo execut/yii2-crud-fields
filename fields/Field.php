@@ -45,6 +45,7 @@ class Field extends BaseObject
     protected $_label = null;
     protected $displayOnly = false;
     protected $readOnly = null;
+    protected $detailViewFieldClass = DetailViewField::class;
     public $isRenderRelationFields = false;
     public $isRenderInRelationForm = true;
 
@@ -202,36 +203,32 @@ class Field extends BaseObject
     }
 
     public function getField() {
-        $field = $this->_field;
-        if (is_callable($field)) {
-            $field = $field($this->model, $this);
-        }
-
-        if ($field === false) {
-            return false;
-        }
-
-        if ($this->model !== null) {
-            $field['viewModel'] = $this->model;
-            $field['editModel'] = $this->model;
-        }
-
-        if ($this->attribute !== null) {
-            $field['attribute'] = $this->attribute;
-        }
-
-        $displayOnly = $this->getDisplayOnly();
-        if ($displayOnly) {
-            $field['displayOnly'] = true;
-//            $field['hideIfEmpty'] = false;
-        }
-
-        return $field;
+        return $this->getDetailViewField()->getConfig($this->model);
     }
 
+
+    protected $detailViewField = null;
+    public function setDetailViewField($detailViewField) {
+        $this->detailViewField = $detailViewField;
+        return $this;
+    }
+
+    /**
+     * @return DetailViewField|null
+     */
     public function getDetailViewField() {
-        $detailViewField = new DetailViewField($this->model, $this->_field, $this->attribute, $this->displayOnly);
-        return $detailViewField;
+        if ($this->detailViewField === null) {
+            $fieldConfig = $this->_field;
+            if (is_callable($fieldConfig)) {
+                $fieldConfig = function ($model, $detailViewField) use ($fieldConfig) {
+                    return $fieldConfig($model, $this, $detailViewField);
+                };
+            }
+
+            $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute, $this->getDisplayOnly());
+        }
+
+        return $this->detailViewField;
     }
 
     public function setFieldConfig($config) {

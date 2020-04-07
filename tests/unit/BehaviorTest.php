@@ -298,6 +298,15 @@ class BehaviorTest extends TestCase
         $this->assertNull($behavior->getPlugin('test'));
     }
 
+    public function testInitPluginFromString() {
+        $behavior = new Behavior([
+            'plugins' => [
+                'test' => BehaviorTestPlugin::class,
+            ]
+        ]);
+        $this->assertInstanceOf(BehaviorTestPlugin::class, $behavior->getPlugin('test'));
+    }
+
 //    public function testGetScopesViaRoles() {
 //        $behavior = new Behavior([
 //            'roles' => [

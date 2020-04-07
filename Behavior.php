@@ -183,6 +183,10 @@ class Behavior extends BaseBehavior
     protected function initPlugins() {
         if (!$this->_pluginsIsInited) {
             foreach ($this->_plugins as $key => $plugin) {
+                if (is_string($plugin)) {
+                    $plugin = ['class' => $plugin];
+                }
+
                 if (is_array($plugin)) {
                     $plugin = \yii::createObject($plugin);
                     $this->_plugins[$key] = $plugin;
