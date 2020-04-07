@@ -356,11 +356,16 @@ class Relation extends BaseObject
         }
     }
 
-    /**
-     * @return ActiveQuery
-     */
-    public function getRelationQuery()
-    {
+    protected $query;
+    public function setQuery($q) {
+        $this->query = $q;
+    }
+
+    public function getQuery() {
+        if ($this->query !== null) {
+            return $this->query;
+        }
+
         if (!$this->model) {
             return;
         }
@@ -368,6 +373,14 @@ class Relation extends BaseObject
         $relationQuery = $this->model->getRelation($this->getName());
 
         return $relationQuery;
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getRelationQuery()
+    {
+        return $this->getQuery();
     }
 
     /**

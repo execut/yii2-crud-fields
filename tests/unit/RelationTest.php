@@ -10,6 +10,7 @@ namespace execut\crudFields;
 
 
 use execut\crudFields\fields\Field;
+use execut\crudFields\fields\FieldTestModel;
 use execut\crudFields\LinkRenderer;
 use execut\crudFields\relation\UrlMaker;
 use yii\base\Model;
@@ -24,9 +25,24 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('testTest', $relation->name);
     }
 
-    public function testGetRelationQueryIsNull() {
+    public function testGetQueryIsNull() {
         $relation = new Relation();
-        $this->assertNull($relation->getRelationQuery());
+        $this->assertNull($relation->getQuery());
+    }
+
+    public function testSetQuery() {
+        $relation = new Relation();
+        $q = new ActiveQuery('a');
+        $relation->setQuery($q);
+        $this->assertEquals($q, $relation->getQuery());
+    }
+
+    public function testGetQueryFromModel() {
+        $relation = new Relation([
+            'model' => new FieldTestModel(),
+            'name' => 'testTest',
+        ]);
+        $this->assertInstanceOf(ActiveQuery::class, $relation->getQuery());
     }
 
     public function testAddWithToSearchQuery() {
