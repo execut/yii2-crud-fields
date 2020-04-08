@@ -68,6 +68,18 @@ class DetailViewFieldTest extends TestCase
         ], $field->getConfig());
     }
 
+    public function testGetDisplayOnlyByDefault() {
+        $field = new DetailViewField();
+        $this->assertFalse($field->getDisplayOnly());
+    }
+
+    public function testGetDisplayOnlyFromCallback() {
+        $field = new DetailViewField([], null, function () {
+            return false;
+        });
+        $this->assertFalse($field->getDisplayOnly());
+    }
+
     public function testGetConfigWithAddon() {
         $addon = $this->getMockBuilder(AddonInterface::class)->onlyMethods(['getConfig'])->getMock();
         $addon->method('getConfig')->willReturn('test');

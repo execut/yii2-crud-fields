@@ -43,24 +43,24 @@ class BehaviorTest extends TestCase
         $this->assertEquals($model, $field->model);
     }
 
-    public function testGetRelations() {
-        $field = $this->getMockBuilder(Field::class)->getMock();
-        $object = $this->getMockBuilder(Relation::class)->getMock();
-        $q = new ActiveQuery('a');
-        $object->method('getQuery')->willReturn($q);
-        $object->method('getName')->willReturn('testRelationName');
-
-        $field->method('getRelationObject')
-            ->willReturn($object);
-        $behavior = new Behavior([
-            'fields' => [
-                $field
-            ]
-        ]);
-        $relations = $behavior->getRelations();
-        $this->assertCount(1, $relations);
-        $this->assertEquals($q, $behavior->getRelation('testRelationName'));
-    }
+//    public function testGetRelations() {
+//        $field = $this->getMockBuilder(Field::class)->getMock();
+//        $object = $this->getMockBuilder(Relation::class)->getMock();
+//        $q = new ActiveQuery('a');
+//        $object->method('getQuery')->willReturn($q);
+//        $object->method('getName')->willReturn('testRelationName');
+//
+//        $field->method('getRelationObject')
+//            ->willReturn($object);
+//        $behavior = new Behavior([
+//            'fields' => [
+//                $field
+//            ]
+//        ]);
+//        $relations = $behavior->getRelations();
+//        $this->assertCount(1, $relations);
+//        $this->assertEquals($q, $behavior->getRelation('testRelationName'));
+//    }
 
     public function testSetFieldsByAttribute() {
         $model = new Model;

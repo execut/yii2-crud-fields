@@ -80,9 +80,6 @@ class FieldTest extends TestCase
             'model' => $fieldTestModel,
             'fieldConfig' => false,
             'attribute' => 'testAttribute',
-            'displayOnly' => function () {
-                return false;
-            },
         ]);
         $detailViewField = $field->getDetailViewField();
         $this->assertEquals(spl_object_hash($detailViewField), spl_object_hash($field->getDetailViewField()));
@@ -90,7 +87,6 @@ class FieldTest extends TestCase
         $this->assertInstanceOf(DetailViewField::class, $detailViewField);
         $this->assertFalse($detailViewField->getFieldConfig());
         $this->assertEquals('testAttribute', $detailViewField->getAttribute());
-        $this->assertFalse($detailViewField->getDisplayOnly());
     }
 
     public function testSetDetailViewField() {
@@ -142,13 +138,6 @@ class FieldTest extends TestCase
         ]);
         $this->assertTrue($field->getReadOnly());
     }
-
-//    public function testDisplayOnlyWithNotReadOnlyFlagException() {
-//        $field = new Field();
-//        $this->assertExceptionMessage('displayOnly is must bee true when readOnly true');
-//        $field->setDisplayOnly(false);
-//        $field->setReadOnly(false);
-//    }
 
     public function testSetFieldConfigDirectly() {
         $formField = [
@@ -315,7 +304,6 @@ class FieldTest extends TestCase
         $model = new FieldTestModel;
         $field = new Field([
             'relation' => 'relationName',
-            'nameAttribute' => 'nameAttribute',
             'orderByAttribute' => 'orderByAttribute',
             'with' => ['testRelation'],
             'valueAttribute' => 'valueAttribute',
@@ -329,6 +317,7 @@ class FieldTest extends TestCase
             'isNoRenderRelationLink' => true,
             'label' => 'label',
             'urlMaker' => 'test url maker',
+            'nameAttribute' => 'nameAttribute',
         ]);
         $relationObject = $field->getRelationObject();
         $this->assertInstanceOf(Relation::class, $relationObject);

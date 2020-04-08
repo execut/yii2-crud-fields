@@ -43,7 +43,6 @@ class Field extends BaseObject
     protected $_column = [];
     protected $_field = [];
     protected $_label = null;
-    protected $displayOnly = false;
     protected $readOnly = null;
     protected $detailViewFieldClass = DetailViewField::class;
     public $isRenderRelationFields = false;
@@ -77,7 +76,7 @@ class Field extends BaseObject
 
     public function getReadOnly() {
         if ($this->readOnly === null) {
-            return $this->displayOnly;
+            return $this->getDisplayOnly();
         }
 
         return $this->readOnly;
@@ -225,10 +224,14 @@ class Field extends BaseObject
                 };
             }
 
-            $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute, $this->getDisplayOnly());
+            $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute);
+            $this->initDetailViewField($this->detailViewField);
         }
 
         return $this->detailViewField;
+    }
+
+    protected function initDetailViewField(DetailViewField $field) {
     }
 
     public function setFieldConfig($config) {
@@ -242,7 +245,7 @@ class Field extends BaseObject
     }
 
     public function setDisplayOnly($displayOnly) {
-        $this->displayOnly = $displayOnly;
+        $this->getDetailViewField()->setDisplayOnly($displayOnly);
         return $this;
     }
 
@@ -252,13 +255,7 @@ class Field extends BaseObject
     }
 
     public function getDisplayOnly() {
-        if ($this->displayOnly) {
-            if (is_callable($this->displayOnly)) {
-                return call_user_func($this->displayOnly);
-            }
-        }
-
-        return $this->displayOnly;
+        return $this->getDetailViewField()->getDisplayOnly();
     }
 
     public function getFields($isWithRelationsFields = true) {

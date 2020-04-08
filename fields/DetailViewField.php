@@ -16,7 +16,7 @@ class DetailViewField
     protected $attribute = null;
     protected $displayOnly = null;
     protected $addon = null;
-    public function __construct($fieldConfig = [], $attribute = null, $displayOnly = null, AddonInterface $addon = null)
+    public function __construct($fieldConfig = [], $attribute = null, $displayOnly = false, AddonInterface $addon = null)
     {
         $this->fieldConfig = $fieldConfig;
         $this->attribute = $attribute;
@@ -85,6 +85,10 @@ class DetailViewField
      */
     public function getDisplayOnly()
     {
+        if (is_callable($this->displayOnly)) {
+            $this->displayOnly = call_user_func($this->displayOnly);
+        }
+
         return $this->displayOnly;
     }
 

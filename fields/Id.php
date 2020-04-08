@@ -58,4 +58,9 @@ class Id extends Field
     {
         return false;
     }
+
+    protected function initDetailViewField(DetailViewField $field)
+    {
+        $field->setDisplayOnly(true);
+    }
 }

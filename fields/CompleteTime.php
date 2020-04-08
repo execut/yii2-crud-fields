@@ -76,4 +76,8 @@ class CompleteTime extends Date
 
         return $totalTime->format('Y-m-d H:i:s');
     }
+
+    protected function initDetailViewField(DetailViewField $field) {
+        $field->setDisplayOnly(true);
+    }
 }
