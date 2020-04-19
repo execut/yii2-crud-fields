@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
 
 class Id extends Field
 {
-    public $attribute = 'id';
+    protected $attribute = 'id';
     public $multipleInputType = MultipleInputColumn::TYPE_HIDDEN_INPUT;
     public $displayOnly = true;
 
@@ -27,20 +27,20 @@ class Id extends Field
     public function rules()
     {
         $rules = $this->rules;
-        if ($this->attribute !== null) {
+        if ($this->getAttribute() !== null) {
             $rules[] = [
-                [$this->attribute],
+                [$this->getAttribute()],
                 'safe',
                 'on' => self::SCENARIO_GRID,
             ];
         }
 
-        $rules[$this->attribute . '_filter'] = [
-            $this->attribute,
+        $rules[$this->getAttribute() . '_filter'] = [
+            $this->getAttribute(),
             'filter',
             'filter' => function ($v) {
             if (is_string($v)) {
-                $column = $this->model->getTableSchema()->getColumn($this->attribute);
+                $column = $this->model->getTableSchema()->getColumn($this->getAttribute());
                 if ($column) {
                     return $column->phpTypecast($v);
                 }
@@ -57,5 +57,10 @@ class Id extends Field
     public function getMultipleInputField()
     {
         return false;
+    }
+
+    protected function initDetailViewField(DetailViewField $field)
+    {
+        $field->setDisplayOnly(true);
     }
 }

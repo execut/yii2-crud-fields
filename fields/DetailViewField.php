@@ -16,7 +16,7 @@ class DetailViewField
     protected $attribute = null;
     protected $displayOnly = null;
     protected $addon = null;
-    public function __construct($fieldConfig = [], $attribute = null, $displayOnly = null, AddonInterface $addon = null)
+    public function __construct($fieldConfig = [], $attribute = null, $displayOnly = false, AddonInterface $addon = null)
     {
         $this->fieldConfig = $fieldConfig;
         $this->attribute = $attribute;
@@ -85,6 +85,10 @@ class DetailViewField
      */
     public function getDisplayOnly()
     {
+        if (is_callable($this->displayOnly)) {
+            return call_user_func($this->displayOnly);
+        }
+
         return $this->displayOnly;
     }
 
@@ -120,97 +124,5 @@ class DetailViewField
         }
 
         return $field;
-
-        return [
-            /**
-             * Field
-             */
-            'viewModel' => $this->model,
-            'editModel' => $this->model,
-            'attribute' => $this->attribute,
-            'displayOnly' => $this->displayOnly,
-            'valueColOptions' => [],
-
-            /**
-             * StringField
-             */
-            /** нет */
-
-            /**
-             * AutosizeTextarea
-             */
-            'type' => DetailView::INPUT_WIDGET,
-            'options' => [
-                'class' => 'form-control',
-                'style' => 'height: 32px',
-            ],
-            'widgetOptions' => [
-                'class' => TextareaWidget::class,
-                'clientOptions' => [
-                    'vertical' => true,
-                    'horizontal' => false,
-                ],
-            ],
-
-            /**
-             * Boolean
-             */
-            'type' => DetailView::INPUT_CHECKBOX,
-            'value' => function () {},
-            /**
-             * CheckboxList
-             */
-            'type' => DetailView::INPUT_WIDGET,
-            'attribute' => $this->attribute,
-            'label' => $this->getLabel(),
-            'format' => 'raw',
-            'value' => '',
-            'widgetOptions' => [
-                'class' => IconsCheckboxList::class,
-                'items' => $items,
-            ],
-
-            /**
-             * DropDown
-             */
-            'type'=> DetailView::INPUT_DROPDOWN_LIST,
-            'attribute' => $attribute,
-            'value' => function () use ($data, $value) {
-                if (!empty($data[$value])) {
-                    return $data[$value];
-                }
-            },
-            'items' => $data,
-
-            /**
-             * Editor
-             */
-            'type' => DetailView::INPUT_WIDGET,
-            'format' => 'html',
-            'widgetOptions' => [
-                'class' => CKEditor::class,
-                'preset' => 'full',
-                'clientOptions' => [
-                    'language' => \yii::$app ? \yii::$app->language : null,
-                    'allowedContent' => true,
-                ],
-            ],
-
-            /**
-             * Select2
-             */
-            'type' => $type,
-//            'widgetClass' => Select2::class,
-            'value' => $this->getRelationObject()->getColumnValue($this->model),
-            'format' => 'raw',
-            'widgetOptions' => [
-                'addons' => []
-            ],
-            'fieldConfig' => [
-                //                'template' => "{input}$createButton\n{error}\n{hint}",
-            ],
-            'displayOnly' => $this->getIsRenderRelationFields(),
-            'rowOptions' => $rowOptions,
-        ];
     }
 }

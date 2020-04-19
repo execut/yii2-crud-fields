@@ -57,4 +57,9 @@ class ProgressBar extends Field
 
         return $column;
     }
+
+    protected function initDetailViewField(DetailViewField $field)
+    {
+        $field->setDisplayOnly(true);
+    }
 }

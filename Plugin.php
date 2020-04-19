@@ -14,6 +14,10 @@ abstract class Plugin extends BaseObject
     public $owner = null;
     public $fields = [];
     public $rules = [];
+    /**
+     * @var QueryFromConfigFactory
+     */
+    public $factory = null;
     public function getFields() {
         return ArrayHelper::merge($this->_getFields(), $this->fields);
     }
@@ -39,6 +43,37 @@ abstract class Plugin extends BaseObject
      */
     public function getRelations() {
         return [];
+    }
+
+    public function getFactory () {
+        if ($this->factory === null) {
+            $this->factory = new QueryFromConfigFactory;
+        }
+
+        return $this->factory;
+    }
+
+    protected $queries = [];
+    public function getRelationQuery($name) {
+        $queries = &$this->queries;
+        if (array_key_exists($name, $queries)) {
+            return $queries[$name];
+        }
+        $factory = $this->getFactory();
+        $relations = $this->getRelations();
+        if (!empty($relations[$name])) {
+            $factory->setModel($this->owner);
+            $factory->setParams($relations[$name]);
+            $queries[$name] = $factory->create();
+        } else {
+            $queries[$name] = false;
+        }
+
+        return $queries[$name];
+    }
+
+    public function getRelationsNames() {
+        return array_keys($this->getRelations());
     }
 
     public function rules() {

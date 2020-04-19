@@ -16,7 +16,6 @@ class Date extends Field
 {
     public $isTime = false;
     public $fieldType = null;
-    public $displayOnly = true;
     public $showIfEmpty = false;
     public $isWithMicroseconds = false;
 
@@ -58,7 +57,7 @@ class Date extends Field
 
     public function getField()
     {
-        if (empty($this->getValue()) && $this->displayOnly) {
+        if (empty($this->getValue()) && $this->getDisplayOnly()) {
             if ($this->showIfEmpty) {
                 return [
                     'label' => $this->getLabel(),
@@ -75,7 +74,7 @@ class Date extends Field
             return false;
         }
 
-        if ($this->displayOnly) {
+        if ($this->getDisplayOnly()) {
             return array_merge($field, [
                 'displayOnly' => true,
                 'value' => function () {
@@ -105,9 +104,13 @@ class Date extends Field
         ];
     }
 
+    protected function initDetailViewField(DetailViewField $field) {
+        $field->setDisplayOnly(true);
+    }
+
     public function getMultipleInputField()
     {
-        if ($this->displayOnly) {
+        if ($this->getDisplayOnly()) {
             return false;
         }
 

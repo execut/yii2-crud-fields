@@ -9,11 +9,17 @@ use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\base\Behavior as BaseBehavior;
 use yii\base\Exception;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\db\ActiveRecordInterface;
 use yii\helpers\ArrayHelper;
 
 class Behavior extends BaseBehavior
 {
+    /**
+     * @var ActiveRecord|null the owner of this behavior
+     */
+    public $owner;
     protected $_plugins = [];
     protected $_module = null;
     public $relations = [];
@@ -21,6 +27,7 @@ class Behavior extends BaseBehavior
     public $roles = [];
     protected $role = null;
     const RELATIONS_SAVER_KEY = 'relationsSaver';
+    const KEY = 'fields';
     public $defaultScenario = Field::SCENARIO_DEFAULT;
     public $relationsSaver = [];
 
@@ -35,7 +42,33 @@ class Behavior extends BaseBehavior
     public function attach($owner)
     {
         parent::attach($owner);
-        $relations = $this->getRelations();
+
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->attach();
+        }
+    }
+
+    public function setRelationsScenarioFromOwner() {
+        $this->initSaverBehaviorRelations();
+        /**
+         * @var SaveRelationsBehavior $saver
+         */
+        $saver = $this->owner->getBehavior(self::RELATIONS_SAVER_KEY);
+        if ($saver) {
+            foreach ($saver->relations as $relation) {
+                $scenario = $this->owner->getScenario();
+                $saver->setRelationScenario($relation, $scenario);
+            }
+
+            foreach ($this->getRelationsNames() as $name) {
+                $scenario = $this->owner->getScenario();
+                $saver->setRelationScenario($name, $scenario);
+            }
+        }
+    }
+
+    public function initEvent() {
+        $owner = $this->owner;
         if (!empty($this->relationsSaver)) {
             /**
              * @var SaveRelationsBehavior $relationsSaver
@@ -48,8 +81,12 @@ class Behavior extends BaseBehavior
             $relationsSaver = \yii::createObject($relationsSaver);
             $owner->attachBehavior(self::RELATIONS_SAVER_KEY, $relationsSaver);
         }
+    }
 
+    protected function initSaverBehaviorRelations() {
+        $relations = $this->getRelationsNames();
         if (!empty($relations)) {
+            $owner = $this->owner;
             $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
             if (!$relationsSaver) {
                 $owner->attachBehavior(self::RELATIONS_SAVER_KEY, [
@@ -63,26 +100,23 @@ class Behavior extends BaseBehavior
 //                ],');
             }
 
-            foreach ($relations as $relation => $relationParams) {
-                if (!in_array($relation, $relationsSaver->relations) && empty($relationParams['isNoSave'])) {
+            foreach ($relations as $relation) {
+                if (!in_array($relation, $relationsSaver->relations)) {
                     $params = [];
-                    if (!empty($relationParams['scenario'])) {
-                        $params['scenario'] = $relationParams['scenario'];
-                    }
+//                    if (!empty($relationParams['scenario'])) {
+//                        $params['scenario'] = $relationParams['scenario'];
+//                    }
 
                     $relationsSaver->addRelation($relation, $params);
                 }
             }
-        }
-
-        foreach ($this->getPlugins() as $plugin) {
-            $plugin->attach();
         }
     }
 
     public function events()
     {
         $events = [
+            ActiveRecord::EVENT_INIT => 'initEvent',
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
@@ -93,14 +127,12 @@ class Behavior extends BaseBehavior
 
         return $events;
     }
-
     public function beforeValidate() {
         $this->setRelationsScenarioFromOwner();
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeValidate();
         }
     }
-
     public function beforeUpdate() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeUpdate();
@@ -108,7 +140,6 @@ class Behavior extends BaseBehavior
 
         $this->beforeSave();
     }
-
     public function beforeInsert() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeInsert();
@@ -116,13 +147,11 @@ class Behavior extends BaseBehavior
 
         $this->beforeSave();
     }
-
     public function beforeSave() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeSave();
         }
     }
-
     public function afterInsert() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterInsert();
@@ -130,47 +159,20 @@ class Behavior extends BaseBehavior
 
         $this->afterSave();
     }
-
     public function afterUpdate() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterUpdate();
         }
         $this->afterSave();
     }
-
     public function afterSave() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterSave();
         }
     }
-
     public function beforeDelete() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeDelete();
-        }
-    }
-
-    public function setRelationsScenarioFromOwner() {
-        /**
-         * @var SaveRelationsBehavior $saver
-         */
-        $saver = $this->owner->getBehavior(self::RELATIONS_SAVER_KEY);
-        if ($saver) {
-            foreach ($saver->relations as $relation) {
-                $scenario = $this->owner->getScenario();
-                $saver->setRelationScenario($relation, $scenario);
-            }
-
-            foreach ($this->getRelations() as $name => $relation) {
-                if (empty($relation['scenario'])) {
-                    if (!empty($relation['name'])) {
-                        $name = $relation['name'];
-                    }
-
-                    $scenario = $this->owner->getScenario();
-                    $saver->setRelationScenario($name, $scenario);
-                }
-            }
         }
     }
 
@@ -203,6 +205,58 @@ class Behavior extends BaseBehavior
         }
     }
 
+    public function canGetProperty($name, $checkVars = true)
+    {
+        if (parent::canGetProperty($name, $checkVars)) {
+            return true;
+        }
+
+        return $this->isHasRelation($name);
+    }
+
+    public function __get($name)
+    {
+        if (property_exists($this, $name)) {
+            return $this->$name;
+        }
+
+        if ($this->isHasRelation($name)) {
+            return $this->getRelation($name);
+        }
+
+        return parent::__get($name); // TODO: Change the autogenerated stub
+    }
+
+    protected function getRelationsNames() {
+        $relationsNames = [];
+        foreach ($this->getFields() as $field) {
+            if ($name = $field->getRelationName()) {
+                $relationsNames[$name] = $name;
+            }
+        }
+
+        $relationsNames = ArrayHelper::merge($relationsNames, $this->getPluginsRelationsNames());
+
+        return $relationsNames;
+    }
+
+    protected function getPluginsRelationsNames() {
+        $relationsNames = [];
+        foreach ($this->getPlugins() as $plugin) {
+            $relationsNames = ArrayHelper::merge($relationsNames, $plugin->getRelationsNames());
+        }
+        return $relationsNames;
+    }
+
+    protected function getPluginsFields() {
+        $result = [];
+        foreach ($this->getPlugins() as $plugin) {
+            $result = array_merge($result, $plugin->getFields());
+        }
+
+        return $result;
+    }
+
     /**
      * @return Plugin[]
      * @throws Exception
@@ -219,32 +273,12 @@ class Behavior extends BaseBehavior
         }
     }
 
-    public function getRelations() {
-        $relations = $this->relations;
-        foreach ($this->getPlugins() as $plugin) {
-            $relations = ArrayHelper::merge($relations, $plugin->getRelations());
-        }
-
-        return $relations;
-    }
-
     public function getRelation($name) {
-        $relations = $this->getRelations();
-        if (!empty($relations[$name])) {
-            $relation = $relations[$name];
-            $relation['name'] = $name;
-
-            return $relation;
-        }
-    }
-
-    public function getPluginsFields() {
-        $result = [];
-        foreach ($this->getPlugins() as $plugin) {
-            $result = array_merge($result, $plugin->getFields());
+        if ($field = $this->getField($name)) {
+            return $field->getRelationQuery();
         }
 
-        return $result;
+        return $this->getPluginsRelation($name);
     }
 
     protected $_fields = [];
@@ -316,21 +350,13 @@ class Behavior extends BaseBehavior
             $field->defaultScenario = $this->defaultScenario;
             $field->model = $this->owner;
             if ($field->module === null) {
-                $field->module = $this->module;
+                $field->module = $this->getModule();
             }
 
             $field->attach();
 
             $fields[$key] = $field;
         }
-
-//        $orderedFields = array_filter($fields, function ($field) {
-//            return $field->order != 0;
-//        });
-//
-//        $unOrderedFields = array_filter($fields, function ($field) {
-//            return $field->order == 0;
-//        });
 
         $orderedFields = [];
         foreach ($fields as $key => $field) {
@@ -346,10 +372,6 @@ class Behavior extends BaseBehavior
         foreach ($orderedFields as $orderedField) {
             $fields = array_merge($fields, $orderedField);
         }
-
-//        $fields = array_merge($orderedFields, array_filter($fields, function ($field) {
-//            return $field->order == 0;
-//        }));
 
         $this->_fields = $fields;
         $this->fieldsIsInitied = true;
@@ -420,6 +442,7 @@ class Behavior extends BaseBehavior
 
         return $this->query;
     }
+
     public function applyScopes($query) {
         if (!empty($this->scopes)) {
             $scopes = $this->scopes;
@@ -455,7 +478,7 @@ class Behavior extends BaseBehavior
         return $dataProvider;
     }
 
-    public function initDataProvider($dataProvider) {
+    protected function initDataProvider($dataProvider) {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->initDataProvider($dataProvider);
         }
@@ -474,7 +497,7 @@ class Behavior extends BaseBehavior
             $rules = ArrayHelper::merge($rules, $plugin->rules());
         }
 
-        foreach ($this->getRelations() as $relation => $relationParams) {
+        foreach ($this->getRelationsNames() as $relation) {
             $rules[$relation . 'Safe'] = [$relation, 'safe'];
         }
 
@@ -518,7 +541,7 @@ class Behavior extends BaseBehavior
         return $this->_module;
     }
 
-    public function detectModule() {
+    protected function detectModule() {
         if (!$this->owner) {
             return;
         }
@@ -533,7 +556,7 @@ class Behavior extends BaseBehavior
     public function attributesLabels() {
         $result = [];
         foreach ($this->getFields() as $field) {
-            $result[$field->getName()] = $field->getLabel($this->module);
+            $result[$field->getName()] = $field->getLabel($this->getModule());
         }
 
         return $result;
@@ -572,5 +595,27 @@ class Behavior extends BaseBehavior
         }
 
         return $fields;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getPluginsRelation($name)
+    {
+        foreach ($this->getPlugins() as $plugin) {
+            if ($relation = $plugin->getRelationQuery($name)) {
+                return $relation;
+            }
+        }
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function isHasRelation($name): bool
+    {
+        return in_array($name, $this->getRelationsNames());
     }
 }

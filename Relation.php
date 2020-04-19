@@ -14,6 +14,8 @@ use execut\crudFields\LinkRenderer;
 use execut\crudFields\relation\UrlMaker;
 use yii\base\BaseObject;
 use yii\base\Exception;
+use yii\base\InvalidArgumentException;
+use yii\base\UnknownMethodException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -29,6 +31,9 @@ class Relation extends BaseObject
      * @var Field
      */
     public $field = null;
+    /**
+     * @var ActiveRecord
+     */
     public $model = null;
     public $nameAttribute = 'name';
     public $valueAttribute = null;
@@ -37,7 +42,7 @@ class Relation extends BaseObject
     public $updateUrl = null;
     public $attribute = null;
     public $columnRecordsLimit = null;
-    public $url = null;
+    protected $url = null;
     public $isHasRelationAttribute = false;
     public $isNoRenderRelationLink = false;
     public $linkRenderer = null;
@@ -45,6 +50,7 @@ class Relation extends BaseObject
     public $urlMaker = null;
     public $label = null;
     public $idAttribute = null;
+    public $groupByVia = null;
     protected $_name = null;
 
     public function setName($relation) {
@@ -58,7 +64,7 @@ class Relation extends BaseObject
             return $this->idAttribute;
         }
 
-        $relationQuery = $this->getRelationQuery();
+        $relationQuery = $this->getQuery();
         if ($relationQuery) {
             return $this->attribute;
         }
@@ -82,7 +88,7 @@ class Relation extends BaseObject
 
     public function applyScopes(ActiveQuery $query)
     {
-        $relationQuery = $this->getRelationQuery();
+        $relationQuery = $this->getQuery();
         if ($relationQuery && $relationQuery->multiple) {
             $value = $this->getValue();
             if (!empty($value)) {
@@ -109,14 +115,14 @@ class Relation extends BaseObject
                     if ($this->isVia()) {
                         $viaRelationQuery = $this->getViaRelationQuery();
                         $viaRelationQuery->select(key($viaRelationQuery->link));
-                        $whereAttribute = current($this->getRelationQuery()->link);
+                        $whereAttribute = current($this->getQuery()->link);
                         $viaRelationQuery->andWhere([
                             $whereAttribute => $value,
                         ]);
                         $viaRelationQuery->link = null;
                         $viaRelationQuery->primaryModel = null;
                     } else {
-                        $viaRelationQuery = $this->getRelationQuery();
+                        $viaRelationQuery = $this->getQuery();
                         $viaRelationQuery->select(key($viaRelationQuery->link));
                         $viaRelationQuery->indexBy = key($viaRelationQuery->link);
                         $whereAttribute = current($viaRelationQuery->link);
@@ -155,7 +161,7 @@ class Relation extends BaseObject
     }
 
     public function getRelationModelClass() {
-        $modelClass = $this->getRelationQuery()->modelClass;
+        $modelClass = $this->getQuery()->modelClass;
 
         return $modelClass;
     }
@@ -167,7 +173,7 @@ class Relation extends BaseObject
     }
 
     public function getRelationPrimaryKey() {
-        $relationQuery = $this->getRelationQuery();
+        $relationQuery = $this->getQuery();
         $class = $relationQuery->modelClass;
         return current($class::primaryKey());
     }
@@ -187,7 +193,7 @@ class Relation extends BaseObject
         }
 
         if ($this->isManyToMany()) {
-            $relationQuery = $this->getRelationQuery();
+            $relationQuery = $this->getQuery();
             $via = $relationQuery->via;
             if ($via instanceof ActiveQuery) {
                 /**
@@ -261,7 +267,7 @@ class Relation extends BaseObject
 
         $models = $this->getRelatedModels();
 
-        $relationQuery = $this->getRelationQuery();
+        $relationQuery = $this->getQuery();
         $idAttribute = key($relationQuery->link);
         if ($asLink) {
             $nameAttribute = function ($model) {
@@ -276,7 +282,7 @@ class Relation extends BaseObject
     }
 
     public function isVia() {
-        return $this->getRelationQuery()->via !== null;
+        return $this->getQuery()->via !== null;
     }
 
     public function getColumnValue($row) {
@@ -287,7 +293,7 @@ class Relation extends BaseObject
                 $attribute = $this->name . '.' . $this->nameAttribute;
             }
 
-//            $q = $this->getRelationQuery();
+//            $q = $this->getQuery();
 //            $fromAttribute = current($q->link);
 //            if (empty($this->model->$fromAttribute)) {
 //                return;
@@ -305,8 +311,8 @@ class Relation extends BaseObject
                 $relation = $row->getRelation($this->getName());
                 if (!empty($relation->via)) {
                     $via = $relation->via[1];
-                    if ($this->field->groupByVia) {
-                        $via->select($this->field->groupByVia)->groupBy($this->field->groupByVia);
+                    if ($this->groupByVia) {
+                        $via->select($this->groupByVia)->groupBy($this->groupByVia);
                     }
 
                     if ($this->columnRecordsLimit !== null) {
@@ -339,7 +345,7 @@ class Relation extends BaseObject
                             $url = [$url];
                         }
 
-                        $attribute = key($this->getRelationQuery()->link);
+                        $attribute = key($this->getQuery()->link);
                         if (empty($url[$this->getRelationFormName()])) {
                             $url[$this->getRelationFormName()] = [];
                         }
@@ -356,18 +362,39 @@ class Relation extends BaseObject
         }
     }
 
-    /**
-     * @return ActiveQuery
-     */
-    public function getRelationQuery()
-    {
+    protected $query;
+    public function setQuery($q) {
+        $this->query = $q;
+    }
+
+    public function getQuery() {
+        if ($this->query !== null) {
+            return $this->query;
+        }
+
         if (!$this->model) {
             return;
         }
 
-        $relationQuery = $this->model->getRelation($this->getName());
+        $name = $this->getName();
+        $relationQuery = $this->model->getRelation($name, false, true);
+        if (!$relationQuery) {
+            $relationQuery = $this->model->getPluginsRelation($name);
+        }
 
-        return $relationQuery;
+        if (!$relationQuery) {
+            $getter = 'get' . $name;
+            try {
+                // the relation could be defined in a behavior
+                $relationQuery = $this->model->$getter();
+            } catch (UnknownMethodException $e) {
+                if (!$relationQuery) {
+                    throw new \yii\db\Exception('Relation ' . $name . ' is not has query!');
+                }
+            }
+        }
+
+        return $this->query = $relationQuery;
     }
 
     /**
@@ -375,7 +402,7 @@ class Relation extends BaseObject
      */
     public function getViaRelation()
     {
-        $relationQuery = $this->getRelationQuery();
+        $relationQuery = $this->getQuery();
 
         $via = $relationQuery->via;
         if ($via instanceof ActiveQuery) {
@@ -401,7 +428,7 @@ class Relation extends BaseObject
     }
 
     public function getViaToAttribute() {
-        return current($this->getRelationQuery()->link);
+        return current($this->getQuery()->link);
     }
 
     public function getViaRelationModelClass() {
@@ -413,7 +440,7 @@ class Relation extends BaseObject
      */
     public function getRelatedModels()
     {
-        $relationQuery = clone $this->getRelationQuery();
+        $relationQuery = clone $this->getQuery();
         $relationQuery->link = null;
         $relationQuery->primaryModel = null;
 
@@ -431,7 +458,7 @@ class Relation extends BaseObject
     }
 
     public function isHasMany() {
-        return $this->getRelationQuery()->multiple;
+        return $this->getQuery()->multiple;
     }
     
     public function getRelationFields() {
@@ -524,7 +551,7 @@ class Relation extends BaseObject
     }
 
     protected function isManyToMany() {
-        $relationQuery = $this->getRelationQuery();
+        $relationQuery = $this->getQuery();
 
         return $relationQuery->multiple && $this->isVia();
     }
@@ -539,7 +566,7 @@ class Relation extends BaseObject
         if ($this->isManyToMany()) {
             $relatedModels = $this->getRelatedModels();
             foreach ($relatedModels as $model) {
-                $relationQuery = $this->getRelationQuery();
+                $relationQuery = $this->getQuery();
                 $relationQuery->primaryModel = null;
                 if ($rowModel->$attribute == '1') {
                     $operator = 'IN';
@@ -562,7 +589,7 @@ class Relation extends BaseObject
         } else if ($this->isHasMany()) {
             $model = $this->getRelationModel(true);
             $value = $this->model->$attribute;
-            $relationQuery = $this->getRelationQuery();
+            $relationQuery = $this->getQuery();
             $relationQuery->primaryModel = null;
             if ($value == '1') {
                 $operator = 'IN';
@@ -675,5 +702,17 @@ class Relation extends BaseObject
         }
 
         return $this->linkRenderer;
+    }
+
+    public function setUrl($url) {
+        $this->url = $url;
+    }
+
+    public function getUrl() {
+        return $this->url;
+    }
+
+    public function getColumnRecordsLimit() {
+        return $this->columnRecordsLimit;
     }
 }

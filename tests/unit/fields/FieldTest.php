@@ -80,9 +80,6 @@ class FieldTest extends TestCase
             'model' => $fieldTestModel,
             'fieldConfig' => false,
             'attribute' => 'testAttribute',
-            'displayOnly' => function () {
-                return false;
-            },
         ]);
         $detailViewField = $field->getDetailViewField();
         $this->assertEquals(spl_object_hash($detailViewField), spl_object_hash($field->getDetailViewField()));
@@ -90,7 +87,6 @@ class FieldTest extends TestCase
         $this->assertInstanceOf(DetailViewField::class, $detailViewField);
         $this->assertFalse($detailViewField->getFieldConfig());
         $this->assertEquals('testAttribute', $detailViewField->getAttribute());
-        $this->assertFalse($detailViewField->getDisplayOnly());
     }
 
     public function testSetDetailViewField() {
@@ -142,13 +138,6 @@ class FieldTest extends TestCase
         ]);
         $this->assertTrue($field->getReadOnly());
     }
-
-//    public function testDisplayOnlyWithNotReadOnlyFlagException() {
-//        $field = new Field();
-//        $this->assertExceptionMessage('displayOnly is must bee true when readOnly true');
-//        $field->setDisplayOnly(false);
-//        $field->setReadOnly(false);
-//    }
 
     public function testSetFieldConfigDirectly() {
         $formField = [
@@ -206,11 +195,26 @@ class FieldTest extends TestCase
         $this->assertEquals($q, $field->applyScopes($q));
     }
 
+    public function testGetRelationQuery() {
+        $q = new ActiveQuery('a');
+
+        $field = new Field([
+            'relationQuery' => $q,
+            'relation' => 'relationName',
+        ]);
+        $this->assertEquals($q, $field->getRelationQuery());
+    }
+
+    public function testGetRelationName() {
+        $relationName = 'relationName';
+        $field = new Field(['relation' => $relationName]);
+        $this->assertEquals($relationName, $field->getRelationName());
+    }
+
     public function testApplyScopesWithRelationObject() {
         $relation = $this->getMockBuilder(Relation::class)->getMock();
         $relation->expects($this->once())->method('applyScopes');
         $field = new Field([
-            'relation' => 'test',
             'relationObject' => $relation,
         ]);
 
@@ -315,7 +319,6 @@ class FieldTest extends TestCase
         $model = new FieldTestModel;
         $field = new Field([
             'relation' => 'relationName',
-            'nameAttribute' => 'nameAttribute',
             'orderByAttribute' => 'orderByAttribute',
             'with' => ['testRelation'],
             'valueAttribute' => 'valueAttribute',
@@ -329,6 +332,7 @@ class FieldTest extends TestCase
             'isNoRenderRelationLink' => true,
             'label' => 'label',
             'urlMaker' => 'test url maker',
+            'nameAttribute' => 'nameAttribute',
         ]);
         $relationObject = $field->getRelationObject();
         $this->assertInstanceOf(Relation::class, $relationObject);
@@ -367,6 +371,91 @@ class FieldTest extends TestCase
             'idAttribute' => $relationObject->idAttribute,
             'urlMaker' => $relationObject->urlMaker,
         ]);
+    }
+
+    public function testGetValue() {
+        $field = new Field([
+            'model' => new FieldTestModel(),
+            'attribute' => 'name',
+        ]);
+        $this->assertEquals('test', $field->getValue());
+    }
+
+    public function testGetValueAttributeRequiredException() {
+        $field = new Field();
+        $this->expectExceptionMessage('"attribute" is required for getting value');
+        $field->getValue();
+    }
+
+    public function testGetValueModelRequiredException() {
+        $field = new Field([
+            'attribute' => 'name'
+        ]);
+        $this->expectExceptionMessage('"model" is required for getting value');
+        $field->getValue();
+    }
+
+    public function testGetUrl() {
+        $relationObject = $this->getMockBuilder(Relation::class)->getMock();
+        $url = ['/testUrl'];
+        $relationObject->method('getUrl')
+            ->willReturn($url);
+        $field = new Field([
+            'relationObject' => $relationObject,
+        ]);
+        $this->assertEquals($url, $field->getUrl());
+    }
+
+    public function testGetUrlMaker() {
+        $relationObject = $this->getMockBuilder(Relation::class)->getMock();
+        $relationObject->method('getUrlMaker')
+            ->willReturn(true);
+        $field = new Field([
+            'relationObject' => $relationObject,
+        ]);
+        $this->assertTrue($field->getUrlMaker());
+    }
+
+    public function testGetAttribute() {
+        $attribute = 'test';
+        $field = new Field([
+            'attribute' => $attribute,
+        ]);
+        $this->assertEquals($attribute, $field->getAttribute());
+    }
+
+    public function testGetRequired() {
+        $field = new Field([
+            'required' => true,
+        ]);
+
+        $this->assertTrue($field->getRequired());
+    }
+
+    public function testSetAttributeDelegation() {
+        $attribute = 'test';
+        $detailViewField = $this->getMockBuilder(DetailViewField::class)->getMock();
+        $detailViewField->expects($this->once())
+            ->method('setAttribute')
+            ->with($attribute);
+        $field = new Field([
+            'detailViewField' => $detailViewField,
+        ]);
+        $field->setAttribute($attribute);
+    }
+
+    public function testSetFieldConfigDelegation() {
+        $config = [
+            'test' => 'test',
+        ];
+        $detailViewField = $this->getMockBuilder(DetailViewField::class)->getMock();
+        $detailViewField->expects($this->once())
+            ->method('setFieldConfig')
+            ->with($config);
+        $field = new Field([
+            'detailViewField' => $detailViewField,
+        ]);
+        $field->setFieldConfig($config);
     }
 }
 
