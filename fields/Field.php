@@ -35,9 +35,9 @@ class Field extends BaseObject
      * @var ActiveRecord
      */
     public $model = null;
-    public $required = false;
+    protected $required = false;
     public $defaultValue = null;
-    public $attribute = null;
+    protected $attribute = null;
     public $rules = [];
     public $multipleInputType = MultipleInputColumn::TYPE_TEXT_INPUT;
     protected $_column = [];
@@ -48,17 +48,9 @@ class Field extends BaseObject
     public $isRenderRelationFields = false;
     public $isRenderInRelationForm = true;
 
-    public $idAttribute = null;
-    public $nameAttribute = 'name';
-    public $orderByAttribute = null;
-    public $with = null;
-    public $relation = null;
     public $data = [];
     public $valueAttribute = null;
     public $multipleInputField = [];
-    public $url = null;
-    public $updateUrl = null;
-    public $isNoRenderRelationLink = false;
     public $defaultScenario = self::SCENARIO_DEFAULT;
     public $name = null;
 
@@ -68,11 +60,82 @@ class Field extends BaseObject
     public $scope = null;
 
     protected $_relationObject = null;
+    protected $relationObjectParams = [
+        'class' => Relation::class,
+    ];
+
     public $order = 0;
-    public $columnRecordsLimit = null;
-    public $groupByVia = null;
 
     const SCENARIO_DEFAULT = [self::SCENARIO_FORM];
+
+    public function __construct($config = [])
+    {
+        $relationAttributes = [
+//            'attribute' => $this->attribute,
+//            'model' => $this->model,
+//            'isHasRelationAttribute' => $this->isHasRelationAttribute,
+//            'label' => $this->getLabel(),
+
+            'name' => 'relation',
+            'query' => 'relationQuery',
+            'nameAttribute',
+            'orderByAttribute',
+            'with',
+//            'valueAttribute',
+            'updateUrl',
+            'url',
+            'columnRecordsLimit',
+            'isNoRenderRelationLink',
+            'idAttribute',
+            'urlMaker',
+            'groupByVia',
+        ];
+
+        $relationValues = [];
+        foreach ($config as $key => $value) {
+            if (in_array($key, $relationAttributes)) {
+                $relationValues[$key] = $value;
+                unset($config[$key]);
+            }
+        }
+
+        parent::__construct($config);
+        if (!empty($relationValues) && !empty($relationValues['relation'])) {
+            foreach ($relationValues as $key => $relationValue) {
+                if (!is_string($relationAttribute = array_search($key, $relationAttributes))) {
+                    $relationAttribute = $key;
+                }
+
+                $this->relationObjectParams[$relationAttribute] = $relationValue;
+            }
+        }
+    }
+
+    protected function getRelationObjectParams() {
+        return $this->relationObjectParams;
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function createRelationObject()
+    {
+        $relationObjectParams = $this->getRelationObjectParams();
+        if (empty($relationObjectParams['name'])) {
+            return false;
+        }
+        $params = ArrayHelper::merge([
+            'field' => $this,
+            'valueAttribute' => $this->valueAttribute,
+            'attribute' => $this->attribute,
+            'model' => $this->model,
+            'isHasRelationAttribute' => $this->isHasRelationAttribute,
+            'label' => $this->getLabel(),
+        ], $relationObjectParams);
+        $relation = \yii::createObject($params);
+
+        return $relation;
+    }
 
     public function getReadOnly() {
         if ($this->readOnly === null) {
@@ -83,7 +146,7 @@ class Field extends BaseObject
     }
 
     public function attach() {
-        if ($this->defaultValue !== null && in_array($this->model->scenario, $this->defaultScenario)) {
+        if ($this->defaultValue !== null && in_array($this->model->getScenario(), $this->defaultScenario)) {
             $attribute = $this->attribute;
             if ($this->model->$attribute === null || $this->model->$attribute === []) {
                 $defaultValue = $this->defaultValue;
@@ -102,36 +165,45 @@ class Field extends BaseObject
         return $this;
     }
 
-    public $urlMaker = null;
+    /**
+     * @return Relation
+     */
     public function getRelationObject() {
-        if ($this->_relationObject === null && $this->relation !== null) {
-            $this->_relationObject = new Relation([
-                'field' => $this,
-                'name' => $this->relation,
-                'nameAttribute' => $this->nameAttribute,
-                'orderByAttribute' => $this->orderByAttribute,
-                'with' => $this->with,
-                'valueAttribute' => $this->valueAttribute,
-                'updateUrl' => $this->updateUrl,
-                'url' => $this->url,
-                'attribute' => $this->attribute,
-                'model' => $this->model,
-                'columnRecordsLimit' => $this->columnRecordsLimit,
-                'isHasRelationAttribute' => $this->isHasRelationAttribute,
-                'isNoRenderRelationLink' => $this->isNoRenderRelationLink,
-                'label' => $this->getLabel(),
-                'idAttribute' => $this->idAttribute,
-                'urlMaker' => $this->urlMaker,
-            ]);
+        if ($this->_relationObject === null) {
+            $this->_relationObject = $this->createRelationObject();
         }
 
         return $this->_relationObject;
     }
 
+    public function getRelation() {
+        return $this->getRelationName();
+    }
+
+    public function getRelationQuery() {
+        if ($relation = $this->getRelationObject()) {
+            return $relation->getQuery();
+        }
+    }
+
+    public function getRelationName() {
+        if ($relation = $this->getRelationObject()) {
+            return $relation->getName();
+        }
+    }
+
     public function getValue() {
         $attribute = $this->attribute;
+        if (empty($attribute)) {
+            throw new Exception('"attribute" is required for getting value');
+        }
 
-        return $this->model->$attribute;
+        $model = $this->model;
+        if (empty($model)) {
+            throw new Exception('"model" is required for getting value');
+        }
+
+        return $model->$attribute;
     }
 
 //    public function isCheckRecordsValue($value = null) {
@@ -218,11 +290,6 @@ class Field extends BaseObject
     public function getDetailViewField() {
         if ($this->detailViewField === null) {
             $fieldConfig = $this->_field;
-            if (is_callable($fieldConfig)) {
-                $fieldConfig = function ($model, $detailViewField) use ($fieldConfig) {
-                    return $fieldConfig($model, $this, $detailViewField);
-                };
-            }
 
             $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute);
             $this->initDetailViewField($this->detailViewField);
@@ -235,13 +302,20 @@ class Field extends BaseObject
     }
 
     public function setFieldConfig($config) {
-        $this->_field = $config;
+
+        if (is_callable($config)) {
+            $config = function ($model, $detailViewField) use ($config) {
+                return $config($model, $this, $detailViewField);
+            };
+        }
+
+        $this->getDetailViewField()->setFieldConfig($config);
 
         return $this;
     }
 
     public function getFieldConfig() {
-        return $this->_field;
+        return $this->getDetailViewField()->getFieldConfig();
     }
 
     public function setDisplayOnly($displayOnly) {
@@ -336,9 +410,7 @@ class Field extends BaseObject
     }
 
     public function setField($field) {
-        $this->_field = $field;
-
-        return $this;
+        return $this->setFieldConfig($field);
     }
 
     public function applyScopes(ActiveQuery $query) {
@@ -410,8 +482,8 @@ class Field extends BaseObject
      */
     protected function applyRelationScopes(ActiveQuery $query)
     {
-        if ($this->relation) {
-            return $this->getRelationObject()->applyScopes($query);
+        if ($relation = $this->getRelationObject()) {
+            return $relation->applyScopes($query);
         }
     }
 
@@ -425,7 +497,7 @@ class Field extends BaseObject
     protected function getRules(): array
     {
         $rules = [];
-        $uniqueId = $this->attribute . $this->relation;
+        $uniqueId = $this->attribute . $this->getRelationName();
         if ($this->defaultValue !== null) {
             $rules[$uniqueId . 'DefaultValue'] = [
                 [$this->attribute],
@@ -450,7 +522,7 @@ class Field extends BaseObject
 
             if ($this->getIsRenderRelationFields()) {
                 $rules[$uniqueId . 'onFormAndDefault'] = [
-                    [$this->relation],
+                    [$this->getRelationName()],
                     $rule,
                     'on' => $this->defaultScenario,
                 ];
@@ -515,5 +587,54 @@ class Field extends BaseObject
                 $whereAttribute => $value,
             ]);
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRelationClass(): string
+    {
+        return Relation::class;
+    }
+
+    public function getUrl() {
+        $relation = $this->getRelationObject();
+        if ($relation) {
+            return $relation->getUrl();
+        }
+    }
+
+    public function getUrlMaker() {
+        $relation = $this->getRelationObject();
+        if ($relation) {
+            return $relation->getUrlMaker();
+        }
+    }
+
+    /**
+     * @param null $attribute
+     */
+    public function setAttribute($attribute): void
+    {
+        $this->attribute = $attribute;
+        if ($detailViewField = $this->detailViewField) {
+            $detailViewField->setAttribute($attribute);
+        }
+    }
+
+    public function getAttribute() {
+        return $this->attribute;
+    }
+
+    /**
+     * @param bool $required
+     */
+    public function setRequired(bool $required): void
+    {
+        $this->required = $required;
+    }
+
+    public function getRequired() {
+        return $this->required;
     }
 }

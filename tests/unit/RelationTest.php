@@ -278,8 +278,21 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $relation->getIdAttribute());
     }
 
-//    public function testConfigureLinkRenderer() {
-//        $renderer = $this->getMockBuilder(LinkRenderer::class)->getMock();
-//        $renderer->method('')
-//    }
+    public function testGetUrl() {
+        $url = [
+            '/test/test',
+        ];
+        $relation = new Relation([
+            'url' => $url,
+        ]);
+        $this->assertEquals($url, $relation->getUrl());
+    }
+
+    public function testGetColumnRecordsLimit() {
+        $limit = 20;
+        $relation = new Relation([
+            'columnRecordsLimit' => $limit,
+        ]);
+        $this->assertEquals($limit, $relation->getColumnRecordsLimit());
+    }
 }

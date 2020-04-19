@@ -184,9 +184,10 @@ class HasManyMultipleInput extends Field
             return $this->nameParam;
         }
 
-        $formName = $this->getRelationObject()->getRelationFormName();
+        $relation = $this->getRelationObject();
+        $formName = $relation->getRelationFormName();
 
-        return $formName . '[' . $this->nameAttribute . ']';
+        return $formName . '[' . $relation->nameAttribute . ']';
     }
 
     public function applyScopes(ActiveQuery $query)
@@ -194,8 +195,9 @@ class HasManyMultipleInput extends Field
         /**
          * @TODO Учесть with=false
          */
-        if ($this->columnRecordsLimit === null || $this->columnRecordsLimit === false) {
-            $query->with($this->getRelationObject()->getWith());
+        $relation = $this->getRelationObject();
+        if ($relation->getColumnRecordsLimit() === null || $relation->getColumnRecordsLimit() === false) {
+            $query->with($relation->getWith());
         }
 
         if ($this->scope === false) {
@@ -206,13 +208,13 @@ class HasManyMultipleInput extends Field
             return $query->andWhere('false');
         }
 
-        $relatedModelClass = $this->getRelationObject()->getRelationModelClass();
+        $relatedModelClass = $relation->getRelationModelClass();
         $relatedModel = new $relatedModelClass;
 
         foreach ($this->value as $rowModel) {
             $isHasRelationAttribute = $this->isHasRelationAttribute;
             if ($isHasRelationAttribute && in_array($rowModel->$isHasRelationAttribute, ['0', '1'])) {
-                $relationQuery = $this->getRelationObject()->getRelationQuery();
+                $relationQuery = $relation->getRelationQuery();
                 $relationQuery->primaryModel = null;
                 if ($rowModel->$isHasRelationAttribute == '1') {
                     $operator = 'IN';
@@ -236,7 +238,7 @@ class HasManyMultipleInput extends Field
                 if (!empty($row)) {
                     $relatedModel->scenario = Field::SCENARIO_GRID;
                     $relatedModel->attributes = $row;
-                    $relationQuery = $this->getRelationObject()->getRelationQuery();
+                    $relationQuery = $relation->getRelationQuery();
                     $relationQuery = $relatedModel->applyScopes($relationQuery);
 
                     $relationQuery->select(key($relationQuery->link));

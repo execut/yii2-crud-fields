@@ -14,6 +14,8 @@ use execut\crudFields\LinkRenderer;
 use execut\crudFields\relation\UrlMaker;
 use yii\base\BaseObject;
 use yii\base\Exception;
+use yii\base\InvalidArgumentException;
+use yii\base\UnknownMethodException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -29,6 +31,9 @@ class Relation extends BaseObject
      * @var Field
      */
     public $field = null;
+    /**
+     * @var ActiveRecord
+     */
     public $model = null;
     public $nameAttribute = 'name';
     public $valueAttribute = null;
@@ -37,7 +42,7 @@ class Relation extends BaseObject
     public $updateUrl = null;
     public $attribute = null;
     public $columnRecordsLimit = null;
-    public $url = null;
+    protected $url = null;
     public $isHasRelationAttribute = false;
     public $isNoRenderRelationLink = false;
     public $linkRenderer = null;
@@ -45,6 +50,7 @@ class Relation extends BaseObject
     public $urlMaker = null;
     public $label = null;
     public $idAttribute = null;
+    public $groupByVia = null;
     protected $_name = null;
 
     public function setName($relation) {
@@ -305,8 +311,8 @@ class Relation extends BaseObject
                 $relation = $row->getRelation($this->getName());
                 if (!empty($relation->via)) {
                     $via = $relation->via[1];
-                    if ($this->field->groupByVia) {
-                        $via->select($this->field->groupByVia)->groupBy($this->field->groupByVia);
+                    if ($this->groupByVia) {
+                        $via->select($this->groupByVia)->groupBy($this->groupByVia);
                     }
 
                     if ($this->columnRecordsLimit !== null) {
@@ -370,9 +376,25 @@ class Relation extends BaseObject
             return;
         }
 
-        $relationQuery = $this->model->getRelation($this->getName());
+        $name = $this->getName();
+        $relationQuery = $this->model->getRelation($name, false, true);
+        if (!$relationQuery) {
+            $relationQuery = $this->model->getPluginsRelation($name);
+        }
 
-        return $relationQuery;
+        if (!$relationQuery) {
+            $getter = 'get' . $name;
+            try {
+                // the relation could be defined in a behavior
+                $relationQuery = $this->model->$getter();
+            } catch (UnknownMethodException $e) {
+                if (!$relationQuery) {
+                    throw new \yii\db\Exception('Relation ' . $name . ' is not has query!');
+                }
+            }
+        }
+
+        return $this->query = $relationQuery;
     }
 
     /**
@@ -680,5 +702,17 @@ class Relation extends BaseObject
         }
 
         return $this->linkRenderer;
+    }
+
+    public function setUrl($url) {
+        $this->url = $url;
+    }
+
+    public function getUrl() {
+        return $this->url;
+    }
+
+    public function getColumnRecordsLimit() {
+        return $this->columnRecordsLimit;
     }
 }

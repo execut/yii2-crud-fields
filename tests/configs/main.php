@@ -1,4 +1,8 @@
 <?php
+
+use execut\crudFields\widgets\Select2ExecutAsset;
+use kartik\select2\Select2Asset;
+
 $params = [];
 
 return [
@@ -22,6 +26,18 @@ return [
         'assetManager' => [
             'basePath' => __DIR__ . '/../../tests/assets/',
             'bundles' => [
+                Select2ExecutAsset::class => [
+                    'sourcePath' => null,
+                    'js' => [],
+                    'css' => [],
+                    'depends' => [],
+                ],
+                Select2Asset::class => [
+                    'sourcePath' => null,
+                    'js' => [],
+                    'css' => [],
+                    'depends' => [],
+                ],
                 'yii\\web\\JqueryAsset' => [
                     'sourcePath' => null,
                     'js' => [],

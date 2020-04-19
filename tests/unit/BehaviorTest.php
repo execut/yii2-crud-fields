@@ -43,24 +43,45 @@ class BehaviorTest extends TestCase
         $this->assertEquals($model, $field->model);
     }
 
-//    public function testGetRelations() {
-//        $field = $this->getMockBuilder(Field::class)->getMock();
-//        $object = $this->getMockBuilder(Relation::class)->getMock();
-//        $q = new ActiveQuery('a');
-//        $object->method('getQuery')->willReturn($q);
-//        $object->method('getName')->willReturn('testRelationName');
-//
-//        $field->method('getRelationObject')
-//            ->willReturn($object);
-//        $behavior = new Behavior([
-//            'fields' => [
-//                $field
-//            ]
-//        ]);
-//        $relations = $behavior->getRelations();
-//        $this->assertCount(1, $relations);
-//        $this->assertEquals($q, $behavior->getRelation('testRelationName'));
-//    }
+    public function testGetRelation() {
+        $field = $this->getMockBuilder(Field::class)->getMock();
+        $q = new ActiveQuery('a');
+        $field->method('getRelationQuery')->willReturn($q);
+
+        $relationName = 'testRelationName';
+        $field->method('getRelationName')->willReturn($relationName);
+
+        $behavior = new Behavior([
+            'fields' => [
+                $relationName => $field
+            ]
+        ]);
+        $relation = $behavior->getRelation($relationName);
+        $this->assertEquals($q, $relation);
+    }
+
+    public function testGetRelationFromPlugin() {
+        $plugin = $this->getMockBuilder(BehaviorTestPlugin::class)->onlyMethods(['getRelationQuery'])->getMock();
+        $query = new ActiveQuery('a');
+        Model::$query = $query;
+
+        $plugin->method('getRelationQuery')
+            ->with('testRelation')
+            ->willReturn($query);
+        $model = new Model();
+
+        $behavior = new Behavior([
+            'owner' => $model,
+            'plugins' => [
+                'testPlugin' => $plugin,
+            ]
+        ]);
+
+        $relation = $behavior->getRelation('testRelation');
+        $this->assertEquals($query, $relation);
+    }
+
+    public function testGetPluginRelation() {}
 
     public function testSetFieldsByAttribute() {
         $model = new Model;
@@ -309,6 +330,36 @@ class BehaviorTest extends TestCase
             ]
         ]);
         $this->assertInstanceOf(BehaviorTestPlugin::class, $behavior->getPlugin('test'));
+    }
+
+    public function testTriggerPluginsEvents() {
+        $delegatedEvents = [
+            ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
+            ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
+            ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
+            ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
+            ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
+            ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
+        ];
+
+        $plugin = $this->getMockBuilder(BehaviorTestPlugin::class)->onlyMethods(array_values($delegatedEvents))->getMock();
+        $behavior = new Behavior([
+            'owner' => new Model,
+        ]);
+        $events = $behavior->events();
+
+        foreach ($delegatedEvents as $event => $method) {
+            $this->assertArrayHasKey($event, $events);
+            $this->assertEquals($method, $events[$event]);
+            $plugin->expects($this->once())->method($method);
+        }
+        $behavior->setPlugins([
+            'test' => $plugin
+        ]);
+
+        foreach ($delegatedEvents as $event => $method) {
+            $behavior->$method();
+        }
     }
 
 //    public function testGetScopesViaRoles() {

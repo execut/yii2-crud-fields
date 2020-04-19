@@ -134,7 +134,7 @@ class HasOneSelect2 extends Field
 //        return $relationModel->getBehavior('fields')->getFields();
 //    }
 
-    public function getNameParam() {
+    protected function getNameParam() {
         if ($this->nameParam !== null) {
             return $this->nameParam;
         }
@@ -145,7 +145,7 @@ class HasOneSelect2 extends Field
 
         $formName = $this->getRelationObject()->getRelationFormName();
 
-        return $formName . '[' . $this->nameAttribute . ']';
+        return $formName . '[' . $relation->nameAttribute . ']';
     }
 
 
@@ -219,7 +219,7 @@ class HasOneSelect2 extends Field
     }
 
     protected function getLanguage() {
-        return substr(\yii::$app->language, 0, 2);
+        return \yii::$app ? substr(\yii::$app->language, 0, 2) : 'en';
     }
 
     public function getMultipleInputField()
@@ -246,8 +246,10 @@ class HasOneSelect2 extends Field
         }
 
         $nameParam = $this->getNameParam();
+        $relation = $this->getRelationObject();
         $widgetOptions = [
             'class' => Select2::class,
+            'bsVersion' => 3,
             'theme' => Select2::THEME_BOOTSTRAP,
             'language' => $this->getLanguage(),
             'initValueText' => $sourceInitText,
@@ -258,10 +260,10 @@ class HasOneSelect2 extends Field
             'options' => [
                 'placeholder' => $this->getLabel(),
             ],
-            'isRenderLink' => !$this->isNoRenderRelationLink,
+            'isRenderLink' => !$relation->isNoRenderRelationLink,
         ];
 
-        if ($this->url !== null) {
+        if ($relation->url !== null) {
 //            $scopeStub = [];
 //            foreach ($this->getRelationConditionData() as $key => $name) {
 //                $scopeStub[] = [
@@ -272,7 +274,7 @@ class HasOneSelect2 extends Field
 //            $scopeStub = Json::encode($scopeStub);
             $widgetOptions = ArrayHelper::merge($widgetOptions, [
                 'showToggleAll' => false,
-                'url' => $this->url,
+                'url' => $relation->url,
                 'pluginOptions' => [
                     'ajax' => [
                         'dataType' => 'json',
@@ -307,7 +309,7 @@ JS
         }
 
 
-        if (!empty($this->data) || $this->url === null) {
+        if (!empty($this->data) || $relation->url === null) {
             $data = $this->getData();
 //            $data = ArrayHelper::merge($this->getRelationConditionData(), $data);
 //            unset($data['']);

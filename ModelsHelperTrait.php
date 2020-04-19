@@ -33,7 +33,7 @@ trait ModelsHelperTrait
         return $this->name;
     }
 
-    public function getStandardBehaviors($fields, $otherFields = []) {
+    public function getStandardBehaviors($fields, $otherBehaviors = []) {
         return ArrayHelper::merge([
             'timestamp' => [
                 'class' => TimestampBehavior::class,
@@ -45,6 +45,6 @@ trait ModelsHelperTrait
                 'class' => Behavior::class,
                 'fields' => $fields,
             ],
-        ], $otherFields);
+        ], $otherBehaviors);
     }
 }

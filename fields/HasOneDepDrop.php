@@ -21,6 +21,7 @@ class HasOneDepDrop extends HasOneSelect2
     public $depends = [];
     public $dependedAttribute = null;
     public $searchDataScopes = [];
+    public $nameAttribute = null;
     public function getField()
     {
         $field = parent::getField();
@@ -98,7 +99,7 @@ class HasOneDepDrop extends HasOneSelect2
     }
 
     public function getData() {
-        $query = clone $this->getRelationObject()->getRelationQuery();
+        $query = clone $this->getRelationObject()->getQuery();
         $query->primaryModel = null;
         $isHas = false;
         $depends = [$this->depends[count($this->depends) - 1]];
