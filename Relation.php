@@ -201,8 +201,6 @@ class Relation extends BaseObject
                  */
                 $sourceIds = $via->select('id');
             } else {
-                $viaRelationName = $via[0];
-                $viaModels = $this->model->$viaRelationName;
                 $viaAttribute = $this->attribute;
                 if (!empty($this->model->$viaAttribute)) {
                     $sourceIds = $this->model->$viaAttribute;
@@ -212,6 +210,9 @@ class Relation extends BaseObject
                         }
                     }
                 } else {
+
+                    $viaRelationName = $via[0];
+                    $viaModels = $this->model->$viaRelationName;
                     $sourceIds = [];
                     foreach ($viaModels as $viaModel) {
                         $sourceIds[$viaModel->$viaAttribute] = ArrayHelper::getValue($viaModel, $nameAttribute);
