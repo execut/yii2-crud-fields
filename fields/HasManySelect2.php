@@ -68,7 +68,7 @@ class HasManySelect2 extends HasOneSelect2
                 $this->model->$attribute = $viaModelsAttributes;
             }
         } else {
-            $relationQuery = $this->getRelationObject()->getRelationQuery();
+            $relationQuery = $this->getRelationObject()->getQuery();
             $viaRelationModelClass = $relationQuery->modelClass;
             $viaRelationModel = new $viaRelationModelClass;
             $attribute = $this->getRelationObject()->getName();
