@@ -82,10 +82,11 @@ class HasOneSelect2 extends Field
             $widgetOptions = [];
         }
 
+        $relation = $this->getRelationObject();
         $field = ArrayHelper::merge([
             'type' => $type,
 //            'widgetClass' => Select2::class,
-            'value' => $this->getRelationObject()->getColumnValue($this->model),
+            'value' => $relation ? $relation->getColumnValue($this->model) : $this->getValue(),
             'format' => 'raw',
             'widgetOptions' => $widgetOptions,
             'fieldConfig' => [
@@ -245,7 +246,6 @@ class HasOneSelect2 extends Field
             $sourceInitText = null;
         }
 
-        $nameParam = $this->getNameParam();
         $relation = $this->getRelationObject();
         $widgetOptions = [
             'class' => Select2::class,
@@ -260,52 +260,55 @@ class HasOneSelect2 extends Field
             'options' => [
                 'placeholder' => $this->getLabel(),
             ],
-            'isRenderLink' => !$relation->isNoRenderRelationLink,
         ];
 
-        if ($relation->url !== null) {
-//            $scopeStub = [];
-//            foreach ($this->getRelationConditionData() as $key => $name) {
-//                $scopeStub[] = [
-//                    'id' => $key,
-//                    'text' => $name,
-//                ];
-//            }
-//            $scopeStub = Json::encode($scopeStub);
-            $widgetOptions = ArrayHelper::merge($widgetOptions, [
-                'showToggleAll' => false,
-                'url' => $relation->url,
-                'pluginOptions' => [
-                    'ajax' => [
-                        'dataType' => 'json',
-                        'data' => new JsExpression(<<<JS
-            function(params) {
-                return {
-                    "$nameParam": params.term,
-                    page: params.page
-                };
-            }
+        if ($relation) {
+            $widgetOptions['isRenderLink'] = !$relation->isNoRenderRelationLink;
+            if ($relation->getUrl() !== null) {
+                //            $scopeStub = [];
+                //            foreach ($this->getRelationConditionData() as $key => $name) {
+                //                $scopeStub[] = [
+                //                    'id' => $key,
+                //                    'text' => $name,
+                //                ];
+                //            }
+                //            $scopeStub = Json::encode($scopeStub);
+                $nameParam = $this->getNameParam();
+                $widgetOptions = ArrayHelper::merge($widgetOptions, [
+                    'showToggleAll' => false,
+                    'url' => $relation->url,
+                    'pluginOptions' => [
+                        'ajax' => [
+                            'dataType' => 'json',
+                            'data' => new JsExpression(<<<JS
+                        function(params) {
+                            return {
+                                "$nameParam": params.term,
+                                page: params.page
+                            };
+                        }
 JS
-                        ),
-//                        'processResults' => new JsExpression(<<<JS
-//function (data) {
-//    var items = data.results,
-//        results = $scopeStub;
-//    for (var key in items) {
-//        results[results.length] = items[key];
-//    }
-//
-//    console.debug(results);
-//
-//  return {
-//    results: results
-//  };
-//}
-//JS
-//                        )
-                    ]
-                ],
-            ]);
+                            ),
+                            //                        'processResults' => new JsExpression(<<<JS
+                            //function (data) {
+                            //    var items = data.results,
+                            //        results = $scopeStub;
+                            //    for (var key in items) {
+                            //        results[results.length] = items[key];
+                            //    }
+                            //
+                            //    console.debug(results);
+                            //
+                            //  return {
+                            //    results: results
+                            //  };
+                            //}
+                            //JS
+                            //                        )
+                        ]
+                    ],
+                ]);
+            }
         }
 
 

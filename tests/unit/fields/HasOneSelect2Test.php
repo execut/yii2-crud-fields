@@ -27,6 +27,20 @@ class HasOneSelect2Test extends Unit
         $this->assertArrayHasKey('type', $field);
     }
 
+    public function testGetFieldWithoutRelation() {
+        $model = new HasOneSelect2TestModel;
+        $data = ['test' => 'test'];
+        $field = new HasOneSelect2([
+            'attribute' => 'name',
+            'model' => $model,
+            'data' => $data,
+        ]);
+        $field = $field->getField();
+        $this->assertArrayHasKey('widgetOptions', $field);
+        $this->assertArrayHasKey('data', $field['widgetOptions']);
+        $this->assertEquals($data, $field['widgetOptions']['data']);
+    }
+
     public function testGetColumn() {
         $relationObject = $this->getMockBuilder(Relation::class)->onlyMethods(['getSourcesText', 'getRelationFormName', 'getRelatedModels', 'getData'])->getMock();
         $relationObject->method('getSourcesText')
