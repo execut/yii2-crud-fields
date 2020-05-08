@@ -208,57 +208,35 @@ class HasManyMultipleInput extends Field
             return $query->andWhere('false');
         }
 
+        $relation->applyScopeIsExistRecords($query);
         $relatedModelClass = $relation->getRelationModelClass();
         $relatedModel = new $relatedModelClass;
 
         foreach ($this->value as $rowModel) {
-            $isHasRelationAttribute = $this->isHasRelationAttribute;
-            if ($isHasRelationAttribute && in_array($rowModel->$isHasRelationAttribute, ['0', '1'])) {
-                $relationQuery = $relation->getRelationQuery();
-                $relationQuery->primaryModel = null;
-                if ($rowModel->$isHasRelationAttribute == '1') {
-                    $operator = 'IN';
-                    $relationQuery->select(key($relationQuery->link));
-                    $query->andWhere([
-                        $operator,
-                        current($relationQuery->link),
-                        $relationQuery,
-                    ]);
+            $row = array_filter($rowModel->attributes);
+            if (!empty($row)) {
+                $relatedModel->scenario = Field::SCENARIO_GRID;
+                $relatedModel->attributes = $row;
+                $relationQuery = $relation->getQuery();
+                $relationQuery = $relatedModel->applyScopes($relationQuery);
+
+                $relationQuery->select(key($relationQuery->link));
+                $relationQuery->indexBy = key($relationQuery->link);
+
+
+                if (!($this->model instanceof ActiveRecord)) {
+                    $attributePrefix = $this->model->tableName() . '.';
                 } else {
-                    $relationQuery->andWhere([
-                        $relatedModel->tableName() . '.' . key($relationQuery->link) => new Expression($this->model->tableName() . '.' . current($relationQuery->link)),
-                    ])->select(new Expression( '1'));
-                    $query->andWhere([
-                        'NOT EXISTS',
-                        $relationQuery
-                    ]);
+                    $attributePrefix = '';
                 }
-            } else {
-                $row = array_filter($rowModel->attributes);
-                if (!empty($row)) {
-                    $relatedModel->scenario = Field::SCENARIO_GRID;
-                    $relatedModel->attributes = $row;
-                    $relationQuery = $relation->getRelationQuery();
-                    $relationQuery = $relatedModel->applyScopes($relationQuery);
 
-                    $relationQuery->select(key($relationQuery->link));
-                    $relationQuery->indexBy = key($relationQuery->link);
+                $relatedAttribute = current($relationQuery->link);
+                $relationQuery->primaryModel = null;
+                $relationQuery->link = null;
 
-
-                    if (!($this->model instanceof ActiveRecord)) {
-                        $attributePrefix = $this->model->tableName() . '.';
-                    } else {
-                        $attributePrefix = '';
-                    }
-
-                    $relatedAttribute = current($relationQuery->link);
-                    $relationQuery->primaryModel = null;
-                    $relationQuery->link = null;
-
-                    $query->andWhere([
-                        $attributePrefix . $relatedAttribute => $relationQuery,
-                    ]);
-                }
+                $query->andWhere([
+                    $attributePrefix . $relatedAttribute => $relationQuery,
+                ]);
             }
         }
 
@@ -467,14 +445,22 @@ class HasManyMultipleInput extends Field
                 }
             }
 
+            $multipleInputWidgetOptions = ArrayHelper::merge($multipleInputWidgetOptions, [
+                'attribute' => $this->attribute,
+                'model' => $this->model,
+                'max' => 1,
+                'min' => 1,
+                'addButtonPosition' => MultipleInput::POS_ROW,
+            ]);
+
             $column = ArrayHelper::merge([
-                'filter' => '',//$sourceInitText,
-                'filterType' => MultipleInput::class,
-                'filterWidgetOptions' => ArrayHelper::merge($multipleInputWidgetOptions, [
-                    'max' => 1,
-                    'min' => 1,
-                    'addButtonPosition' => MultipleInput::POS_ROW,
-                ]),
+                'filter' => MultipleInput::widget($multipleInputWidgetOptions) . $this->renderHasRelationFilter(),//$sourceInitText,
+//                'filterType' => MultipleInput::class,
+//                'filterWidgetOptions' => ArrayHelper::merge($multipleInputWidgetOptions, [
+//                    'max' => 1,
+//                    'min' => 1,
+//                    'addButtonPosition' => MultipleInput::POS_ROW,
+//                ]),
             ], $column);
         }
 

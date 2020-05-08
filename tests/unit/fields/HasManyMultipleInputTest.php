@@ -10,7 +10,6 @@ use execut\crudFields\TestCase;
 class HasManyMultipleInputTest extends TestCase
 {
     public function testGetField() {
-        return;
         $relationObject = $this->getMockBuilder(Relation::class)->getMock();
         $model = new HasOneSelect2TestModel;
         $relationObject->method('getRelationModel')
@@ -23,6 +22,10 @@ class HasManyMultipleInputTest extends TestCase
         ]);
         $field = $field->getField();
         $this->assertArrayHasKey('type', $field);
+    }
+
+    public function testApplyScopes() {
+
     }
 
     public function testGetColumn() {

@@ -534,4 +534,8 @@ class FieldTestModel extends ActiveRecord {
 
         return true;
     }
+
+    public function getMultipleInputFields() {
+        return [];
+    }
 }
