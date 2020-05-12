@@ -265,7 +265,6 @@ class HasManyMultipleInput extends Field
                 } else {
                     $limit = $this->columnRecordsLimit;
                     $q = $row->getRelation($relationName);
-
                     if ($limit !== false) {
                         if ($limit === null) {
                             $limit = 10;
@@ -433,16 +432,13 @@ class HasManyMultipleInput extends Field
         if (!array_key_exists('filter', $column) || $column['filter'] !== false) {
             $multipleInputWidgetOptions = $this->getMultipleInputWidgetOptions(true);
             if (!$this->isRenderFilter) {
-                if ($this->isHasRelationAttribute !== false && !empty($multipleInputWidgetOptions['columns'][$this->isHasRelationAttribute])) {
-                    $multipleInputWidgetOptions['columns'] = [
-                        'id' => $multipleInputWidgetOptions['columns']['id'],
-                        $this->isHasRelationAttribute => $multipleInputWidgetOptions['columns'][$this->isHasRelationAttribute],
-                    ];
+                if ($this->isHasRelationAttribute !== false) {
+                    $column['filter'] = $this->renderHasRelationFilter();
                 } else {
                     $column['filter'] = false;
-
-                    return $column;
                 }
+
+                return $column;
             }
 
             $multipleInputWidgetOptions = ArrayHelper::merge($multipleInputWidgetOptions, [
@@ -453,7 +449,7 @@ class HasManyMultipleInput extends Field
                 'addButtonPosition' => MultipleInput::POS_ROW,
             ]);
 
-            $column = ArrayHelper::merge([
+            $column = ArrayHelper::merge($column, [
                 'filter' => MultipleInput::widget($multipleInputWidgetOptions) . $this->renderHasRelationFilter(),//$sourceInitText,
 //                'filterType' => MultipleInput::class,
 //                'filterWidgetOptions' => ArrayHelper::merge($multipleInputWidgetOptions, [
@@ -461,7 +457,7 @@ class HasManyMultipleInput extends Field
 //                    'min' => 1,
 //                    'addButtonPosition' => MultipleInput::POS_ROW,
 //                ]),
-            ], $column);
+            ]);
         }
 
         return $column;

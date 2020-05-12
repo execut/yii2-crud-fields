@@ -513,6 +513,14 @@ class Field extends BaseObject
             'on' => self::SCENARIO_GRID,
         ];
 
+        if ($this->isHasRelationAttribute) {
+            $rules[$uniqueId . 'HasRelationSafeOnGrid'] = [
+                [$this->isHasRelationAttribute],
+                'safe',
+                'on' => self::SCENARIO_GRID,
+            ];
+        }
+
         if (!$this->getReadOnly()) {
             if ($this->required) {
                 $rule = 'required';
