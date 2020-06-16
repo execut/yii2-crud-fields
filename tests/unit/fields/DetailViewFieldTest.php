@@ -90,4 +90,20 @@ class DetailViewFieldTest extends TestCase
         $this->assertArrayHasKey('addon', $fieldConfig);
         $this->assertEquals('test', $fieldConfig['addon']);
     }
+
+    public function testHide() {
+        $field = new DetailViewField([]);
+        $this->assertEquals($field, $field->hide());
+        $this->assertEquals([
+            'rowOptions' => [
+                'class' => 'hide',
+            ]
+        ], $field->getConfig());
+    }
+
+    public function testShow() {
+        $field = new DetailViewField([]);
+        $field->hide()->show();
+        $this->assertEquals([], $field->getConfig());
+    }
 }

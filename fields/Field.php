@@ -65,6 +65,10 @@ class Field extends BaseObject
     ];
 
     public $order = 0;
+    /**
+     * @var ReloaderInterface[]
+     */
+    protected $reloaders = [];
 
     const SCENARIO_DEFAULT = [self::SCENARIO_FORM];
 
@@ -109,6 +113,28 @@ class Field extends BaseObject
                 $this->relationObjectParams[$relationAttribute] = $relationValue;
             }
         }
+    }
+
+    /**
+     * @param ReloaderInterface $reloaders
+     */
+    public function setReloaders($reloaders)
+    {
+        $this->reloaders = $reloaders;
+    }
+
+    /**
+     * @return ReloaderInterface[]
+     */
+    public function getReloaders()
+    {
+        return $this->reloaders;
+    }
+
+    public function addReloader($reloader) {
+        $this->reloaders[] = $reloader;
+
+        return $this;
     }
 
     protected function getRelationObjectParams() {
@@ -289,13 +315,17 @@ class Field extends BaseObject
      */
     public function getDetailViewField() {
         if ($this->detailViewField === null) {
-            $fieldConfig = $this->_field;
+            $fieldConfig = $this->getDetailViewFieldConfig();
 
             $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute);
             $this->initDetailViewField($this->detailViewField);
         }
 
         return $this->detailViewField;
+    }
+
+    protected function getDetailViewFieldConfig() {
+        return $this->_field;
     }
 
     protected function initDetailViewField(DetailViewField $field) {
@@ -644,5 +674,24 @@ class Field extends BaseObject
 
     public function getRequired() {
         return $this->required;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDetailViewFieldClass(): string
+    {
+        return $this->detailViewFieldClass;
+    }
+
+    /**
+     * @param string $detailViewFieldClass
+     */
+    public function setDetailViewFieldClass(string $detailViewFieldClass): self
+    {
+        $this->detailViewField = null;
+        $this->detailViewFieldClass = $detailViewFieldClass;
+
+        return $this;
     }
 }

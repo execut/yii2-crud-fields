@@ -14,17 +14,23 @@ use yii\helpers\ArrayHelper;
 
 class Group extends Field
 {
-    public function getField()
+    public $scope = false;
+    protected function getDetailViewFieldConfig()
     {
+        $config = parent::getDetailViewFieldConfig();
         return ArrayHelper::merge([
             'group'=>true,
             'label'=> $this->getLabel(),
             'rowOptions'=>['class'=>DetailView::TYPE_SUCCESS]
-        ], $this->_field);
+        ], $config);
     }
 
     public function getColumn()
     {
         return false;
+    }
+
+    public function getDisplayOnly() {
+        return true;
     }
 }

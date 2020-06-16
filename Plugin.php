@@ -116,4 +116,7 @@ abstract class Plugin extends BaseObject
 
     public function beforeDelete() {
     }
+
+    public function afterLoad() {
+    }
 }

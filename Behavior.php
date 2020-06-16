@@ -30,6 +30,7 @@ class Behavior extends BaseBehavior
     const KEY = 'fields';
     public $defaultScenario = Field::SCENARIO_DEFAULT;
     public $relationsSaver = [];
+    const EVENT_AFTER_LOAD = 'afterLoad';
 
     public function setRole($role) {
         $this->role = $role;
@@ -42,7 +43,6 @@ class Behavior extends BaseBehavior
     public function attach($owner)
     {
         parent::attach($owner);
-
         foreach ($this->getPlugins() as $plugin) {
             $plugin->attach();
         }
@@ -123,6 +123,7 @@ class Behavior extends BaseBehavior
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
             ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
+            self::EVENT_AFTER_LOAD => 'afterLoad',
         ];
 
         return $events;
@@ -173,6 +174,11 @@ class Behavior extends BaseBehavior
     public function beforeDelete() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeDelete();
+        }
+    }
+    public function afterLoad() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->afterLoad();
         }
     }
 
@@ -403,17 +409,12 @@ class Behavior extends BaseBehavior
     }
 
     public function getFormFields() {
-        $columns = [];
+        $formFields = [];
         foreach ($this->getFields() as $fieldKey => $field) {
-            $formFields = $field->getFields();
-            foreach ($formFields as $formFieldKey => $formField) {
-                if ($formField !== false) {
-                    $columns[$fieldKey . '_' . $formFieldKey] = $formField;
-                }
-            }
+            $formFields = ArrayHelper::merge($formFields, $field->getFields());
         }
 
-        return $columns;
+        return $formFields;
     }
 
     public function getScopes() {

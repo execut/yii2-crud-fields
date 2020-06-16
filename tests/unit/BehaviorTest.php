@@ -141,7 +141,7 @@ class BehaviorTest extends TestCase
         ]);
         $formFields = $behavior->getFormFields();
         $this->assertEquals([
-            '0_test' => [
+            'test' => [
                 'test' => 'test',
             ]
         ], $formFields);

@@ -104,6 +104,10 @@ class Relation extends BaseObject
                     $value = array_values($value);
                 }
 
+                if (is_int($value)) {
+                    $value = [$value];
+                }
+
                 $value = array_filter($value);
                 if (!empty($value)) {
                     if ($this->model->getDb()->getSchema() instanceof Schema) {
@@ -487,6 +491,11 @@ class Relation extends BaseObject
         uasort($fields, function ($a, $b) {
             return $a->order > $b->order;
         });
+
+        $result = [];
+        foreach ($fields as $key => $field) {
+            $result[$this->getName() .'_' . $key] = $field;
+        }
 
         return $fields;
     }

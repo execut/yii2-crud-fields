@@ -457,6 +457,33 @@ class FieldTest extends TestCase
         ]);
         $field->setFieldConfig($config);
     }
+
+    public function testGetReloaders() {
+        $field = new Field;
+        $this->assertCount(0, $field->getReloaders());
+    }
+
+    public function testAddReloader() {
+        $reloader = $this->getMockBuilder(ReloaderInterface::class)->getMock();
+        $field = new Field();
+        $field->addReloader($reloader);
+        $this->assertEquals([$reloader], $field->getReloaders());
+    }
+
+    public function testSetReloaders() {
+        $reloader = $this->getMockBuilder(ReloaderInterface::class)->getMock();
+        $field = new Field([
+            'reloaders' => [$reloader]
+        ]);
+        $this->assertEquals([$reloader], $field->getReloaders());
+    }
+
+    public function testSetGetDetailViewFieldClass() {
+        $field = new Field();
+        $class = 'test';
+        $this->assertEquals($field, $field->setDetailViewFieldClass($class));
+        $this->assertEquals($class, $field->getDetailViewFieldClass());
+    }
 }
 
 class FieldTestModel extends ActiveRecord {

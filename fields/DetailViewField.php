@@ -9,6 +9,8 @@ use execut\crudFields\fields\detailViewField\addon\AddonInterface;
 use execut\iconsCheckboxList\IconsCheckboxList;
 use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
+use yii\helpers\ArrayHelper;
+use yii\helpers\UnsetArrayValue;
 
 class DetailViewField
 {
@@ -16,6 +18,7 @@ class DetailViewField
     protected $attribute = null;
     protected $displayOnly = null;
     protected $addon = null;
+    protected $isHidden = false;
     public function __construct($fieldConfig = [], $attribute = null, $displayOnly = false, AddonInterface $addon = null)
     {
         $this->fieldConfig = $fieldConfig;
@@ -55,6 +58,16 @@ class DetailViewField
     {
         $this->fieldConfig = $fieldConfig;
     }
+
+//    /**
+//     * @param null $fieldConfig
+//     */
+//    public function addFieldConfig($fieldConfig): self
+//    {
+//        $this->fieldConfig = ArrayHelper::merge($this->fieldConfig, $fieldConfig);
+//
+//        return $this;
+//    }
 
     /**
      * @param null $attribute
@@ -102,6 +115,14 @@ class DetailViewField
             return false;
         }
 
+        if ($this->isHidden) {
+            $field = ArrayHelper::merge($field, [
+                'rowOptions' => [
+                    'class' => 'hide',
+                ]
+            ]);
+        }
+
         if ($model) {
             $field['viewModel'] = $model;
             $field['editModel'] = $model;
@@ -124,5 +145,15 @@ class DetailViewField
         }
 
         return $field;
+    }
+
+    public function hide() {
+        $this->isHidden = true;
+        return $this;
+    }
+
+    public function show() {
+        $this->isHidden = false;
+        return $this;
     }
 }

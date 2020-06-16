@@ -91,4 +91,9 @@ class Action extends Field
     {
         return false;
     }
+
+    public function getDisplayOnly()
+    {
+        return true;
+    }
 }
