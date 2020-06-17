@@ -172,17 +172,6 @@ class Field extends BaseObject
     }
 
     public function attach() {
-        if ($this->defaultValue !== null && in_array($this->model->getScenario(), $this->defaultScenario)) {
-            $attribute = $this->attribute;
-            if ($this->model->$attribute === null || $this->model->$attribute === []) {
-                $defaultValue = $this->defaultValue;
-                if (is_callable($defaultValue)) {
-                    $defaultValue = $defaultValue();
-                }
-
-                $this->model->$attribute = $defaultValue;
-            }
-        }
     }
 
     public function setRelationObject($object) {
@@ -219,6 +208,7 @@ class Field extends BaseObject
     }
 
     public function getValue() {
+        $this->initDefaultValue();
         $attribute = $this->attribute;
         if (empty($attribute)) {
             throw new Exception('"attribute" is required for getting value');
@@ -693,5 +683,20 @@ class Field extends BaseObject
         $this->detailViewFieldClass = $detailViewFieldClass;
 
         return $this;
+    }
+
+    protected function initDefaultValue(): void
+    {
+        if ($this->defaultValue !== null && in_array($this->model->getScenario(), $this->defaultScenario)) {
+            $attribute = $this->attribute;
+            if ($this->model->$attribute === null || $this->model->$attribute === []) {
+                $defaultValue = $this->defaultValue;
+                if (is_callable($defaultValue)) {
+                    $defaultValue = $defaultValue();
+                }
+
+                $this->model->$attribute = $defaultValue;
+            }
+        }
     }
 }
