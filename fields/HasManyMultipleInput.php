@@ -263,7 +263,7 @@ class HasManyMultipleInput extends Field
                 if ($row->isRelationPopulated($relationName)) {
                     $allModels = $row->$relationName;
                 } else {
-                    $limit = $this->columnRecordsLimit;
+                    $limit = $this->getRelationObject()->getColumnRecordsLimit();
                     $q = $row->getRelation($relationName);
                     if ($limit !== false) {
                         if ($limit === null) {
