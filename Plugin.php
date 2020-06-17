@@ -102,6 +102,9 @@ abstract class Plugin extends BaseObject
     public function beforeValidate() {
     }
 
+    public function afterValidate() {
+    }
+
     public function beforeUpdate() {
     }
 

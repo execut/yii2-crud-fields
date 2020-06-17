@@ -30,6 +30,7 @@ class Behavior extends BaseBehavior
     const KEY = 'fields';
     public $defaultScenario = Field::SCENARIO_DEFAULT;
     public $relationsSaver = [];
+    const EVENT_BEFORE_LOAD = 'beforeLoad';
     const EVENT_AFTER_LOAD = 'afterLoad';
 
     public function setRole($role) {
@@ -118,12 +119,14 @@ class Behavior extends BaseBehavior
         $events = [
             ActiveRecord::EVENT_INIT => 'initEvent',
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
+            ActiveRecord::EVENT_AFTER_VALIDATE => 'afterValidate',
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
             ActiveRecord::EVENT_AFTER_INSERT => 'afterInsert',
             ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
             ActiveRecord::EVENT_BEFORE_INSERT => 'beforeInsert',
             self::EVENT_AFTER_LOAD => 'afterLoad',
+            self::EVENT_BEFORE_LOAD => 'beforeLoad',
         ];
 
         return $events;
@@ -141,6 +144,13 @@ class Behavior extends BaseBehavior
 
         $this->beforeSave();
     }
+
+    public function afterValidate() {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->afterValidate();
+        }
+    }
+
     public function beforeInsert() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeInsert();
@@ -176,6 +186,11 @@ class Behavior extends BaseBehavior
             $plugin->beforeDelete();
         }
     }
+
+    public function beforeLoad() {
+        $this->setRelationsScenarioFromOwner();
+    }
+
     public function afterLoad() {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterLoad();
