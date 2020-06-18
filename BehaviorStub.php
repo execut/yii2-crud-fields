@@ -57,7 +57,7 @@ trait BehaviorStub
     protected static $relationsCache = [];
     public function __get($name)
     {
-        if ($this->hasAttribute($name) || $name === 'scenario') {
+        if (method_exists($this, 'hasAttribute') && $this->hasAttribute($name) || $name === 'scenario') {
             return parent::__get($name);
         }
 
