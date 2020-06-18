@@ -217,7 +217,7 @@ class HasManyMultipleInput extends Field
             if (!empty($row)) {
                 $relatedModel->scenario = Field::SCENARIO_GRID;
                 $relatedModel->attributes = $row;
-                $relationQuery = $relation->getQuery();
+                $relationQuery = clone $relation->getQuery();
                 $relationQuery = $relatedModel->applyScopes($relationQuery);
 
                 $relationQuery->select(key($relationQuery->link));
