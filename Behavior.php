@@ -296,7 +296,10 @@ class Behavior extends BaseBehavior
 
     public function getRelation($name) {
         if ($field = $this->getField($name)) {
-            return $field->getRelationQuery();
+            $q = $field->getRelationQuery();
+            if ($q) {
+                return $q;
+            }
         }
 
         return $this->getPluginsRelation($name);

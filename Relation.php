@@ -117,7 +117,7 @@ class Relation extends BaseObject
                     }
 
                     if ($this->isVia()) {
-                        $viaRelationQuery = $this->getViaRelationQuery();
+                        $viaRelationQuery = clone $this->getViaRelationQuery();
                         $viaRelationQuery->select(key($viaRelationQuery->link));
                         $whereAttribute = current($this->getQuery()->link);
                         $viaRelationQuery->andWhere([
@@ -126,7 +126,7 @@ class Relation extends BaseObject
                         $viaRelationQuery->link = null;
                         $viaRelationQuery->primaryModel = null;
                     } else {
-                        $viaRelationQuery = $this->getQuery();
+                        $viaRelationQuery = clone $this->getQuery();
                         $viaRelationQuery->select(key($viaRelationQuery->link));
                         $viaRelationQuery->indexBy = key($viaRelationQuery->link);
                         $whereAttribute = current($viaRelationQuery->link);
