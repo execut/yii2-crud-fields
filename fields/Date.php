@@ -19,6 +19,24 @@ class Date extends Field
     public $showIfEmpty = false;
     public $isWithMicroseconds = false;
 
+    protected function getRules(): array
+    {
+        return ArrayHelper::merge(parent::getRules(), [
+            $this->attribute . 'Date' => [
+                $this->attribute,
+                function () {
+                    if (!$this->extractIntervalDates()) {
+                        $this->model->addError($this->attribute, 'Bad date interval "' . $this->getValue() . '"');
+                        return false;
+                    }
+
+                    return true;
+                },
+                'on' => self::SCENARIO_GRID,
+            ],
+        ]);
+    }
+
     public function getColumn()
     {
         $parentColumn = parent::getColumn();
@@ -35,7 +53,11 @@ class Date extends Field
         ];
 
         if ($this->rules !== false) {
-            $column['filter'] = DateRangePicker::widget($widgetOptions);
+            if (empty($this->getValue()) || $this->extractIntervalDates()) {
+                $column['filter'] = DateRangePicker::widget($widgetOptions);
+            } else {
+                $column['filter'] = true;
+            }
         }
 
         return ArrayHelper::merge($column, $parentColumn);
@@ -122,22 +144,43 @@ class Date extends Field
         $modelClass = $query->modelClass;
         $attribute = $this->attribute;
         $t = $modelClass::tableName();
-        $value = $this->model->$attribute;
+        $value = $this->getValue();
         if (!empty($value) && strpos($value, ' - ') !== false) {
-            list($from, $to) = explode(' - ', $value);
-            if (!$this->isTime) {
-                $from = $from . ' 00:00:00';
-                $to = $to . ' 23:59:59';
-            }
+            list($from, $to) = $this->extractIntervalDates();
 
-            $dateTimeFormat = $this->getFormat(false, false);
-            $fromUtc = self::convertToUtc($from, $dateTimeFormat);
-            $dateTimeFormat = $this->getFormat(false, false);
-            $toUtc = self::convertToUtc($to, $dateTimeFormat);
-
-            $query->andFilterWhere(['>=', $t . '.' . $attribute, $fromUtc])
-                ->andFilterWhere(['<=', $t . '.' . $attribute, $toUtc]);
+            $query->andFilterWhere(['>=', $t . '.' . $attribute, $from])
+                ->andFilterWhere(['<=', $t . '.' . $attribute, $to]);
         }
+    }
+
+    protected function extractIntervalDates() {
+        $value = $this->getValue();
+        if (strpos($value, ' - ') === false) {
+            return false;
+        }
+        list($from, $to) = explode(' - ', $value);
+
+        if (!$from || !$to) {
+            return false;
+        }
+
+        if (!$this->isTime) {
+            $from = $from . ' 00:00:00';
+            $to = $to . ' 23:59:59';
+        };
+
+        $dateTimeFormat = $this->getFormat(false, false);
+        $from = self::convertToUtc($from, $dateTimeFormat);
+        if (!$from) {
+            return false;
+        }
+        $dateTimeFormat = $this->getFormat(false, false);
+        $to = self::convertToUtc($to, $dateTimeFormat);
+        if (!$to) {
+            return false;
+        }
+
+        return [$from, $to];
     }
 
     public static function convertToUtc($dateTimeStr, $format)
@@ -147,6 +190,10 @@ class Date extends Field
             $dateTimeStr,
             self::getApplicationTimeZone()
         );
+
+        if (!$dateTime) {
+            return false;
+        }
 
         $dateTime->setTimezone(new \DateTimeZone(self::getDatabaseTimeZone()));
         return $dateTime->format('Y-m-d H:i:s.u');
@@ -187,8 +234,9 @@ class Date extends Field
             'attribute' => $this->attribute,
             'model' => $this->model,
             'convertFormat' => true,
-            'pluginOptions' => $pluginOptions
+            'pluginOptions' => $pluginOptions,
         ];
+
         return $widgetOptions;
     }
 
