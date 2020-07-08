@@ -44,14 +44,7 @@ class DateTest extends TestCase
         $this->assertEquals([
             'attribute' => 'name',
             'label' => 'Name',
-            'filter' => preg_replace('/daterangepicker_[a-z\d]+/', '', DateRangePicker::widget([
-                'attribute' => 'name',
-                'model' => $model,
-                'convertFormat' =>true,
-                'pluginOptions' => [
-                    'locale' => ['format' =>'Y-m-d']
-                ]
-            ])),
+            'filter' => 1,
             'format' => function () {},
         ], $column);
     }
@@ -68,16 +61,7 @@ class DateTest extends TestCase
         $column['filter'] = preg_replace('/daterangepicker_[a-z\d]+/', '', $column['filter']);
         $this->assertEquals([
             'attribute' => 'name',
-            'filter' => preg_replace('/daterangepicker_[a-z\d]+/', '', DateRangePicker::widget([
-                'attribute' => 'name',
-                'model' => $model,
-                'convertFormat' =>true,
-                'pluginOptions' => [
-                    'timePicker' =>true,
-                    'timePickerIncrement' =>15,
-                    'locale' => ['format' =>'Y-m-d H:i:s']
-                ]
-            ])),
+            'filter' => 1,
             'format' => function () {},
             'label' => 'Name',
         ], $column);

@@ -1,42 +1,110 @@
 # execut/yii2-crud-fields
 
-Этот компонент позволяет задать все настройки для интерфейса CRUD модели максимально быстрым способом. Например, нам
-нужен CRUD для управления пользователями.
+Этот компонент позволяет автоматизировать многие процессы, которые встречаются в работе с моделями, сократив
+тем самым дублирование кода, а отсюда суммарные временные затраты:
+* Написание правил валидации однотипных полей
+* Написание геттеров для объявления различных связей с другими моделями
+* Валидация и редактирование связанных записей
+* Вывод формы редактирования модели и её связанных записей
+* Вывод списка записей моделей
+* Возможность расширения моделей другими модулями, про которые она не знает
 
-У нас есть таблица стандартная таблица пользователей с полями:
+## Пример использования
+Допустим у нас возникла задача создать CRUD для управления простой моделью Simple с двумя полями id и name.
+Далее приведён список того, что примерно нужно написать для создания полноценного CRUD и вычеркнуто то, что
+автоматизирует в этом процессе yii2-crud-fields:
+1. Класс модели Simple
+1. Название таблицы путём объявления ```Simple::tableName()```
+1. Навигация CRUD
+1. Контроллер CRUD
+    1. Контроль доступа к CRUD
+    1. Вывод списка
+        1. Действие для вывода списка записей
+           1. Загрузку параметров фильтрации
+           1. ~~Задать в модели правила валидации для сценария search путём объявления~~ ```Simple::rules()```
+           1. Валидацию модели через сценарий search
+           1. ~~Формирование ActiveQuery на основе параметров фильтрации~~
+           1. ~~Настройка ActiveDataProvider для списка записей~~
+           1. Вывод представления 
+        1. Представление для вывода списка записей
+           1. Вывод кнопки добавления новой записи
+           1. ~~Формирование настроек колонок списка~~
+           1. Вывод списка записей через виджет [kartik-v/yii2-dynagrid](https://github.com/kartik-v/yii2-dynagrid)
+    1. Создание или редактирование записей
+        1. Действие для создания или редактирования записей
+            1. Если это не новая запись, то поиск активной модели
+            1. Если новая, то создание
+            1. Задание сценария edit
+            1. Загрузка данных модели из запроса
+            1. ~~Задать правила валидации модели для сценария edit путём добавления~~ ```Simple::rules()```
+            1. Валидация данных модели
+            1. Сохранение модели
+            1. Вывод ошибок
+        1. Представление для вывода формы редактирования активной записи
+            1. ~~Формирование настроек аттрибутов для формы редактирования~~
+            1. Вывод формы редактирования
+    1. Действие для удаления записей
 
+Данный CRUD на нативном Yii2 без yii2-crud-fields можно увидеть в этом проекте.
 
-Поведение поддерживает плагины. Пример:
+Большинство остальных пунктов можно автоматизировать путём использования другого компонента [execut/yii2-crud](https://github.com/execut/yii2-crud).
+
+Автоматизация вычеркнутых пунктов достигается путём подключения и настройки характеристики
+[execut\crudFields\Behavior](Behavior.php) и поведения [execut\crudFields\BehaviorStub](BehaviorStub.php):
 ```php
-<?php
-namespace execut\calls;
-
-use execut\crudFields\Behavior;
-use execut\crudFields\BehaviorStub;
-use execut\crudFields\ModelsHelperTrait;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-
-class Call extends ActiveRecord
-{
-    use BehaviorStub, ModelsHelperTrait;
-    const MODEL_NAME = '{n,plural,=0{Calls} =1{Call} other{Calls}}';
-    public function behaviors()
-    {
+class Simple extends \yii\db\ActiveRecord {
+    use \execut\crudFields\BehaviorStub;
+    // ...
+    public function behaviors() {
         return [
-            'fields' => [
-                'class' => Behavior::class,
-                'fields' => $this->getStandardFields(['name'], ['phone']),
-                'plugins' => \yii::$app->getModule('calls')
-                    ->getCallsCrudFieldsPlugins(),
+            'id' => [
+                'class' => \execut\crudFields\fields\Id::class,
             ],
-            'timestamp' => [
-                'class' => TimestampBehavior::class,
-                'createdAtAttribute' => 'created',
-                'updatedAtAttribute' => 'updated',
-                'value' => new Expression('NOW()'),
+            'name' => [
+                'class' => \execut\crudFields\fields\StringField::class,
+                'required' => true,
+            ],
+            'actions' => [
+                'class' => \execut\crudFields\fields\Action::class,
             ],
         ];
     }
+    // ...
 }
+```
+
+После этого модель научится делать всё от неё необходимое для CRUD-а автоматически:
+```php
+$model = new Simple();
+echo 'Правила валидации для сценария search и edit';
+var_dump($model->rules());
+echo 'Формирование ActiveQuery на основе параметров фильтрации и настройка ActiveDataProvider';
+var_dump($model->search());
+echo 'Формирование настроек колонок списка';
+var_dump($model->getGridColumns());
+echo 'Формирование настроек формы создания\редактирования';
+var_dump($model->getFormFields());
+```
+
+Вывод будет таким:
+```
+array (size=1)
+  'name' => 
+    array (size=3)
+      'viewModel' => 
+          ...
+      'editModel' => 
+          ...
+      'attribute' => string 'name' (length=4)
+
+array (size=2)
+  'id' => 
+    array (size=2)
+      'attribute' => string 'id' (length=2)
+      'label' => string 'Id' (length=2)
+  'name' => 
+    array (size=2)
+      'attribute' => string 'name' (length=4)
+      'label' => string 'Name' (length=4)
+
 ```
