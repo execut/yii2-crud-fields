@@ -45,9 +45,10 @@
             1. Вывод формы редактирования
     1. Действие для удаления записей
 
-Данный CRUD на нативном Yii2 без yii2-crud-fields можно увидеть в этом проекте.
+Такой CRUD на нативном Yii2 без yii2-crud-fields можно посмотреть в проекте [execut/yii2-crud-example](https://github.com/execut/yii2-crud-example).
 
-Большинство остальных пунктов можно автоматизировать путём использования другого компонента [execut/yii2-crud](https://github.com/execut/yii2-crud).
+Большинство остальных пунктов можно автоматизировать путём использования другого компонента [execut/yii2-crud](https://github.com/execut/yii2-crud)
+, что ещё больше упростит вам жизнь, обращайтесь к его [документации](https://github.com/execut/yii2-crud), чтобы понять как это сделать.
 
 Автоматизация вычеркнутых пунктов достигается путём подключения и настройки характеристики
 [execut\crudFields\Behavior](Behavior.php) и поведения [execut\crudFields\BehaviorStub](BehaviorStub.php):
