@@ -6,7 +6,6 @@ namespace execut\crudFields\fields;
 
 
 use kartik\detail\DetailView;
-use kartik\grid\BooleanColumn;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
 
@@ -21,7 +20,10 @@ class Boolean extends Field
         }
 
         return ArrayHelper::merge([
-            'class' => BooleanColumn::class,
+            'filter' => [
+                'Нет',
+                'Да',
+            ]
         ], $column);
     }
 

@@ -39,9 +39,9 @@ trait ModelsHelperTrait
                 'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'created',
                 'updatedAtAttribute' => 'updated',
-                'value' => new Expression('now()'),
+                'value' => date('Y-m-d H:i:s'),
             ],
-            'fields' => [
+            Behavior::KEY => [
                 'class' => Behavior::class,
                 'fields' => $fields,
             ],

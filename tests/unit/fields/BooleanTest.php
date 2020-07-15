@@ -16,7 +16,11 @@ class BooleanTest extends TestCase
             'attribute' => 'visible',
         ]);
         $this->assertEquals($field->getColumn(), [
-            'class' => BooleanColumn::class,
+//            'class' => BooleanColumn::class,
+            'filter' => [
+                'Нет',
+                'Да',
+            ],
             'attribute' => 'visible',
             'label' => 'Visible'
         ]);

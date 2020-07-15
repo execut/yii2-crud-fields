@@ -3,6 +3,7 @@ namespace execut\crudFields;
 
 
 use yii\base\BaseObject;
+use yii\data\DataProviderInterface;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
@@ -84,7 +85,7 @@ abstract class Plugin extends BaseObject
         return [];
     }
 
-    public function initDataProvider($dataProvider) {
+    public function initDataProvider(DataProviderInterface $dataProvider) {
     }
 
     public function applyScopes(ActiveQuery $q) {

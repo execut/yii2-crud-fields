@@ -24,6 +24,30 @@ class ActionTest extends TestCase
         ]);
         $column = $field->getColumn();
         $this->assertEquals([
+            'class' => \yii\grid\ActionColumn::class,
+//            'class' => ActionColumn::class,
+//            'template' => '{update}',
+//            'deleteOptions' => [
+//                'class' => 'btn btn-danger glyphicon glyphicon-remove',
+//                'label' => '',
+//            ],
+//            'options' => [
+//                'style' => [
+//                    'min-width' => '156px',
+//                ],
+//            ],
+        ], $column);
+    }
+
+    public function testGetKartikColumn() {
+        $field = new Action([
+            'update' => true,
+            'delete' => false,
+            'view' => false,
+            'isKartik' => true,
+        ]);
+        $column = $field->getColumn();
+        $this->assertEquals([
             'class' => ActionColumn::class,
             'template' => '{update}',
             'deleteOptions' => [

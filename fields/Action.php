@@ -15,6 +15,7 @@ class Action extends Field
     public $view = false;
     public $delete = null;
     public $order = 1000;
+    public $isKartik = false;
     protected $_column = [];
 
     public function getField()
@@ -28,23 +29,6 @@ class Action extends Field
         if ($parentColumn === false) {
             return false;
         }
-
-        $column = [
-            'class' => ActionColumn::class,
-            'options' => [
-                'style' => [
-                    'min-width' => '156px',
-                ],
-            ],
-//            'updateOptions' => [
-//                'class' => 'btn btn-primary update',
-//                'label' => 'Просмотр',
-//            ],
-            'deleteOptions' => [
-                'class' => 'btn btn-danger glyphicon glyphicon-remove',
-                'label' => ''
-            ],
-        ];
 
         $template = '';
         if ($this->update !== false) {
@@ -64,7 +48,30 @@ class Action extends Field
             return false;
         }
 
-        $column['template'] = $template;
+        if ($this->isKartik) {
+            $column = [
+                'class' => ActionColumn::class,
+                'options' => [
+                    'style' => [
+                        'min-width' => '156px',
+                    ],
+                ],
+                //            'updateOptions' => [
+                //                'class' => 'btn btn-primary update',
+                //                'label' => 'Просмотр',
+                //            ],
+                'deleteOptions' => [
+                    'class' => 'btn btn-danger glyphicon glyphicon-remove',
+                    'label' => ''
+                ],
+            ];
+
+            $column['template'] = $template;
+        } else {
+            $column = [
+                'class' => \yii\grid\ActionColumn::class,
+            ];
+        }
 
         $column = ArrayHelper::merge($parentColumn, $column);
         unset($column['attribute']);
