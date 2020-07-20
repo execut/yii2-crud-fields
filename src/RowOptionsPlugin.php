@@ -1,14 +1,11 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 12/15/17
- * Time: 5:52 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
-
-
 interface RowOptionsPlugin
 {
     public function getRowOptions();

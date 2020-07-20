@@ -1,18 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 2/27/19
- * Time: 1:40 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\widgets;
-
-
-use execut\yii\jui\WidgetTrait;
-use yii\helpers\Html;
 use yii\helpers\Url;
-
 class Select2 extends \kartik\select2\Select2
 {
     public $idAttribute = 'id';

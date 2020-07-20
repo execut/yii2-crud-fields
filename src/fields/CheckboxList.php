@@ -1,18 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 10/24/17
- * Time: 3:59 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use execut\iconsCheckboxList\IconsCheckboxList;
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
-
 class CheckboxList extends HasManySelect2
 {
     protected static $icons = [

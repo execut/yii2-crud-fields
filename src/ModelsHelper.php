@@ -1,23 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: execut
- * Date: 6/24/17
- * Time: 2:09 PM
- */
-
 namespace execut\crudFields;
-
-
 use execut\crudFields\fields\Action;
 use execut\crudFields\fields\Boolean;
 use execut\crudFields\fields\Date;
-use execut\crudFields\fields\Field;
 use execut\crudFields\fields\Id;
 use execut\crudFields\fields\StringField;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
-
 class ModelsHelper extends Component
 {
     public $standardFieldsDefault = [

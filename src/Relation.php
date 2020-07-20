@@ -1,20 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 6/28/17
- * Time: 10:48 AM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
-
-
 use execut\crudFields\fields\Field;
-use execut\crudFields\LinkRenderer;
 use execut\crudFields\relation\UrlMaker;
 use yii\base\BaseObject;
-use yii\base\Exception;
-use yii\base\InvalidArgumentException;
 use yii\base\UnknownMethodException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -24,7 +18,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
-
 class Relation extends BaseObject
 {
     /**

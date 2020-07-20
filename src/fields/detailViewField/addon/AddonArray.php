@@ -1,25 +1,42 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields\detailViewField\addon;
 
-
-use yii\helpers\ArrayHelper;
-
-class AddonArray
+/**
+ * Wrapper for kartik-v ActiveField addons
+ * @see https://demos.krajee.com/widget-details/active-field#option-addon
+ * @package execut\crudFields\fields\detailViewField\addon
+ */
+class AddonArray implements AddonInterface
 {
-    protected $content = null;
-    protected $options = [];
+    /**
+     * @var string Addon text content
+     */
+    protected ?string $content = null;
+    /**
+     * @var array Addon options
+     */
+    protected array $options = [];
 
-    public function __construct($options = [], $content = null)
+    /**
+     * AddonArray constructor.
+     * @param array $options Options for addon
+     * @param string|null $content Addon text content
+     */
+    public function __construct(array $options = [], string $content = null)
     {
         $this->setContent($content);
         $this->setOptions($options);
     }
 
     /**
-     * @return null
+     * Get addon content value
+     * @return string
      */
     public function getContent()
     {
@@ -27,14 +44,16 @@ class AddonArray
     }
 
     /**
-     * @param null $content
+     * Set addon content value
+     * @param string|null $content
      */
-    public function setContent($content): void
+    public function setContent(?string $content): void
     {
         $this->content = $content;
     }
 
     /**
+     * Get addon options
      * @return array
      */
     public function getOptions(): array
@@ -43,6 +62,7 @@ class AddonArray
     }
 
     /**
+     * Set addon options
      * @param array $options
      */
     public function setOptions(array $options): void
@@ -50,6 +70,9 @@ class AddonArray
         $this->options = $options;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig() {
         return [
             'append' => [

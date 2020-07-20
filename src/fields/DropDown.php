@@ -1,20 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 6/27/17
- * Time: 5:31 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use kartik\detail\DetailView;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\UnsetArrayValue;
-
 class DropDown extends Field
 {
     public $multipleInputType = MultipleInputColumn::TYPE_DROPDOWN;

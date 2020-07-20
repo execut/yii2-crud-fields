@@ -1,11 +1,11 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
-use detalika\clients2\models\Contacts;
 use execut\oData\ActiveRecord;
 use kartik\detail\DetailView;
 use kartik\grid\BooleanColumn;
@@ -16,13 +16,10 @@ use unclead\multipleinput\MultipleInputColumn;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\db\ActiveQuery;
-use yii\db\Expression;
-use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\JsExpression;
-
 class HasManyMultipleInput extends Field
 {
     public $url = null;

@@ -1,5 +1,4 @@
 <?php
-
 use execut\crudFields\widgets\Select2ExecutAsset;
 use kartik\select2\Select2Asset;
 

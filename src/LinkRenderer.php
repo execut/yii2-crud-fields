@@ -1,15 +1,10 @@
 <?php
-
-
 namespace execut\crudFields;
-
-
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use \yii\base\Model;
-
+use yii\base\Model;
 class LinkRenderer
 {
     protected $nameAttribute = null;

@@ -1,17 +1,14 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields\fields;
-
-
-use execut\autosizeTextarea\TextareaWidget;
 use execut\crudFields\widgets\ClearedPasswordInput;
 use kartik\detail\DetailView;
-use kartik\password\PasswordInput;
 use kartik\password\StrengthValidator;
-use yii\helpers\ArrayHelper;
-use yii\web\JsExpression;
-
 class PasswordWidget extends Field
 {
     public $userAttribute = null;

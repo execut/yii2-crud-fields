@@ -1,11 +1,11 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-use iutbay\yii2kcfinder\CKEditor;
-use kartik\detail\DetailView;
 class Editor extends Field
 {
     protected $detailViewFieldClass = \execut\crudFields\fields\detailViewField\Editor::class;

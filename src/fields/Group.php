@@ -1,17 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 9/7/17
- * Time: 5:48 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
-
 class Group extends Field
 {
     public $scope = false;

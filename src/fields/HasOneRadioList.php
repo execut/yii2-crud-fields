@@ -1,22 +1,14 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use execut\crudFields\widgets\RadioListWithSubform;
 use kartik\detail\DetailView;
-use kartik\grid\GridView;
-use kartik\select2\Select2;
-use unclead\multipleinput\MultipleInputColumn;
-use yii\base\Exception;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-use yii\helpers\Inflector;
-use yii\helpers\Url;
-use yii\web\JsExpression;
-
 class HasOneRadioList extends HasOneSelect2
 {
     public $isRenderRelationFields = true;

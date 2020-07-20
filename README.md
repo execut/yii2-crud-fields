@@ -19,7 +19,7 @@ English documentation is at [docs/guide/README.md](https://github.com/execut/yii
 
 [![Latest Stable Version](https://poser.pugx.org/execut/yii2-crud-fields/v/stable.png)](https://packagist.org/packages/execut/yii2-crud-fields)
 [![Total Downloads](https://poser.pugx.org/execut/yii2-crud-fields/downloads.png)](https://packagist.org/packages/execut/yii2-crud-fields)
-[![Build Status](https://travis-ci.com/execut/yii2-crud-fields.svg?branch=master)](https://travis-ci.com/yiisoft/execut/yii2-crud-fields)
+[![Build Status](https://travis-ci.com/execut/yii2-crud-fields.svg?branch=master)](https://travis-ci.com/execut/yii2-crud-fields)
 
 
 Installation

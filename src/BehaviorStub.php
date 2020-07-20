@@ -1,15 +1,8 @@
 <?php
-/**
- */
-
 namespace execut\crudFields;
-
-
 use yii\base\UnknownPropertyException;
-use yii\db\ActiveQuery;
 use yii\db\ActiveQueryInterface;
 use yii\helpers\ArrayHelper;
-
 trait BehaviorStub
 {
     public function search() {

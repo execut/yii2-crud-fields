@@ -1,17 +1,16 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
-use detalika\requests\helpers\DateTimeHelper;
 use kartik\daterange\DateRangePicker;
 use kartik\detail\DetailView;
 use yii\base\Exception;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
-
 class Date extends Field
 {
     public $isTime = false;

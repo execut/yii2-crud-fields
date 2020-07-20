@@ -1,18 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 6/24/17
- * Time: 2:23 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
-
-
 use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 use yii\helpers\ArrayHelper;
-
 trait ModelsHelperTrait
 {
     public function getStandardFields($exclude = null, $other = null) {

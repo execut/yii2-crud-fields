@@ -1,14 +1,14 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use kartik\grid\ActionColumn;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
-
 class Action extends Field
 {
     public $update = false;

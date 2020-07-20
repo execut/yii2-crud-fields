@@ -1,19 +1,13 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 9/13/17
- * Time: 9:25 AM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use kartik\detail\DetailView;
-use kartik\time\TimePicker;
-use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
-
 class Time extends Date
 {
     public $fieldType = DetailView::INPUT_TIME;

@@ -1,16 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 3/13/19
- * Time: 11:53 AM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\relation;
-
-
 use yii\base\Model;
-
 class DeleteModel extends Model
 {
     public $label = null;

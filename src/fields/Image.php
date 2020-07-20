@@ -1,14 +1,11 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 9/18/18
- * Time: 11:43 AM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use yii\base\Event;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\ManipulatorInterface;
@@ -17,7 +14,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\imagine\BaseImage;
 use \yii\imagine\Image as ImagineImage;
-
 class Image extends File
 {
     public $allowedExtensions = [

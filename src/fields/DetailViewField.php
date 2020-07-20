@@ -1,17 +1,13 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields\fields;
-
-
-use execut\autosizeTextarea\TextareaWidget;
 use execut\crudFields\fields\detailViewField\addon\AddonInterface;
-use execut\iconsCheckboxList\IconsCheckboxList;
-use iutbay\yii2kcfinder\CKEditor;
-use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
-use yii\helpers\UnsetArrayValue;
-
 class DetailViewField
 {
     protected $fieldConfig = null;

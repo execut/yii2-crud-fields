@@ -1,24 +1,21 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use execut\crudFields\Relation;
 use execut\crudFields\widgets\HasRelationDropdown;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\base\BaseObject;
 use yii\base\Exception;
-use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\db\Connection;
-use yii\db\pgsql\Schema;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
-
 class Field extends BaseObject
 {
     const SCENARIO_GRID = 'grid';

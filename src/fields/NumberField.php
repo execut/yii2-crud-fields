@@ -1,17 +1,13 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
-use execut\crudFields\Relation;
 use yii\base\Exception;
-use yii\data\ActiveDataProvider;
-use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Inflector;
-
 class NumberField extends Field
 {
     public $integerOnly = false;

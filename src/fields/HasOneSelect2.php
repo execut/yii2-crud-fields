@@ -1,24 +1,11 @@
 <?php
-/**
- */
-
 namespace execut\crudFields\fields;
-
-
-use execut\crudFields\widgets\HasRelationDropdown;
 use kartik\detail\DetailView;
-use kartik\grid\GridView;
 use execut\crudFields\widgets\Select2;
-use unclead\multipleinput\MultipleInputColumn;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Inflector;
-use yii\helpers\Json;
-use yii\helpers\UnsetArrayValue;
-use yii\helpers\Url;
 use yii\web\JsExpression;
-
 class HasOneSelect2 extends Field
 {
     public $nameParam = null;

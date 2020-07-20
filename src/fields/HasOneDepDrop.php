@@ -1,21 +1,18 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use kartik\depdrop\DepDrop;
 use kartik\detail\DetailView;
-use kartik\grid\GridView;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Inflector;
 use yii\helpers\UnsetArrayValue;
 use yii\helpers\Url;
-use yii\web\JsExpression;
-
 class HasOneDepDrop extends HasOneSelect2
 {
     public $depends = [];

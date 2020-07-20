@@ -1,16 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: execut
- * Date: 11/19/18
- * Time: 2:58 PM
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
 use yii\helpers\Inflector;
-
 class Translit extends Field
 {
     public $transliteratedAttribute = null;

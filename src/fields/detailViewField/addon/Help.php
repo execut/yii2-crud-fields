@@ -1,21 +1,39 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields\detailViewField\addon;
 
-
-use execut\crudFields\fields\detailViewField\Addon;
 use execut\crudFields\fields\detailViewField\addon\help\Text;
 use execut\crudFields\widgets\Qtip;
 use yii\helpers\ArrayHelper;
 
+/**
+ * Help addon for DetailViewField
+ * @package execut\crudFields\fields\detailViewField\addon
+ */
 class Help implements AddonInterface
 {
-    protected $text = null;
-    protected $instanceCount = null;
-    protected static $instancesCounter = 0;
+    /**
+     * @var Text Text instance for field addon
+     */
+    protected Text $text;
+    /**
+     * @var int|null Instances counter for generation unique id of qTip widget
+     */
+    protected ?int $instanceCount = null;
+    /**
+     * @var int Instances counter for setting instanceCount
+     */
+    protected static int $instancesCounter = 0;
 
+    /**
+     * Help constructor.
+     * @param Text $text Text for help tooltip
+     */
     public function __construct(Text $text)
     {
         $this->text = $text;
@@ -23,15 +41,23 @@ class Help implements AddonInterface
         $this->instanceCount = self::$instancesCounter;
     }
 
+    /**
+     * Returns current text instance
+     * @return Text
+     */
     public function getText() {
         return $this->text;
     }
 
+    /**
+     * Resets the instances counter for unit tests
+     */
     public static function resetInstancesCounter() {
         self::$instancesCounter = 0;
     }
 
     /**
+     * Get options value
      * @return array
      */
     protected function getOptions(): array
@@ -42,6 +68,11 @@ class Help implements AddonInterface
         ];
     }
 
+    /**
+     * Generate and return content for addon with qTip widget
+     * @return string
+     * @throws \Exception
+     */
     protected function getContent()
     {
         return '<i class="glyphicon text-primary glyphicon-question-sign"></i>' . Qtip::widget(ArrayHelper::merge([], [
@@ -76,6 +107,9 @@ class Help implements AddonInterface
             ]));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getConfig()
     {
         return [
@@ -87,6 +121,7 @@ class Help implements AddonInterface
     }
 
     /**
+     * Returns current qTip widget id
      * @return string
      */
     protected function getId(): string

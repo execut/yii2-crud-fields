@@ -1,24 +1,19 @@
 <?php
 /**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
-
-use detalika\cars\models\ModificationsVsEngine;
 use execut\crudFields\widgets\HasRelationDropdown;
 use kartik\detail\DetailView;
 use execut\crudFields\widgets\Select2;
 use unclead\multipleinput\MultipleInput;
 use unclead\multipleinput\MultipleInputColumn;
-use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Inflector;
-use yii\helpers\Url;
-use yii\web\JsExpression;
-
 class HasManySelect2 extends HasOneSelect2
 {
     public $columns = null;
