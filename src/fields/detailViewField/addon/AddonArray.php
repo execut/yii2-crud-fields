@@ -73,7 +73,8 @@ class AddonArray implements AddonInterface
     /**
      * @inheritDoc
      */
-    public function getConfig() {
+    public function getConfig()
+    {
         return [
             'append' => [
                 'options' => $this->getOptions(),

@@ -6,16 +6,40 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use execut\crudFields\fields\detailViewField\addon\AddonInterface;
+use kartik\detail\DetailView;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Class for wrapping \kartik\detail\DetailView fields configs
+ * @see DetailView
+ * @package execut\crudFields\fields
+ */
 class DetailViewField
 {
+    /**
+     * @var array|null Source field configuration array
+     */
     protected $fieldConfig = null;
-    protected $attribute = null;
-    protected $displayOnly = null;
-    protected $addon = null;
-    protected $isHidden = false;
-    public function __construct($fieldConfig = [], $attribute = null, $displayOnly = false, AddonInterface $addon = null)
+    /**
+     * @var string|null Model attribute name
+     */
+    protected ?string $attribute = null;
+    /**
+     * @var bool|callable Field is display only. Callback is supported
+     */
+    protected $displayOnly;
+    /**
+     * @var AddonInterface Addon of field
+     */
+    protected ?AddonInterface $addon = null;
+    /**
+     * @var bool Is hidden field flag
+     */
+    protected bool $isHidden = false;
+    public function __construct($fieldConfig = [], string $attribute = null, $displayOnly = false, AddonInterface $addon = null)
     {
         $this->fieldConfig = $fieldConfig;
         $this->attribute = $attribute;
@@ -24,7 +48,8 @@ class DetailViewField
     }
 
     /**
-     * @return array
+     * Get field addon
+     * @return AddonInterface
      */
     public function getAddon(): ?AddonInterface
     {
@@ -32,7 +57,8 @@ class DetailViewField
     }
 
     /**
-     * @param array $addons
+     * Set field addon
+     * @param AddonInterface|null $addon
      */
     public function setAddon(?AddonInterface $addon): void
     {
@@ -40,7 +66,8 @@ class DetailViewField
     }
 
     /**
-     * @return null
+     * Get field config
+     * @return array|null
      */
     public function getFieldConfig()
     {
@@ -48,25 +75,18 @@ class DetailViewField
     }
 
     /**
-     * @param null $fieldConfig
+     * Set field config
+     * @param array|null $fieldConfig
      */
     public function setFieldConfig($fieldConfig): void
     {
         $this->fieldConfig = $fieldConfig;
     }
 
-//    /**
-//     * @param null $fieldConfig
-//     */
-//    public function addFieldConfig($fieldConfig): self
-//    {
-//        $this->fieldConfig = ArrayHelper::merge($this->fieldConfig, $fieldConfig);
-//
-//        return $this;
-//    }
-
     /**
-     * @param null $attribute
+     * Set model attribute name
+     *
+     * @param string|null $attribute
      */
     public function setAttribute($attribute): void
     {
@@ -74,7 +94,8 @@ class DetailViewField
     }
 
     /**
-     * @return null
+     * Get model attribute name
+     * @return string|null
      */
     public function getAttribute()
     {
@@ -82,7 +103,8 @@ class DetailViewField
     }
 
     /**
-     * @param null $displayOnly
+     * Set is display only. Callback is supported
+     * @param callable|bool $displayOnly
      */
     public function setDisplayOnly($displayOnly): void
     {
@@ -90,7 +112,8 @@ class DetailViewField
     }
 
     /**
-     * @return null
+     * Get calculated is display only flag
+     * @return bool
      */
     public function getDisplayOnly()
     {
@@ -101,7 +124,13 @@ class DetailViewField
         return $this->displayOnly;
     }
 
-    public function getConfig($model = null) {
+    /**
+     * Get array of field config for DetailView from model instance
+     * @param Model null $model
+     * @return array|bool
+     */
+    public function getConfig($model = null)
+    {
         $field = $this->getFieldConfig();
         if (is_callable($field)) {
             $field = $field($model, $this);
@@ -131,7 +160,6 @@ class DetailViewField
         $displayOnly = $this->getDisplayOnly();
         if ($displayOnly) {
             $field['displayOnly'] = true;
-//            $field['hideIfEmpty'] = false;
         }
 
         if (!empty($this->addon)) {
@@ -143,12 +171,22 @@ class DetailViewField
         return $field;
     }
 
-    public function hide() {
+    /**
+     * Hide field
+     * @return $this
+     */
+    public function hide()
+    {
         $this->isHidden = true;
         return $this;
     }
 
-    public function show() {
+    /**
+     * Show field
+     * @return $this
+     */
+    public function show()
+    {
         $this->isHidden = false;
         return $this;
     }

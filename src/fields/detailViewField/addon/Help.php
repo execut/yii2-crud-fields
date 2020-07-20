@@ -45,14 +45,16 @@ class Help implements AddonInterface
      * Returns current text instance
      * @return Text
      */
-    public function getText() {
+    public function getText()
+    {
         return $this->text;
     }
 
     /**
      * Resets the instances counter for unit tests
      */
-    public static function resetInstancesCounter() {
+    public static function resetInstancesCounter()
+    {
         self::$instancesCounter = 0;
     }
 

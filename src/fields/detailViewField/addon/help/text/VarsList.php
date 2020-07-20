@@ -55,7 +55,8 @@ class VarsList implements Text
      * Return info value
      * @return string
      */
-    public function getInfo() {
+    public function getInfo()
+    {
         return $this->info;
     }
 
@@ -63,7 +64,8 @@ class VarsList implements Text
      * Return vars list value
      * @return string[]
      */
-    public function getVarsList() {
+    public function getVarsList()
+    {
         return $this->varsList;
     }
 }

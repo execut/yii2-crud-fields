@@ -11,8 +11,15 @@ use execut\crudFields\fields\DetailViewField;
 use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 
+/**
+ * Editor DetailView field
+ * @package execut\crudFields\fields\detailViewField
+ */
 class Editor extends DetailViewField
 {
+    /**
+     * @inheritDoc
+     */
     public function getConfig($model = null)
     {
         return array_merge(parent::getConfig($model), [
