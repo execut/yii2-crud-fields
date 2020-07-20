@@ -13,13 +13,13 @@ duplication, and hence the total time spent:
 
 For license information check the [LICENSE](LICENSE.md)-file.
 
-English documentation is at [docs/guide/README.md](https://github.com/execut/yii2-navigation/blob/master/docs/guide/README.md).
+English documentation is at [docs/guide/README.md](https://github.com/execut/yii2-crud-fields/blob/master/docs/guide/README.md).
 
-Русская документация здесь [docs/guide-ru/README.md](https://github.com/execut/yii2-navigation/blob/master/docs/guide-ru/README.md).
+Русская документация здесь [docs/guide-ru/README.md](https://github.com/execut/yii2-crud-fields/blob/master/docs/guide-ru/README.md).
 
-[![Latest Stable Version](https://poser.pugx.org/execut/yii2-navigation/v/stable.png)](https://packagist.org/packages/execut/yii2-navigation)
-[![Total Downloads](https://poser.pugx.org/execut/yii2-navigation/downloads.png)](https://packagist.org/packages/execut/yii2-navigation)
-[![Build Status](https://travis-ci.com/execut/yii2-navigation.svg?branch=master)](https://travis-ci.com/yiisoft/execut/yii2-navigation)
+[![Latest Stable Version](https://poser.pugx.org/execut/yii2-crud-fields/v/stable.png)](https://packagist.org/packages/execut/yii2-crud-fields)
+[![Total Downloads](https://poser.pugx.org/execut/yii2-crud-fields/downloads.png)](https://packagist.org/packages/execut/yii2-crud-fields)
+[![Build Status](https://travis-ci.com/execut/yii2-crud-fields.svg?branch=master)](https://travis-ci.com/yiisoft/execut/yii2-crud-fields)
 
 
 Installation
@@ -30,13 +30,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require execut/yii2-navigation
+php composer.phar require execut/yii2-crud-fields
 ```
 
 or add
 
 ```
-"execut/yii2-navigation": "dev-master"
+"execut/yii2-crud-fields": "dev-master"
 ```
 
 to the require section of your `composer.json` file.
