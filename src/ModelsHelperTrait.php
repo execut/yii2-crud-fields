@@ -6,11 +6,18 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields;
+
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Trait ModelsHelperTrait
+ * @package execut\crudFields
+ */
 trait ModelsHelperTrait
 {
-    public function getStandardFields($exclude = null, $other = null) {
+    public function getStandardFields($exclude = null, $other = null)
+    {
         $helper = new ModelsHelper();
         if ($exclude !== null) {
             $helper->exclude = $exclude;
@@ -28,7 +35,8 @@ trait ModelsHelperTrait
         return $this->name;
     }
 
-    public function getStandardBehaviors($fields, $otherBehaviors = []) {
+    public function getStandardBehaviors($fields, $otherBehaviors = [])
+    {
         return ArrayHelper::merge([
             'timestamp' => [
                 'class' => TimestampBehavior::class,

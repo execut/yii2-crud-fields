@@ -6,11 +6,23 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Field for grouping form fields
+ * @package execut\crudFields\fields
+ */
 class Group extends Field
 {
+    /**
+     * {@inheritdoc}
+     */
     public $scope = false;
+    /**
+     * {@inheritdoc}
+     */
     protected function getDetailViewFieldConfig()
     {
         $config = parent::getDetailViewFieldConfig();
@@ -21,12 +33,19 @@ class Group extends Field
         ], $config);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getColumn()
     {
         return false;
     }
 
-    public function getDisplayOnly() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getDisplayOnly()
+    {
         return true;
     }
 }

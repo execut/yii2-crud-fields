@@ -12,13 +12,13 @@ use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 
 /**
- * Editor DetailView field
+ * DetailViewField for WYSIWYG HTML editor widget
  * @package execut\crudFields\fields\detailViewField
  */
 class Editor extends DetailViewField
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConfig($model = null)
     {

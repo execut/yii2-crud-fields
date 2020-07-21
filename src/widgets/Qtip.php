@@ -6,8 +6,16 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\widgets;
+
+/**
+ * Qtip wrapper for field help blocks
+ * @package execut\crudFields
+ */
 class Qtip extends \sammaye\qtip\Qtip
 {
+    /**
+     * {@inheritDoc}
+     */
     public function run()
     {
         $this->options['style']['classes'] .= ' execut-qtip';

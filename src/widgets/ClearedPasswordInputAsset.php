@@ -6,7 +6,13 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\widgets;
+
 use execut\yii\web\AssetBundle;
+
+/**
+ * ClearedPasswordInput asset class
+ * @package execut\crudFields
+ */
 class ClearedPasswordInputAsset extends AssetBundle
 {
 }

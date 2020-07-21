@@ -71,7 +71,7 @@ class AddonArray implements AddonInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConfig()
     {

@@ -6,12 +6,27 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use execut\autosizeTextarea\TextareaWidget;
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Field for rendering autoresize textarea CRUD field based on \execut\autosizeTextarea\TextareaWidget
+ * @see \execut\autosizeTextarea\TextareaWidget
+ * @package execut\crudFields
+ */
 class AutosizeTextarea extends StringField
 {
+    /**
+     * Unlimited length
+     * {@inheritdoc}
+     */
     public $maxLength = false;
+
+    /**
+     * {@inheritdoc}
+     */
     public function getField()
     {
         $parentField = parent::getField();

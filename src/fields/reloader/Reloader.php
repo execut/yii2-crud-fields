@@ -5,12 +5,32 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
+
 namespace execut\crudFields\fields\reloader;
+
 use execut\crudFields\fields\ReloaderInterface;
+
+/**
+ * Reloader for DetailView fields
+ * @package execut\crudFields\fields\reloader
+ */
 class Reloader implements ReloaderInterface
 {
-    protected $type = null;
-    protected $targets = null;
+    /**
+     * @var TypeInterface Reloader type
+     */
+    protected TypeInterface $type;
+
+    /**
+     * @var Target[] Targets list for reload
+     */
+    protected array $targets = [];
+
+    /**
+     * Reloader constructor
+     * @param TypeInterface $type Type interface
+     * @param array $targets Targets list for reload
+     */
     public function __construct(TypeInterface $type, array $targets = [])
     {
         $this->type = $type;
@@ -18,7 +38,8 @@ class Reloader implements ReloaderInterface
     }
 
     /**
-     * @return null
+     * Returns targets list
+     * @return Target[]
      */
     public function getTargets()
     {
@@ -26,18 +47,27 @@ class Reloader implements ReloaderInterface
     }
 
     /**
-     * @param null $target
+     * Set reloader targets
+     * @param Target[] $targets
      */
-    public function setTargets($target): void
+    public function setTargets($targets): void
     {
-        $this->targets = $target;
+        $this->targets = $targets;
     }
 
-    public function getKey():string {
+    /**
+     * {@inheritdoc}
+     */
+    public function getKey():string
+    {
         return $this->type->getKey();
     }
-
-    public function getType() {
+    /**
+     * Returns reloader type instance
+     * @return TypeInterface
+     */
+    public function getType()
+    {
         return $this->type;
     }
 }

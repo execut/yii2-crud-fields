@@ -6,8 +6,14 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\widgets;
+
 use execut\yii\web\AssetBundle;
 use yii\jui\JuiAsset;
+
+/**
+ * Class DropDownLinkAsset
+ * @package execut\crudFields
+ */
 class DropDownLinkAsset extends AssetBundle
 {
     public $depends = [

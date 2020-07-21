@@ -6,15 +6,32 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use kartik\detail\DetailView;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+
+/**
+ * Select dropdown field
+ * @package execut\crudFields
+ */
 class DropDown extends Field
 {
+    /**
+     * {@inheritdoc}
+     */
     public $multipleInputType = MultipleInputColumn::TYPE_DROPDOWN;
+    /**
+     * @var array|null Item for empty value
+     */
+    protected $emptyDataStub = null;
 
-    public function getField() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getField()
+    {
         $field = parent::getField();
         if ($field === false) {
             return false;
@@ -27,37 +44,34 @@ class DropDown extends Field
             $value = $model->$attribute;
         }
 
-//        $columnValue = $this->getRelationObject()->getColumnValue();
         $data = $this->getDataWithEmptyStub();
         $config = [
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => $attribute,
-//            'options' => [
-//                'prompt' => '',
-//            ],
-//            'model' => $this->model,
-//            'viewModel' => $this->model,
             'value' => function () use ($data, $value) {
                 if (!empty($data[$value])) {
                     return $data[$value];
                 }
+
+                return null;
             },
-//            'value' => $model, $columnValue,
             'items' => $data,
         ];
-
         $field = ArrayHelper::merge($config, $field);
+
         return $field;
     }
 
-    public function getColumn() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getColumn()
+    {
         if ($this->_column === false) {
             return false;
         }
 
         $data = $this->getDataWithEmptyStub();
-//        $data = ArrayHelper::merge($this->getRelationConditionData(), $data);
-//        unset($data['']);
         $config = [
             'attribute' => $this->attribute,
             'filter' => $this->renderHasRelationFilter() . Html::activeDropDownList($this->model, $this->attribute, $data),
@@ -70,6 +84,8 @@ class DropDown extends Field
                 if (!empty($data[$row->$attribute])) {
                     return $data[$row->$attribute];
                 }
+
+                return null;
             };
         }
 
@@ -78,7 +94,11 @@ class DropDown extends Field
         return $config;
     }
 
-    public function rules() {
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
         $rules = parent::rules();
         if ($this->isHasRelationAttribute) {
             $rules[$this->isHasRelationAttribute . 'safe'] = [
@@ -91,7 +111,11 @@ class DropDown extends Field
         return $rules;
     }
 
-    public function getMultipleInputField() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getMultipleInputField()
+    {
         $multipleInputField = parent::getMultipleInputField();
         if ($multipleInputField === false) {
             return $multipleInputField;
@@ -106,14 +130,20 @@ class DropDown extends Field
         return ArrayHelper::merge($multipleInputField, $config);
     }
 
-    protected $emptyDataStub = null;
-    public function setEmptyDataStub($stub) {
+    /**
+     * Set item for empty value
+     * @param array $stub
+     * @return $this
+     */
+    public function setEmptyDataStub($stub)
+    {
         $this->emptyDataStub = $stub;
 
         return $this;
     }
 
     /**
+     * Get item for empty value
      * @return array
      */
     protected function getEmptyDataStub()
@@ -126,6 +156,7 @@ class DropDown extends Field
     }
 
     /**
+     * Get items of list with empty data stub
      * @return array
      */
     protected function getDataWithEmptyStub(): array

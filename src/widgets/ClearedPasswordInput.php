@@ -6,9 +6,15 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\widgets;
+
 use execut\yii\jui\InputWidget;
 use kartik\password\PasswordInput;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Widget for wrapping PasswordInput widget and fix bug with browser password autocomplete
+ * @package execut\crudFields
+ */
 class ClearedPasswordInput extends InputWidget
 {
     public $widgetClass = PasswordInput::class;

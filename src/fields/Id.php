@@ -6,13 +6,35 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use unclead\multipleinput\MultipleInputColumn;
+use yii\base\Exception as ExceptionAlias;
+
+/**
+ * Field for primary key hidden input
+ * @package execut\crudFields\fields
+ */
 class Id extends Field
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $attribute = 'id';
+
+    /**
+     * {@inheritdoc}
+     */
     public $multipleInputType = MultipleInputColumn::TYPE_HIDDEN_INPUT;
+
+    /**
+     * {@inheritdoc}
+     */
     public $displayOnly = true;
 
+    /**
+     * {@inheritdoc}
+     * @throws ExceptionAlias
+     */
     public function getField()
     {
         if (!$this->getValue()) {
@@ -22,6 +44,9 @@ class Id extends Field
         return parent::getField();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rules()
     {
         $rules = $this->rules;
@@ -37,12 +62,12 @@ class Id extends Field
             $this->getAttribute(),
             'filter',
             'filter' => function ($v) {
-            if (is_string($v)) {
-                $column = $this->model->getTableSchema()->getColumn($this->getAttribute());
-                if ($column) {
-                    return $column->phpTypecast($v);
+                if (is_string($v)) {
+                    $column = $this->model->getTableSchema()->getColumn($this->getAttribute());
+                    if ($column) {
+                        return $column->phpTypecast($v);
+                    }
                 }
-            }
 
                 return $v;
             },
@@ -52,11 +77,17 @@ class Id extends Field
         return $rules;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMultipleInputField()
     {
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function initDetailViewField(DetailViewField $field)
     {
         $field->setDisplayOnly(true);

@@ -6,6 +6,7 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use kartik\depdrop\DepDrop;
 use kartik\detail\DetailView;
 use yii\base\Exception;
@@ -13,12 +14,36 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\UnsetArrayValue;
 use yii\helpers\Url;
+
+/**
+ * Field for DepDrop widget. This is widget for dependent fields.
+ * @see DepDrop
+ * @package execut\crudFields
+ */
 class HasOneDepDrop extends HasOneSelect2
 {
+    /**
+     * @var array Array of depends for DepDrop widget
+     * @see DepDrop
+     */
     public $depends = [];
+    /**
+     * @var string Depended attribute for DepDrop widget
+     * @see DepDrop
+     */
     public $dependedAttribute = null;
+    /**
+     * @var array Scopes for search data from relation object
+     */
     public $searchDataScopes = [];
+    /**
+     * @var string Name attribute from relation object. @TODO delegate to relation object?
+     */
     public $nameAttribute = null;
+
+    /**
+     * {@inheritdoc}
+     */
     public function getField()
     {
         $field = parent::getField();
@@ -31,11 +56,7 @@ class HasOneDepDrop extends HasOneSelect2
         unset($widgetOptions['url']);
         unset($widgetOptions['isRenderLink']);
         unset($widgetOptions['pluginOptions']['ajax']);
-//        if ($this->getValue()) {
-//            $data = $this->getData();
-//        } else {
         $data = $this->getData();
-//        }
 
         return ArrayHelper::merge($field, [
             'type' => DetailView::INPUT_DEPDROP,
@@ -47,19 +68,21 @@ class HasOneDepDrop extends HasOneSelect2
                 'select2Options' => $widgetOptions,
                 'pluginOptions' => [
                     'loadingText' => 'Загрузка...',
-//                    'initialize' => true,
                     'nameParam' => 'text',
                     'allParam' => $this->dependedAttribute,
                     'ajaxSettings' => [
                         'method' => 'get',
                     ],
-                    'url' => Url::to($this->url),
+                    'url' => Url::to($this->getUrl()),
                     'depends' => $this->getDepends(),
                 ],
             ],
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getColumn()
     {
         $column = parent::getColumn();
@@ -81,12 +104,20 @@ class HasOneDepDrop extends HasOneSelect2
         return $column;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMultipleInputField()
     {
         throw new Exception(__METHOD__ . ' is not implemented');
     }
 
-    protected function getDepends() {
+    /**
+     * Returns from depends inputs ids
+     * @return array
+     */
+    protected function getDepends()
+    {
         $result = [];
         foreach ($this->depends as $depend) {
             $result[] = Html::getInputId($this->model, $depend);
@@ -95,7 +126,11 @@ class HasOneDepDrop extends HasOneSelect2
         return $result;
     }
 
-    public function getData() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getData()
+    {
         $query = clone $this->getRelationObject()->getQuery();
         $query->primaryModel = null;
         $isHas = false;
@@ -115,14 +150,11 @@ class HasOneDepDrop extends HasOneSelect2
         }
 
         if ($isHas) {
-//            if ($indexBy) {
             $indexBy = $this->getRelationObject()->getRelationPrimaryKey();
-//            } else {
-//                $indexBy = 'Ref_Key';
-//            }
-
             $result = $query->indexBy($indexBy)->select($this->nameAttribute)->column();
             return $result;
         }
+
+        return null;
     }
 }

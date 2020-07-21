@@ -6,11 +6,32 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\relation;
+
+/**
+ * Class for make relations urls
+ * @package execut\crudFields\relation
+ */
 class UrlMaker
 {
+    /**
+     * @var array|null Relation CRUD url
+     */
     protected $url = null;
+    /**
+     * @var array|null Relation update url
+     */
     protected $updateUrl = null;
+    /**
+     * @var boolean Is no render link
+     */
     protected $isNoRenderRelationLink = null;
+
+    /**
+     * UrlMaker constructor.
+     * @param array $url
+     * @param array $updateUrl
+     * @param boolean $isNoRenderRelationLink
+     */
     public function __construct($url = null, $updateUrl = null, $isNoRenderRelationLink = null)
     {
         $this->url = $url;
@@ -18,21 +39,43 @@ class UrlMaker
         $this->isNoRenderRelationLink = $isNoRenderRelationLink;
     }
 
-    public function getUrl() {
+    /**
+     * Returns url
+     * @return array|null
+     */
+    public function getUrl()
+    {
         return $this->url;
     }
 
-    public function getUpdateUrl() {
+    /**
+     * Returns update url
+     * @return array|null
+     */
+    public function getUpdateUrl()
+    {
         return $this->updateUrl;
     }
 
-    public function getIsNoRenderRelationLink() {
+    /**
+     * Returns is no render link
+     * @return boolean
+     */
+    public function getIsNoRenderRelationLink()
+    {
         return $this->isNoRenderRelationLink;
     }
 
-    public function make(\yii\base\Model $model, $keyAttribute) {
+    /**
+     * Make relation link from model and key attribute
+     * @param \yii\base\Model $model Related model
+     * @param string|array $keyAttribute Relation attributes
+     * @return array|null
+     */
+    public function make(\yii\base\Model $model, $keyAttribute)
+    {
         if ($this->isNoRenderRelationLink) {
-            return;
+            return null;
         }
 
         if ($this->updateUrl !== null) {
@@ -41,7 +84,7 @@ class UrlMaker
 
         $url = $this->url;
         if ($url === null) {
-            return;
+            return null;
         }
 
         if (!is_array($url)) {
@@ -52,7 +95,7 @@ class UrlMaker
 
         if (!array_key_exists('id', $url)) {
             if (is_string($keyAttribute) && !$model->hasProperty($keyAttribute)) {
-                return;
+                return null;
             }
 
             $pkValue = $model->$keyAttribute;
@@ -62,6 +105,7 @@ class UrlMaker
                 $url = array_merge($url, ['id' => $pkValue]);
             }
         }
+
         return $url;
     }
 }

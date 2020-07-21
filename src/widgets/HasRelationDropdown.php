@@ -6,13 +6,33 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\widgets;
+
 use execut\yii\jui\Widget;
+use yii\base\Model;
 use yii\helpers\Html;
+
+/**
+ * Widget for rendering has relation filter
+ * @package execut\crudFields
+ */
 class HasRelationDropdown extends Widget
 {
+    /**
+     * @var Model $model Model instance
+     */
     public $model;
+    /**
+     * @var string Is has relation attribute name
+     */
     public $attribute;
+    /**
+     * @var string Parent filter element for disabling
+     */
     public $parentId = null;
+
+    /**
+     * {@inheritDoc}
+     */
     public function run()
     {
         $this->clientOptions['parentSelector'] = '#' . $this->parentId;

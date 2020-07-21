@@ -5,24 +5,58 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
+
 namespace execut\crudFields\fields;
+
 use kartik\grid\ActionColumn;
-use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Field for rendering actions column
+ * @package execut\crudFields\fields
+ */
 class Action extends Field
 {
+    /**
+     * @var callable|bool Renderer callback for update button.
+     * null for default value
+     * false for disable
+     */
     public $update = false;
+    /**
+     * @var callable|bool Renderer callback for view button.
+     * null for default value
+     * false for disable
+     */
     public $view = false;
+    /**
+     * @var callable|bool Renderer callback for delete button.
+     * null for default value
+     * false for disable
+     */
     public $delete = null;
+    /**
+     * {@inheritdoc}
+     */
     public $order = 1000;
+    /**
+     * @var bool Is use kartik\grid\ActionColumn column class
+     */
     public $isKartik = false;
-    protected $_column = [];
 
+    /**
+     * Field is not exists
+     * @return false
+     */
     public function getField()
     {
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getColumn()
     {
         $parentColumn = parent::getColumn();
@@ -79,26 +113,42 @@ class Action extends Field
         return $column;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getColumns()
     {
         return ['actions' => $this->getColumn()];
     }
 
+    /**
+     * The field has no rules
+     * @return false
+     */
     public function rules()
     {
         return false;
     }
 
-    public function applyScopes(ActiveQuery $query)
+    /**
+     * {@inheritdoc}
+     */
+    public function applyScopes(ActiveQueryInterface $query)
     {
         return $query;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getMultipleInputField()
     {
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDisplayOnly()
     {
         return true;

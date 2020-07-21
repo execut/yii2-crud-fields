@@ -6,11 +6,13 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields;
+
 use execut\crudFields\fields\Field;
 use execut\crudFields\relation\UrlMaker;
 use yii\base\BaseObject;
 use yii\base\UnknownMethodException;
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\db\pgsql\Schema;
@@ -18,6 +20,11 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
 use yii\helpers\Url;
+
+/**
+ * Class Relation
+ * @package execut\crudFields
+ */
 class Relation extends BaseObject
 {
     /**
@@ -46,13 +53,15 @@ class Relation extends BaseObject
     public $groupByVia = null;
     protected $_name = null;
 
-    public function setName($relation) {
+    public function setName($relation)
+    {
         $this->_name = $relation;
 
         return $this;
     }
 
-    public function getIdAttribute() {
+    public function getIdAttribute()
+    {
         if ($this->idAttribute !== null) {
             return $this->idAttribute;
         }
@@ -63,7 +72,8 @@ class Relation extends BaseObject
         }
     }
 
-    public function getName() {
+    public function getName()
+    {
         if ($this->_name === null) {
             $this->_name = $this->getRelationNameFromAttribute();
         }
@@ -71,7 +81,8 @@ class Relation extends BaseObject
         return $this->_name;
     }
 
-    public function getWith() {
+    public function getWith()
+    {
         if ($this->with === null) {
             return $this->getName();
         }
@@ -79,7 +90,7 @@ class Relation extends BaseObject
         return $this->with;
     }
 
-    public function applyScopes(ActiveQuery $query)
+    public function applyScopes(ActiveQueryInterface $query)
     {
         $relationQuery = $this->getQuery();
         if ($relationQuery && $relationQuery->multiple) {
@@ -157,19 +168,22 @@ class Relation extends BaseObject
         return current($result);
     }
 
-    public function getRelationModelClass() {
+    public function getRelationModelClass()
+    {
         $modelClass = $this->getQuery()->modelClass;
 
         return $modelClass;
     }
 
-    public function getRelationFormName() {
+    public function getRelationFormName()
+    {
         $model = $this->getRelationModel();
 
         return $model->formName();
     }
 
-    public function getRelationPrimaryKey() {
+    public function getRelationPrimaryKey()
+    {
         $relationQuery = $this->getQuery();
         $class = $relationQuery->modelClass;
         return current($class::primaryKey());
@@ -207,7 +221,6 @@ class Relation extends BaseObject
                         }
                     }
                 } else {
-
                     $viaRelationName = $via[0];
                     $viaModels = $this->model->$viaRelationName;
                     $sourceIds = [];
@@ -279,11 +292,13 @@ class Relation extends BaseObject
         return $data;
     }
 
-    public function isVia() {
+    public function isVia()
+    {
         return $this->getQuery()->via !== null;
     }
 
-    public function getColumnValue($row) {
+    public function getColumnValue($row)
+    {
         if (!$this->isHasMany()) {
             if ($this->valueAttribute !== null) {
                 $attribute = $this->valueAttribute;
@@ -361,11 +376,13 @@ class Relation extends BaseObject
     }
 
     protected $query;
-    public function setQuery($q) {
+    public function setQuery($q)
+    {
         $this->query = $q;
     }
 
-    public function getQuery() {
+    public function getQuery()
+    {
         if ($this->query !== null) {
             return $this->query;
         }
@@ -421,15 +438,18 @@ class Relation extends BaseObject
         return $viaRelationQuery;
     }
 
-    public function getViaFromAttribute() {
+    public function getViaFromAttribute()
+    {
         return key($this->getViaRelationQuery()->link);
     }
 
-    public function getViaToAttribute() {
+    public function getViaToAttribute()
+    {
         return current($this->getQuery()->link);
     }
 
-    public function getViaRelationModelClass() {
+    public function getViaRelationModelClass()
+    {
         return $this->getViaRelationQuery()->modelClass;
     }
 
@@ -455,11 +475,13 @@ class Relation extends BaseObject
         return $models;
     }
 
-    public function isHasMany() {
+    public function isHasMany()
+    {
         return $this->getQuery()->multiple;
     }
     
-    public function getRelationFields() {
+    public function getRelationFields()
+    {
         $model = $this->getRelationModel();
         if (!$model->getBehavior('fields') || $this->isManyToMany() || $this->isHasMany()) {
             return [];
@@ -542,25 +564,29 @@ class Relation extends BaseObject
         return $linkRenderer->render();
     }
 
-    protected function getPrimaryKey() {
+    protected function getPrimaryKey()
+    {
         return current($this->model::primaryKey());
     }
 
-    protected function getRelationNameFromAttribute() {
+    protected function getRelationNameFromAttribute()
+    {
         $attribute = $this->attribute;
         $relationName = lcfirst(Inflector::id2camel(str_replace('_id', '', $attribute), '_'));
 
         return $relationName;
     }
 
-    protected function isManyToMany() {
+    protected function isManyToMany()
+    {
         $relationQuery = $this->getQuery();
 
         return $relationQuery->multiple && $this->isVia();
     }
 
 
-    public function applyScopeIsExistRecords(ActiveQuery $query) {
+    public function applyScopeIsExistRecords(ActiveQueryInterface $query)
+    {
         $attribute = $this->isHasRelationAttribute;
         if (!$attribute) {
             return;
@@ -589,7 +615,7 @@ class Relation extends BaseObject
                     ]);
                 }
             }
-        } else if ($this->isHasMany()) {
+        } elseif ($this->isHasMany()) {
             $model = $this->getRelationModel(true);
             $value = $this->model->$attribute;
             $relationQuery = $this->getQuery();
@@ -602,7 +628,7 @@ class Relation extends BaseObject
                     current($relationQuery->link),
                     $relationQuery,
                 ]);
-            } else if ($value == '0') {
+            } elseif ($value == '0') {
                 $relationQuery->andWhere([
                     $model->tableName() . '.' . key($relationQuery->link) => new Expression($this->model->tableName() . '.' . current($relationQuery->link)),
                 ])->select(new Expression('1'));
@@ -622,31 +648,12 @@ class Relation extends BaseObject
                         $whereAttribute => null,
                     ]
                 ]);
-            } else if ($value === '0') {
+            } elseif ($value === '0') {
                 $query->andWhere([
                     $whereAttribute => null,
                 ]);
             }
         }
-
-//        if (!is_array($value)) {
-//            $value = [$value];
-//        }
-//
-//        if (in_array(self::IS_HAS_RECORDS, $value)) {
-//            $query->andWhere([
-//                'NOT',
-//                [
-//                    $whereAttribute => null,
-//                ]
-//            ]);
-//        }
-//
-//        if (in_array(self::IS_NOT_HAS_RECORDS, $value)) {
-//            $query->andWhere([
-//                $whereAttribute => null,
-//            ]);
-//        }
     }
 
     /**
@@ -699,7 +706,8 @@ class Relation extends BaseObject
         return $linkRenderer;
     }
 
-    public function getLinkRenderer() {
+    public function getLinkRenderer()
+    {
         if ($this->linkRenderer === null) {
             $this->linkRenderer = new LinkRenderer(null, null, null, $this->label);
         }
@@ -707,15 +715,18 @@ class Relation extends BaseObject
         return $this->linkRenderer;
     }
 
-    public function setUrl($url) {
+    public function setUrl($url)
+    {
         $this->url = $url;
     }
 
-    public function getUrl() {
+    public function getUrl()
+    {
         return $this->url;
     }
 
-    public function getColumnRecordsLimit() {
+    public function getColumnRecordsLimit()
+    {
         return $this->columnRecordsLimit;
     }
 }

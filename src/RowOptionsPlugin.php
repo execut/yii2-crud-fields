@@ -6,6 +6,11 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields;
+
+/**
+ * Interface RowOptionsPlugin
+ * @package execut\crudFields
+ */
 interface RowOptionsPlugin
 {
     public function getRowOptions();

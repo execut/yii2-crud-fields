@@ -110,7 +110,7 @@ class Help implements AddonInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getConfig()
     {

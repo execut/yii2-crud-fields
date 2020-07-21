@@ -6,15 +6,23 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Field for rendering DetailView::INPUT_RADIO_BUTTON_GROUP input
+ * @package execut\crudFields
+ */
 class RadiobuttonGroup extends DropDown
 {
-//    public $emptyDataStub = [];
+    /**
+     * {@inheritDoc}
+     */
     public function getField()
     {
         $field = parent::getField();
-        if ($field === false ) {
+        if ($field === false) {
             return false;
         }
 

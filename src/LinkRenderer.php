@@ -1,10 +1,22 @@
 <?php
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields;
+
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\base\Model;
+
+/**
+ * Class LinkRenderer
+ * @package execut\crudFields
+ */
 class LinkRenderer
 {
     protected $nameAttribute = null;
@@ -23,58 +35,69 @@ class LinkRenderer
         $this->label = $label;
     }
 
-    public function setNameAttribute($name) {
+    public function setNameAttribute($name)
+    {
         $this->nameAttribute = $name;
 
         return $this;
     }
 
-    public function getNameAttribute() {
+    public function getNameAttribute()
+    {
         $name = $this->nameAttribute;
 
         return $name;
     }
 
-    public function setIdAttribute($name) {
+    public function setIdAttribute($name)
+    {
         $this->idAttribute = $name;
 
         return $this;
     }
 
-    public function getIdAttribute() {
+    public function getIdAttribute()
+    {
         return $this->idAttribute;
     }
 
-    public function getModel() {
+    public function getModel()
+    {
         return $this->model;
     }
 
-    public function setModel($model) {
+    public function setModel($model)
+    {
         $this->model = $model;
 
         return $this;
     }
 
-    public function setLabel($label) {
+    public function setLabel($label)
+    {
         $this->label = $label;
 
         return $this;
     }
 
-    public function getUrl() {
+    public function getUrl()
+    {
         return $this->url;
     }
 
-    public function setUrl($url) {
+    public function setUrl($url)
+    {
         $this->url = $url;
         return $this;
     }
 
-    public function getLabel() {
+    public function getLabel()
+    {
         return $this->label;
     }
 
-    public function render() {
+    public function render()
+    {
         if ($this->getModel() === null) {
             throw new Exception('Model is required for render');
         }

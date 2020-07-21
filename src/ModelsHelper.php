@@ -1,5 +1,12 @@
 <?php
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields;
+
 use execut\crudFields\fields\Action;
 use execut\crudFields\fields\Boolean;
 use execut\crudFields\fields\Date;
@@ -7,6 +14,11 @@ use execut\crudFields\fields\Id;
 use execut\crudFields\fields\StringField;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Class ModelsHelper
+ * @package execut\crudFields
+ */
 class ModelsHelper extends Component
 {
     public $standardFieldsDefault = [
@@ -56,7 +68,8 @@ class ModelsHelper extends Component
     public $exclude = [];
     public $other = [];
 
-    public function getStandardFields() {
+    public function getStandardFields()
+    {
         $fields = $this->standardFieldsDefault;
         foreach ($this->exclude as $key) {
             unset($fields[$key]);

@@ -6,39 +6,88 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields;
+
+use execut\actions\widgets\DynaGrid;
 use execut\crudFields\fields\Field;
+use kartik\detail\DetailView;
+use kartik\grid\GridView;
+use unclead\multipleinput\MultipleInput;
+use \yii\base\Model;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use yii\base\Behavior as BaseBehavior;
 use yii\base\Exception;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Class Behavior
+ * @package execut\crudFields
+ */
 class Behavior extends BaseBehavior
 {
     /**
-     * @var ActiveRecord|null the owner of this behavior
+     * @var string Relation saver behavior key within model
      */
-    public $owner;
-    protected $_plugins = [];
-    protected $_module = null;
-    public $relations = [];
-    public $rules = [];
-    public $roles = [];
-    protected $role = null;
     const RELATIONS_SAVER_KEY = 'relationsSaver';
+    /**
+     * @var string Fields behavior key within model
+     */
     const KEY = 'fields';
-    public $defaultScenario = Field::SCENARIO_DEFAULT;
-    public $relationsSaver = [];
     const EVENT_BEFORE_LOAD = 'beforeLoad';
     const EVENT_AFTER_LOAD = 'afterLoad';
-
-    public function setRole($role) {
-        $this->role = $role;
-        $this->fieldsIsInitied = false;
-    }
+    /**
+     * @var Model The owner of this behavior
+     */
+    public $owner = null;
+    /**
+     * @var array Advanced validation rules
+     */
+    public $rules = [];
+    /**
+     * @var string[] Default model scenarios list
+     */
+    public $defaultScenario = Field::SCENARIO_DEFAULT;
+    /**
+     * @var array Relations saver behavior configuration
+     */
+    public $relationsSaver = [];
+    /**
+     * @var array Advanced scopes
+     */
+    public $scopes = [];
+    /**
+     * @var bool Plugins is initialized
+     */
+    protected $_pluginsIsInited = false;
+    /**
+     * @var Field[] Initialized fields instances
+     */
+    protected $_fields = [];
+    /**
+     * @var bool Fields configuration
+     */
+    protected $_fieldsConfig = [];
+    /**
+     * @var bool Fields is initialized from config
+     */
+    protected $fieldsIsInitied = false;
+    /**
+     * @var ActiveQueryInterface Query for DataProvider
+     */
+    protected $query = null;
+    /**
+     * @var array Plugins configuration or instances
+     */
+    protected $_plugins = [];
+    /**
+     * @var string Module id for translations
+     */
+    protected $_module = null;
 
     /**
-     * @param ActiveRecord $owner
+     * {@inheritDoc}
      */
     public function attach($owner)
     {
@@ -48,7 +97,11 @@ class Behavior extends BaseBehavior
         }
     }
 
-    public function setRelationsScenarioFromOwner() {
+    /**
+     * Set relations scenario from owner
+     */
+    public function setRelationsScenarioFromOwner()
+    {
         $this->initSaverBehaviorRelations();
         /**
          * @var SaveRelationsBehavior $saver
@@ -67,52 +120,9 @@ class Behavior extends BaseBehavior
         }
     }
 
-    public function initEvent() {
-        $owner = $this->owner;
-        if (!empty($this->relationsSaver)) {
-            /**
-             * @var SaveRelationsBehavior $relationsSaver
-             */
-            $relationsSaver = $this->relationsSaver;
-            if (!isset($relationsSaver['class'])) {
-                $relationsSaver['class'] = SaveRelationsBehavior::class;
-            }
-
-            $relationsSaver = \yii::createObject($relationsSaver);
-            $owner->attachBehavior(self::RELATIONS_SAVER_KEY, $relationsSaver);
-        }
-    }
-
-    protected function initSaverBehaviorRelations() {
-        $relations = $this->getRelationsNames();
-        if (!empty($relations)) {
-            $owner = $this->owner;
-            $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
-            if (!$relationsSaver) {
-                $owner->attachBehavior(self::RELATIONS_SAVER_KEY, [
-                    'class' => SaveRelationsBehavior::class,
-                ]);
-                $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
-//                throw new \execut\yii\base\Exception('RelationsSaver behavior is required. Define it between via config:
-//                \'relationsSaver\' => [
-//                    \'class\' => SaveRelationsBehavior::class,
-//                    \'relations\' => [],
-//                ],');
-            }
-
-            foreach ($relations as $relation) {
-                if (!in_array($relation, $relationsSaver->relations)) {
-                    $params = [];
-//                    if (!empty($relationParams['scenario'])) {
-//                        $params['scenario'] = $relationParams['scenario'];
-//                    }
-
-                    $relationsSaver->addRelation($relation, $params);
-                }
-            }
-        }
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public function events()
     {
         $events = [
@@ -130,13 +140,45 @@ class Behavior extends BaseBehavior
 
         return $events;
     }
-    public function beforeValidate() {
+
+    /**
+     * Init event
+     */
+    public function initEvent()
+    {
+        $owner = $this->owner;
+        if (!empty($this->relationsSaver)) {
+            /**
+             * @var SaveRelationsBehavior $relationsSaver
+             */
+            $relationsSaver = $this->relationsSaver;
+            if (!isset($relationsSaver['class'])) {
+                $relationsSaver['class'] = SaveRelationsBehavior::class;
+            }
+
+            $relationsSaver = \yii::createObject($relationsSaver);
+            $owner->attachBehavior(self::RELATIONS_SAVER_KEY, $relationsSaver);
+        }
+    }
+
+    /**
+     * Before validate
+     * @throws Exception
+     */
+    public function beforeValidate()
+    {
         $this->setRelationsScenarioFromOwner();
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeValidate();
         }
     }
-    public function beforeUpdate() {
+
+    /**
+     * Before update
+     * @throws Exception
+     */
+    public function beforeUpdate()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeUpdate();
         }
@@ -144,87 +186,120 @@ class Behavior extends BaseBehavior
         $this->beforeSave();
     }
 
-    public function afterValidate() {
+    /**
+     * After validate
+     * @throws Exception
+     */
+    public function afterValidate()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterValidate();
         }
     }
 
-    public function beforeInsert() {
+    /**
+     * Before insert
+     * @throws Exception
+     */
+    public function beforeInsert()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeInsert();
         }
 
         $this->beforeSave();
     }
-    public function beforeSave() {
+
+    /**
+     * Before save
+     * @throws Exception
+     */
+    public function beforeSave()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeSave();
         }
     }
-    public function afterInsert() {
+
+    /**
+     * After insert
+     * @throws Exception
+     */
+    public function afterInsert()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterInsert();
         }
 
         $this->afterSave();
     }
-    public function afterUpdate() {
+
+    /**
+     * After update
+     * @throws Exception
+     */
+    public function afterUpdate()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterUpdate();
         }
         $this->afterSave();
     }
-    public function afterSave() {
+
+    /**
+     * After save
+     * @throws Exception
+     */
+    public function afterSave()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterSave();
         }
     }
-    public function beforeDelete() {
+
+    /**
+     * Before delete
+     * @throws Exception
+     */
+    public function beforeDelete()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->beforeDelete();
         }
     }
 
-    public function beforeLoad() {
+    /**
+     * Before load
+     */
+    public function beforeLoad()
+    {
         $this->setRelationsScenarioFromOwner();
     }
 
-    public function afterLoad() {
+    /**
+     * After load
+     * @throws Exception
+     */
+    public function afterLoad()
+    {
         foreach ($this->getPlugins() as $plugin) {
             $plugin->afterLoad();
         }
     }
 
 
-    public function setPlugins($plugins) {
+    /**
+     * Set plugins instances or configurations arrays
+     * @param $plugins
+     */
+    public function setPlugins($plugins)
+    {
         $this->_plugins = $plugins;
     }
 
-    protected $_pluginsIsInited = false;
-    protected function initPlugins() {
-        if (!$this->_pluginsIsInited) {
-            foreach ($this->_plugins as $key => $plugin) {
-                if (is_string($plugin)) {
-                    $plugin = ['class' => $plugin];
-                }
-
-                if (is_array($plugin)) {
-                    $plugin = \yii::createObject($plugin);
-                    $this->_plugins[$key] = $plugin;
-                }
-
-                if (!($plugin instanceof Plugin)) {
-                    throw new Exception('Fields plugin ' . get_class($plugin) . ' must bee instance of ' . Plugin::class);
-                }
-
-                $plugin->owner = $this->owner;
-            }
-
-            $this->_pluginsIsInited = true;
-        }
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public function canGetProperty($name, $checkVars = true)
     {
         if (parent::canGetProperty($name, $checkVars)) {
@@ -234,6 +309,9 @@ class Behavior extends BaseBehavior
         return $this->isHasRelation($name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function __get($name)
     {
         if (property_exists($this, $name)) {
@@ -244,56 +322,43 @@ class Behavior extends BaseBehavior
             return $this->getRelation($name);
         }
 
-        return parent::__get($name); // TODO: Change the autogenerated stub
-    }
-
-    protected function getRelationsNames() {
-        $relationsNames = [];
-        foreach ($this->getFields() as $field) {
-            if ($name = $field->getRelationName()) {
-                $relationsNames[$name] = $name;
-            }
-        }
-
-        $relationsNames = ArrayHelper::merge($relationsNames, $this->getPluginsRelationsNames());
-
-        return $relationsNames;
-    }
-
-    protected function getPluginsRelationsNames() {
-        $relationsNames = [];
-        foreach ($this->getPlugins() as $plugin) {
-            $relationsNames = ArrayHelper::merge($relationsNames, $plugin->getRelationsNames());
-        }
-        return $relationsNames;
-    }
-
-    protected function getPluginsFields() {
-        $result = [];
-        foreach ($this->getPlugins() as $plugin) {
-            $result = array_merge($result, $plugin->getFields());
-        }
-
-        return $result;
+        return parent::__get($name);
     }
 
     /**
+     * Returns fields plugins
      * @return Plugin[]
      * @throws Exception
      */
-    public function getPlugins() {
+    public function getPlugins()
+    {
         $this->initPlugins();
         return $this->_plugins;
     }
 
-    public function getPlugin($key) {
+    /**
+     * Returns plugin instance by key
+     * @param string $key
+     * @return Plugin
+     * @throws Exception
+     */
+    public function getPlugin($key)
+    {
         $plugins = $this->getPlugins();
         if (array_key_exists($key, $plugins)) {
             return $plugins[$key];
         }
     }
 
-    public function getRelation($name) {
+    /**
+     * Returns model relation by key
+     * @param $name Relation name
+     * @return ActiveQueryInterface|null
+     * @throws Exception
+     * @throws \yii\db\Exception
+     */
+    public function getRelation($name)
+    {
         if ($field = $this->getField($name)) {
             $q = $field->getRelationQuery();
             if ($q) {
@@ -304,21 +369,42 @@ class Behavior extends BaseBehavior
         return $this->getPluginsRelation($name);
     }
 
-    protected $_fields = [];
-    protected $_fieldsConfig = [];
-    public function setFields($fields) {
+
+    /**
+     * Set fields configs or instances
+     * @param array $fields Fields configs or instances
+     * @return $this
+     */
+    public function setFields($fields)
+    {
         $this->_fieldsConfig = $fields;
         return $this;
     }
 
-    public function getField($name) {
+    /**
+     * Returns field instance by name
+     * @param string $name Field name
+     * @return Field
+     * @throws Exception
+     */
+    public function getField($name)
+    {
         $fields = $this->getFields();
         if (array_key_exists($name, $fields)) {
             return $fields[$name];
         }
+
+        return null;
     }
 
-    public function getRowOptions() {
+    /**
+     * Returns rowOptions for DynaGrid
+     * @see DynaGrid
+     * @return array
+     * @throws Exception
+     */
+    public function getRowOptions()
+    {
         $plugins = $this->getPlugins();
         $options = [];
         foreach ($plugins as $plugin) {
@@ -330,13 +416,14 @@ class Behavior extends BaseBehavior
         return $options;
     }
 
-    protected $fieldsIsInitied = false;
 
     /**
+     * Returns fields instances
      * @return Field[]
      * @throws Exception
      */
-    public function getFields() {
+    public function getFields()
+    {
         if ($this->fieldsIsInitied) {
             return $this->_fields;
         }
@@ -402,7 +489,14 @@ class Behavior extends BaseBehavior
         return $fields;
     }
 
-    public function getGridColumns() {
+    /**
+     * Returns columns configuration for GridView
+     * @see \yii\grid\GridView
+     * @return array
+     * @throws Exception
+     */
+    public function getGridColumns()
+    {
         $columns = [];
         $fields = $this->getFields();
         foreach ($fields as $fieldKey => $field) {
@@ -425,7 +519,14 @@ class Behavior extends BaseBehavior
         return $columns;
     }
 
-    public function getFormFields() {
+    /**
+     * Returns attributes configuration for DetailView
+     * @see DetailView
+     * @return array
+     * @throws Exception
+     */
+    public function getFormFields()
+    {
         $formFields = [];
         foreach ($this->getFields() as $fieldKey => $field) {
             $formFields = ArrayHelper::merge($formFields, $field->getFields());
@@ -434,25 +535,35 @@ class Behavior extends BaseBehavior
         return $formFields;
     }
 
-    public function getScopes() {
+    /**
+     * Return scopes values
+     * @return array
+     */
+    public function getScopes()
+    {
         $scopes = $this->scopes;
-//        $scopes = array_merge($scopes, $this->getPluginsScopes());
-        if ($this->role !== null && !empty($this->roles[$this->role]) && !empty($this->roles[$this->role]['scopes'])) {
-            $scopes = ArrayHelper::merge($scopes, $this->roles[$this->role]['scopes']);
-        }
 
         return $scopes;
     }
 
-    public $scopes = [];
-    protected $query = null;
-    public function setQuery($q) {
+    /**
+     * Sets query directly
+     * @param $q
+     * @return $this
+     */
+    public function setQuery($q)
+    {
         $this->query = $q;
 
         return $this;
     }
 
-    public function getQuery() {
+    /**
+     * Get query from model
+     * @return ActiveQueryInterface
+     */
+    public function getQuery()
+    {
         if ($this->query === null) {
             $modelClass = get_class($this->owner);
             $this->query = $modelClass::find();
@@ -461,7 +572,14 @@ class Behavior extends BaseBehavior
         return $this->query;
     }
 
-    public function applyScopes($query) {
+    /**
+     * Apply query scopes from configuration, fields and plugins
+     * @param ActiveQueryInterface $query
+     * @return ActiveQueryInterface
+     * @throws Exception
+     */
+    public function applyScopes($query)
+    {
         if (!empty($this->scopes)) {
             $scopes = $this->scopes;
             foreach ($scopes as $scope) {
@@ -482,7 +600,14 @@ class Behavior extends BaseBehavior
         return $query;
     }
 
-    public function search() {
+    /**
+     * Returns DataProvider for GridView
+     * @see GridView
+     * @return ActiveDataProvider
+     * @throws Exception
+     */
+    public function search()
+    {
         $q = $this->getQuery();
         $q = $this->applyScopes($q);
         $dataProvider = new ActiveDataProvider([
@@ -496,13 +621,13 @@ class Behavior extends BaseBehavior
         return $dataProvider;
     }
 
-    protected function initDataProvider($dataProvider) {
-        foreach ($this->getPlugins() as $plugin) {
-            $plugin->initDataProvider($dataProvider);
-        }
-    }
-
-    public function rules() {
+    /**
+     * Returns model validation rules from configuration, fields and plugins
+     * @return array
+     * @throws Exception
+     */
+    public function rules()
+    {
         $rules = [];
         foreach ($this->getFields() as $field) {
             $fieldRules = $field->rules();
@@ -545,13 +670,24 @@ class Behavior extends BaseBehavior
         return ArrayHelper::merge($rules, $forOrderRules);
     }
 
-    public function setModule($module) {
+    /**
+     * Sets module id for message translations
+     * @param string $module
+     * @return $this
+     */
+    public function setModule($module)
+    {
         $this->_module = $module;
 
         return $this;
     }
 
-    public function getModule() {
+    /**
+     * Get module id. If the module id is not specified, then it is calculated from the model namespace
+     * @return string|null
+     */
+    public function getModule()
+    {
         if ($this->_module === null) {
             return $this->detectModule();
         }
@@ -559,19 +695,13 @@ class Behavior extends BaseBehavior
         return $this->_module;
     }
 
-    protected function detectModule() {
-        if (!$this->owner) {
-            return;
-        }
-
-        $ownerClass = get_class($this->owner);
-        $parts = explode('\\', $ownerClass);
-        if (!empty($parts[1])) {
-            return $parts[1];
-        }
-    }
-
-    public function attributesLabels() {
+    /**
+     * Returns model attributes labels
+     * @return array
+     * @throws Exception
+     */
+    public function attributesLabels()
+    {
         $result = [];
         foreach ($this->getFields() as $field) {
             $result[$field->getName()] = $field->getLabel($this->getModule());
@@ -580,7 +710,14 @@ class Behavior extends BaseBehavior
         return $result;
     }
 
-    public function getMultipleInputFields() {
+    /**
+     * Returns MultipleInput model columns
+     * @see MultipleInput
+     * @return array
+     * @throws Exception
+     */
+    public function getMultipleInputFields()
+    {
         $columns = [];
         foreach ($this->getFields() as $key => $field) {
             $field = $field->getMultipleInputField();
@@ -592,30 +729,9 @@ class Behavior extends BaseBehavior
         return $columns;
     }
 
-    protected function throwFieldClassException($key, $field): void
-    {
-        if (!is_string($field)) {
-            $field = get_class($field);
-        }
-
-        throw new Exception('Field "' . $key . '" must bee instance of ' . Field::class . '. Instance of ' . $field . ' instead');
-    }
-
     /**
-     * @return array
-     */
-    protected function getFieldsConfig(): array
-    {
-        $fields = $this->_fieldsConfig;
-        $fields = array_merge($fields, $this->getPluginsFields());
-        if ($this->role !== null && !empty($this->roles[$this->role]) && !empty($this->roles[$this->role]['fields'])) {
-            $fields = ArrayHelper::merge($fields, $this->roles[$this->role]['fields']);
-        }
-
-        return $fields;
-    }
-
-    /**
+     * Returns plugins relation by name
+     * @param string $name Relation name
      * @return array
      * @throws Exception
      */
@@ -626,14 +742,176 @@ class Behavior extends BaseBehavior
                 return $relation;
             }
         }
+
+        return null;
     }
 
     /**
-     * @param $name
+     * Checks for a relation by name
+     * @param string $name Relation name
      * @return bool
      */
     public function isHasRelation($name): bool
     {
         return in_array($name, $this->getRelationsNames());
+    }
+
+    /**
+     * Calculate module id by namespace
+     * @return mixed|string|void
+     */
+    protected function detectModule()
+    {
+        if (!$this->owner) {
+            return;
+        }
+
+        $ownerClass = get_class($this->owner);
+        $parts = explode('\\', $ownerClass);
+        if (!empty($parts[1])) {
+            return $parts[1];
+        }
+    }
+
+    /**
+     * Fired initDataProvider for plugins
+     * @param $dataProvider
+     * @throws Exception
+     */
+    protected function initDataProvider($dataProvider)
+    {
+        foreach ($this->getPlugins() as $plugin) {
+            $plugin->initDataProvider($dataProvider);
+        }
+    }
+
+    /**
+     * Plugins initialization
+     * @throws Exception
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function initPlugins()
+    {
+        if (!$this->_pluginsIsInited) {
+            foreach ($this->_plugins as $key => $plugin) {
+                if (is_string($plugin)) {
+                    $plugin = ['class' => $plugin];
+                }
+
+                if (is_array($plugin)) {
+                    $plugin = \yii::createObject($plugin);
+                    $this->_plugins[$key] = $plugin;
+                }
+
+                if (!($plugin instanceof Plugin)) {
+                    throw new Exception('Fields plugin ' . get_class($plugin) . ' must bee instance of ' . Plugin::class);
+                }
+
+                $plugin->owner = $this->owner;
+            }
+
+            $this->_pluginsIsInited = true;
+        }
+    }
+
+    /**
+     * Save relations behavior initialization
+     */
+    protected function initSaverBehaviorRelations()
+    {
+        $relations = $this->getRelationsNames();
+        if (!empty($relations)) {
+            $owner = $this->owner;
+            $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
+            if (!$relationsSaver) {
+                $owner->attachBehavior(self::RELATIONS_SAVER_KEY, [
+                    'class' => SaveRelationsBehavior::class,
+                ]);
+                $relationsSaver = $owner->getBehavior(self::RELATIONS_SAVER_KEY);
+            }
+
+            foreach ($relations as $relation) {
+                if (!in_array($relation, $relationsSaver->relations)) {
+                    $params = [];
+                    $relationsSaver->addRelation($relation, $params);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns relations names
+     * @return array
+     * @throws Exception
+     */
+    protected function getRelationsNames()
+    {
+        $relationsNames = [];
+        foreach ($this->getFields() as $field) {
+            if ($name = $field->getRelationName()) {
+                $relationsNames[$name] = $name;
+            }
+        }
+
+        $relationsNames = ArrayHelper::merge($relationsNames, $this->getPluginsRelationsNames());
+
+        return $relationsNames;
+    }
+
+    /**
+     * Returns plugins relations names
+     * @return array
+     * @throws Exception
+     */
+    protected function getPluginsRelationsNames()
+    {
+        $relationsNames = [];
+        foreach ($this->getPlugins() as $plugin) {
+            $relationsNames = ArrayHelper::merge($relationsNames, $plugin->getRelationsNames());
+        }
+        return $relationsNames;
+    }
+
+    /**
+     * Returns plugins fields
+     * @return array
+     * @throws Exception
+     */
+    protected function getPluginsFields()
+    {
+        $result = [];
+        foreach ($this->getPlugins() as $plugin) {
+            $result = array_merge($result, $plugin->getFields());
+        }
+
+        return $result;
+    }
+
+    /**
+     * Throw field class exception
+     * @param string $key Field name
+     * @param $field Field instance
+     * @throws Exception
+     */
+    protected function throwFieldClassException($key, $field): void
+    {
+        if (!is_string($field)) {
+            $field = get_class($field);
+        }
+
+        throw new Exception('Field "' . $key . '" must bee instance of ' . Field::class . '. Instance of ' . $field . ' instead');
+    }
+
+    /**
+     * Returns fields config from configuration and plugins
+     * @return array
+     * @throws Exception
+     */
+    protected function getFieldsConfig(): array
+    {
+        $fields = $this->_fieldsConfig;
+        $fields = array_merge($fields, $this->getPluginsFields());
+
+        return $fields;
     }
 }

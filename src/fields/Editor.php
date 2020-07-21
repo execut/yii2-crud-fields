@@ -6,9 +6,21 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
+/**
+ * WYSIWYG HTML editor field
+ * @package execut\crudFields\fields
+ */
 class Editor extends Field
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $detailViewFieldClass = \execut\crudFields\fields\detailViewField\Editor::class;
+
+    /**
+     * {@inheritdoc}
+     */
     public function getColumn()
     {
         $column = parent::getColumn();

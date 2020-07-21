@@ -6,69 +6,154 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use execut\crudFields\Relation;
 use execut\crudFields\widgets\HasRelationDropdown;
+use unclead\multipleinput\MultipleInput;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\base\BaseObject;
 use yii\base\Exception;
-use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
+
+/**
+ * Base class for CRUD fields. Simple text CRUD field with unlimited text length
+ *
+ * @package execut\crudFields
+ */
 class Field extends BaseObject
 {
+    /**
+     * Scenario for filtering GridView
+     */
     const SCENARIO_GRID = 'grid';
+    /**
+     * Scenario for DetailView
+     */
     const SCENARIO_FORM = 'form';
-    const IS_RECORDS_VALUES = [
-        self::IS_NOT_HAS_RECORDS,
-        self::IS_HAS_RECORDS,
-    ];
-    const IS_HAS_RECORDS = 'isHasRecords';
-    const IS_NOT_HAS_RECORDS = 'isNotHasRecords';
-    public $module = null;
+
+    /**
+     * Default scenarios list
+     */
+    const SCENARIO_DEFAULT = [self::SCENARIO_FORM];
+    /**
+     * @var string CRUD module id for field messages translations
+     */
+    public ?string $module = null;
+    /**
+     * @var bool|string The name of the IsHasRelation attribute to filter by the presence of records in the relation
+     */
     public $isHasRelationAttribute = false;
     /**
-     * @var ActiveRecord
+     * @var ActiveRecord Current form or filter model
      */
     public $model = null;
-    protected $required = false;
+    /**
+     * @var mixed Default value of field. Can be a closure
+     */
     public $defaultValue = null;
-    protected $attribute = null;
+    /**
+     * @var array Advanced field validation rules. False to completely disable rules generation
+     */
     public $rules = [];
+    /**
+     * @var string Type of field multiple input for rendering MultipleInput widget
+     * @see MultipleInput
+     */
     public $multipleInputType = MultipleInputColumn::TYPE_TEXT_INPUT;
-    protected $_column = [];
-    protected $_field = [];
-    protected $_label = null;
-    protected $readOnly = null;
-    protected $detailViewFieldClass = DetailViewField::class;
+    /**
+     * @var bool Show relationship form?
+     */
     public $isRenderRelationFields = false;
+    /**
+     * @var bool The field visibility inside relationship form
+     */
     public $isRenderInRelationForm = true;
-
+    /**
+     * @var int Field order
+     */
+    public $order = 0;
+    /**
+     * @var array|callable List of items to select within the field. Can be a closure
+     */
     public $data = [];
+    /**
+     * @var string|null Attribute name for field value
+     */
     public $valueAttribute = null;
+    /**
+     * @var array Multiple input config for rendering MultipleInput widget
+     * @see MultipleInput
+     */
     public $multipleInputField = [];
+    /**
+     * @var string[]
+     */
     public $defaultScenario = self::SCENARIO_DEFAULT;
+    /**
+     * @var string|null CRUD field name
+     */
     public $name = null;
 
     /**
-     * @var \Closure|null
+     * @var \Closure|null Scope for query filtration. False for disable scopes
      */
     public $scope = null;
+    /**
+     * @var bool Field is required for form scenario
+     */
+    protected $required = false;
+    /**
+     * @var string Attribute name of CRUD field
+     */
+    protected $attribute = null;
+    /**
+     * @var array Redefined column config
+     */
+    protected $_column = [];
+    /**
+     * @var array Redefined field config
+     */
+    protected $_field = [];
+    /**
+     * @var string Field label
+     */
+    protected $_label = null;
+    /**
+     * @var boolean|callable|null Field is read only inside GridView
+     */
+    protected $readOnly = null;
+    /**
+     * @var string DetailViewField class
+     */
+    protected $detailViewFieldClass = DetailViewField::class;
 
+    /**
+     * @var Relation|null Relation object if it exists
+     */
     protected $_relationObject = null;
+    /**
+     * @var array Relation object params by default
+     */
     protected $relationObjectParams = [
         'class' => Relation::class,
     ];
-
-    public $order = 0;
+    /**
+     * @var DetailViewField Current detailViewField
+     */
+    protected $detailViewField = null;
     /**
      * @var ReloaderInterface[]
      */
     protected $reloaders = [];
 
-    const SCENARIO_DEFAULT = [self::SCENARIO_FORM];
-
+    /**
+     * Field constructor.
+     * {@inheritdoc}
+     */
     public function __construct($config = [])
     {
         $relationAttributes = [
@@ -113,7 +198,9 @@ class Field extends BaseObject
     }
 
     /**
+     * Set field reloaders
      * @param ReloaderInterface $reloaders
+     * @link https://github.com/execut/yii2-crud-fields/blob/master/docs/guide/reloaders.md
      */
     public function setReloaders($reloaders)
     {
@@ -121,6 +208,7 @@ class Field extends BaseObject
     }
 
     /**
+     * Returns CRUD field reloaders
      * @return ReloaderInterface[]
      */
     public function getReloaders()
@@ -128,39 +216,25 @@ class Field extends BaseObject
         return $this->reloaders;
     }
 
-    public function addReloader($reloader) {
+    /**
+     * Add new field reloader
+     * @param ReloaderInterface[] $reloader
+     * @return $this
+     */
+    public function addReloader($reloader)
+    {
         $this->reloaders[] = $reloader;
 
         return $this;
     }
 
-    protected function getRelationObjectParams() {
-        return $this->relationObjectParams;
-    }
-
     /**
-     * @return mixed
+     * Returns field is read only flag
+     *
+     * @return bool|callable|null
      */
-    protected function createRelationObject()
+    public function getReadOnly()
     {
-        $relationObjectParams = $this->getRelationObjectParams();
-        if (empty($relationObjectParams['name'])) {
-            return false;
-        }
-        $params = ArrayHelper::merge([
-            'field' => $this,
-            'valueAttribute' => $this->valueAttribute,
-            'attribute' => $this->attribute,
-            'model' => $this->model,
-            'isHasRelationAttribute' => $this->isHasRelationAttribute,
-            'label' => $this->getLabel(),
-        ], $relationObjectParams);
-        $relation = \yii::createObject($params);
-
-        return $relation;
-    }
-
-    public function getReadOnly() {
         if ($this->readOnly === null) {
             return $this->getDisplayOnly();
         }
@@ -168,19 +242,31 @@ class Field extends BaseObject
         return $this->readOnly;
     }
 
-    public function attach() {
+    /**
+     * Called when a field has been attached to the model.
+     */
+    public function attach()
+    {
     }
 
-    public function setRelationObject($object) {
+    /**
+     * Set relation object
+     * @param Relation $object Relation object
+     * @return $this
+     */
+    public function setRelationObject($object)
+    {
         $this->_relationObject = $object;
 
         return $this;
     }
 
     /**
+     * Returns relation object
      * @return Relation
      */
-    public function getRelationObject() {
+    public function getRelationObject()
+    {
         if ($this->_relationObject === null) {
             $this->_relationObject = $this->createRelationObject();
         }
@@ -188,23 +274,49 @@ class Field extends BaseObject
         return $this->_relationObject;
     }
 
-    public function getRelation() {
+    /**
+     * Get relation name
+     * @return string
+     */
+    public function getRelation()
+    {
         return $this->getRelationName();
     }
 
-    public function getRelationQuery() {
+    /**
+     * Get query of relation object
+     * @return \yii\db\ActiveQueryInterface
+     * @throws \yii\db\Exception
+     */
+    public function getRelationQuery()
+    {
         if ($relation = $this->getRelationObject()) {
             return $relation->getQuery();
         }
+
+        return null;
     }
 
-    public function getRelationName() {
+    /**
+     * Get name of relation object
+     * @return string|null
+     */
+    public function getRelationName()
+    {
         if ($relation = $this->getRelationObject()) {
             return $relation->getName();
         }
+
+        return null;
     }
 
-    public function getValue() {
+    /**
+     * Returns calculated value of field
+     * @return mixed|null
+     * @throws Exception
+     */
+    public function getValue()
+    {
         $this->initDefaultValue();
         $attribute = $this->attribute;
         if (empty($attribute)) {
@@ -219,25 +331,12 @@ class Field extends BaseObject
         return $model->$attribute;
     }
 
-//    public function isCheckRecordsValue($value = null) {
-//        if ($value === null) {
-//            $value = $this->getValue();
-//        }
-//
-//        if (!is_array($value)) {
-//            $value = [$value];
-//        }
-//
-//        foreach (self::IS_RECORDS_VALUES as $excludedKey) {
-//            if (in_array($excludedKey, $value)) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
-
-    public function getData() {
+    /**
+     * Returns field data, items to select
+     * @return array|callable
+     */
+    public function getData()
+    {
         if (empty($this->data)) {
             $relationObject = $this->getRelationObject();
             if (!$relationObject) {
@@ -257,7 +356,12 @@ class Field extends BaseObject
         return $this->data;
     }
 
-    public function getColumn() {
+    /**
+     * Returns the configuration of a gridView column
+     * @return array|bool
+     */
+    public function getColumn()
+    {
         $column = $this->_column;
         if ($column === false) {
             return false;
@@ -280,27 +384,45 @@ class Field extends BaseObject
         return $column;
     }
 
-    public function setColumn($column) {
+    /**
+     * Set the configuration of a gridView column
+     * @param array $column
+     * @return $this
+     */
+    public function setColumn($column)
+    {
         $this->_column = $column;
 
         return $this;
     }
 
-    public function getField() {
+    /**
+     * Returns the field configuration for DetailView
+     * @return array|bool
+     */
+    public function getField()
+    {
         return $this->getDetailViewField()->getConfig($this->model);
     }
 
 
-    protected $detailViewField = null;
-    public function setDetailViewField($detailViewField) {
+    /**
+     * Set the DetailViewField object
+     * @param DetailViewField $detailViewField
+     * @return $this
+     */
+    public function setDetailViewField($detailViewField)
+    {
         $this->detailViewField = $detailViewField;
         return $this;
     }
 
     /**
+     * Returns the DetailViewField object for CRUD field
      * @return DetailViewField|null
      */
-    public function getDetailViewField() {
+    public function getDetailViewField()
+    {
         if ($this->detailViewField === null) {
             $fieldConfig = $this->getDetailViewFieldConfig();
 
@@ -311,15 +433,13 @@ class Field extends BaseObject
         return $this->detailViewField;
     }
 
-    protected function getDetailViewFieldConfig() {
-        return $this->_field;
-    }
-
-    protected function initDetailViewField(DetailViewField $field) {
-    }
-
-    public function setFieldConfig($config) {
-
+    /**
+     * Set the configuration of the DetailViewField object
+     * @param array|callable $config
+     * @return $this
+     */
+    public function setFieldConfig($config)
+    {
         if (is_callable($config)) {
             $config = function ($model, $detailViewField) use ($config) {
                 return $config($model, $this, $detailViewField);
@@ -331,25 +451,66 @@ class Field extends BaseObject
         return $this;
     }
 
-    public function getFieldConfig() {
+    /**
+     * Get the configuration of the DetailViewField object
+     * @return array|null
+     */
+    public function getFieldConfig()
+    {
         return $this->getDetailViewField()->getFieldConfig();
     }
 
-    public function setDisplayOnly($displayOnly) {
+    /**
+     * Set the displayOnly flag of DetailViewField object
+     * @param boolean|callable $displayOnly
+     * @return $this
+     */
+    public function setDisplayOnly($displayOnly)
+    {
         $this->getDetailViewField()->setDisplayOnly($displayOnly);
         return $this;
     }
 
-    public function setReadOnly($readOnly) {
+    /**
+     * Set the readOnly field flag
+     * @param $readOnly
+     * @return $this
+     */
+    public function setReadOnly($readOnly)
+    {
         $this->readOnly = $readOnly;
         return $this;
     }
 
-    public function getDisplayOnly() {
+    /**
+     * Get the displayOnly flag of DetailViewField object
+     * @return bool
+     */
+    public function getDisplayOnly()
+    {
         return $this->getDetailViewField()->getDisplayOnly();
     }
 
-    public function getFields($isWithRelationsFields = true) {
+    /**
+     * Returns field name
+     * @return string|null
+     */
+    public function getName()
+    {
+        if ($this->name !== null) {
+            return $this->name;
+        }
+
+        return $this->attribute;
+    }
+
+    /**
+     * Returns attributes configuration for the CRUD DetailView widget
+     * @param bool $isWithRelationsFields Is return also relations fields
+     * @return array
+     */
+    public function getFields($isWithRelationsFields = true)
+    {
         $fields = [];
         if ($this->getIsRenderRelationFields() && $isWithRelationsFields) {
             $relationObject = $this->getRelationObject();
@@ -384,15 +545,12 @@ class Field extends BaseObject
         return $fields;
     }
 
-    public function getName() {
-        if ($this->name !== null) {
-            return $this->name;
-        }
-
-        return $this->attribute;
-    }
-
-    public function getColumns() {
+    /**
+     * Returns configuration for the GridView CRUD
+     * @return array
+     */
+    public function getColumns()
+    {
         $column = $this->getColumn();
         if ($column === false) {
             return [];
@@ -410,7 +568,12 @@ class Field extends BaseObject
         return $columns;
     }
 
-    public function getMultipleInputField() {
+    /**
+     * Returns the field configuration for the MultipleInput widget
+     * @return array|bool
+     */
+    public function getMultipleInputField()
+    {
         if ($this->multipleInputField === false || !$this->attribute) {
             return false;
         }
@@ -426,11 +589,24 @@ class Field extends BaseObject
         ], $this->multipleInputField);
     }
 
-    public function setField($field) {
+    /**
+     * Set the configuration of the DetailViewField object
+     * @param array|callable $field Field configuration
+     * @return $this
+     */
+    public function setField($field)
+    {
         return $this->setFieldConfig($field);
     }
 
-    public function applyScopes(ActiveQuery $query) {
+    /**
+     * Apply query scopes for DataProvider
+     * @param ActiveQueryInterface $query
+     * @return ActiveQueryInterface
+     * @throws Exception
+     */
+    public function applyScopes(ActiveQueryInterface $query)
+    {
         $scopeResult = true;
         if ($this->scope !== false) {
             if ($this->scope !== null) {
@@ -439,7 +615,7 @@ class Field extends BaseObject
             }
 
             if ($scopeResult && $this->attribute) {
-                $this->_applyScopes($query);
+                $this->applyFieldScopes($query);
             }
         }
 
@@ -450,7 +626,12 @@ class Field extends BaseObject
         return $query;
     }
 
-    public function getIsRenderRelationFields() {
+    /**
+     * Calculates and returns whether the output of the relationship subform is required
+     * @return bool
+     */
+    public function getIsRenderRelationFields()
+    {
         if ($this->getDisplayOnly()) {
             return false;
         }
@@ -464,7 +645,12 @@ class Field extends BaseObject
         return $this->isRenderRelationFields;
     }
 
-    public function rules() {
+    /**
+     * Returns model validation rules
+     * @return array
+     */
+    public function rules()
+    {
         if ($this->rules === false) {
             return [];
         }
@@ -479,13 +665,24 @@ class Field extends BaseObject
         return $rules;
     }
 
-    public function setLabel($label) {
+    /**
+     * Set CRUD field label
+     * @param string $label
+     * @return $this
+     */
+    public function setLabel($label)
+    {
         $this->_label = $label;
 
         return $this;
     }
 
-    public function getLabel() {
+    /**
+     * Returns translated CRUD field label
+     * @return string|null
+     */
+    public function getLabel()
+    {
         if ($this->_label !== null) {
             return $this->_label;
         }
@@ -495,20 +692,165 @@ class Field extends BaseObject
     }
 
     /**
-     * @param ActiveQuery $query
+     * Returns the URL from a relationship object
+     * @return string|array|null
      */
-    protected function applyRelationScopes(ActiveQuery $query)
+    public function getUrl()
+    {
+        $relation = $this->getRelationObject();
+        if ($relation) {
+            return $relation->getUrl();
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the URL maker from a relationship object
+     *
+     * @return \execut\crudFields\relation\UrlMaker|null
+     */
+    public function getUrlMaker()
+    {
+        $relation = $this->getRelationObject();
+        if ($relation) {
+            return $relation->getUrlMaker();
+        }
+
+        return null;
+    }
+
+    /**
+     * Set the attribute name
+     * @param null $attribute The attribute name
+     */
+    public function setAttribute($attribute): void
+    {
+        $this->attribute = $attribute;
+        if ($detailViewField = $this->detailViewField) {
+            $detailViewField->setAttribute($attribute);
+        }
+    }
+
+    /**
+     * Get the attribute name
+     * @return string|null
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * Set field as required or not
+     * @param bool $required Required flag
+     */
+    public function setRequired(bool $required): void
+    {
+        $this->required = $required;
+    }
+
+    /**
+     * Get field is required or not
+     * @return bool
+     */
+    public function getRequired()
+    {
+        return $this->required;
+    }
+
+    /**
+     * Returns the class of DetailViewField object
+     * @return string
+     */
+    public function getDetailViewFieldClass(): string
+    {
+        return $this->detailViewFieldClass;
+    }
+
+    /**
+     * Set the class of DetailViewField object
+     * @param string $detailViewFieldClass The class of DetailViewField object
+     * @return $this
+     */
+    public function setDetailViewFieldClass(string $detailViewFieldClass): self
+    {
+        $this->detailViewField = null;
+        $this->detailViewFieldClass = $detailViewFieldClass;
+
+        return $this;
+    }
+
+    /**
+     * Returns the default configuration of DetailViewField object
+     * @return array
+     */
+    protected function getRelationObjectParams()
+    {
+        return $this->relationObjectParams;
+    }
+
+    /**
+     * Factory of DetailViewField object
+     * @return DetailViewField|false
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected function createRelationObject()
+    {
+        $relationObjectParams = $this->getRelationObjectParams();
+        if (empty($relationObjectParams['name'])) {
+            return false;
+        }
+        $params = ArrayHelper::merge([
+            'field' => $this,
+            'valueAttribute' => $this->valueAttribute,
+            'attribute' => $this->attribute,
+            'model' => $this->model,
+            'isHasRelationAttribute' => $this->isHasRelationAttribute,
+            'label' => $this->getLabel(),
+        ], $relationObjectParams);
+        /**
+         * @var DetailViewField $relation
+         */
+        $relation = \yii::createObject($params);
+
+        return $relation;
+    }
+
+
+    /**
+     * Returns the current configuration of DetailViewField object
+     * @return array
+     */
+    protected function getDetailViewFieldConfig()
+    {
+        return $this->_field;
+    }
+
+    /**
+     * Initialization of DetailViewField object
+     * @param DetailViewField $field Field object
+     */
+    protected function initDetailViewField(DetailViewField $field)
+    {
+    }
+
+    /**
+     * Apply relation object scopes
+     * @param ActiveQueryInterface $query
+     * @return ActiveQueryInterface|null
+     */
+    protected function applyRelationScopes(ActiveQueryInterface $query)
     {
         if ($relation = $this->getRelationObject()) {
             return $relation->applyScopes($query);
         }
-    }
 
-    public function getFormBuilderFields() {
-        return [];
+        return null;
     }
 
     /**
+     * Return rules
      * @return array
      */
     protected function getRules(): array
@@ -562,7 +904,13 @@ class Field extends BaseObject
         return $rules;
     }
 
-    protected function renderHasRelationFilter() {
+    /**
+     * Returns the rendered has relation filter
+     * @return string
+     * @throws \Exception
+     */
+    protected function renderHasRelationFilter()
+    {
         if (($relation = $this->getRelationObject()) && $this->isHasRelationAttribute) {
             return HasRelationDropdown::widget([
                 'model' => $this->model,
@@ -570,10 +918,13 @@ class Field extends BaseObject
                 'parentId' => Html::getInputId($this->model, $this->attribute),
             ]);
         }
+
+        return null;
     }
 
     /**
-     * @param $attribute
+     * Translate message via i18n
+     * @param string $attribute Message for translation
      * @return string
      */
     protected function translateAttribute($attribute): string
@@ -586,14 +937,12 @@ class Field extends BaseObject
         return \Yii::t('execut/' . $this->module, $attribute);
     }
 
-    public function attributes() {
-        return [];
-    }
-
     /**
-     * @param ActiveQuery $query
+     * Accept field specific scopes
+     * @param ActiveQueryInterface $query
+     * @throws Exception
      */
-    protected function _applyScopes(ActiveQuery $query)
+    protected function applyFieldScopes(ActiveQueryInterface $query)
     {
         $attribute = $this->attribute;
         $value = $this->getValue();
@@ -615,73 +964,8 @@ class Field extends BaseObject
     }
 
     /**
-     * @return string
+     * Set a default value for a model attribute if empty
      */
-    protected function getRelationClass(): string
-    {
-        return Relation::class;
-    }
-
-    public function getUrl() {
-        $relation = $this->getRelationObject();
-        if ($relation) {
-            return $relation->getUrl();
-        }
-    }
-
-    public function getUrlMaker() {
-        $relation = $this->getRelationObject();
-        if ($relation) {
-            return $relation->getUrlMaker();
-        }
-    }
-
-    /**
-     * @param null $attribute
-     */
-    public function setAttribute($attribute): void
-    {
-        $this->attribute = $attribute;
-        if ($detailViewField = $this->detailViewField) {
-            $detailViewField->setAttribute($attribute);
-        }
-    }
-
-    public function getAttribute() {
-        return $this->attribute;
-    }
-
-    /**
-     * @param bool $required
-     */
-    public function setRequired(bool $required): void
-    {
-        $this->required = $required;
-    }
-
-    public function getRequired() {
-        return $this->required;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDetailViewFieldClass(): string
-    {
-        return $this->detailViewFieldClass;
-    }
-
-    /**
-     * @param string $detailViewFieldClass
-     */
-    public function setDetailViewFieldClass(string $detailViewFieldClass): self
-    {
-        $this->detailViewField = null;
-        $this->detailViewFieldClass = $detailViewFieldClass;
-
-        return $this;
-    }
-
     protected function initDefaultValue(): void
     {
         if ($this->defaultValue !== null && in_array($this->model->getScenario(), $this->defaultScenario)) {

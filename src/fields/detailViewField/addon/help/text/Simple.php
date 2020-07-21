@@ -30,7 +30,7 @@ class Simple implements Text
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getValue()
     {

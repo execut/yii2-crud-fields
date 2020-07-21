@@ -6,11 +6,20 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use execut\iconsCheckboxList\IconsCheckboxList;
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Checkbox list CRUD field
+ * @package execut\crudFields
+ */
 class CheckboxList extends HasManySelect2
 {
+    /**
+     * Predefined icons list
+     */
     protected static $icons = [
         'phone' => 'glyphicon glyphicon-phone-alt',
         'whatsapp' => 'fa fa-whatsapp',
@@ -19,7 +28,11 @@ class CheckboxList extends HasManySelect2
         'cabinet' => 'glyphicon glyphicon-user',
     ];
 
-    public function getField() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getField()
+    {
         $items = $this->getItems();
         return [
             'type' => DetailView::INPUT_WIDGET,
@@ -35,6 +48,7 @@ class CheckboxList extends HasManySelect2
     }
 
     /**
+     * Get items list from related models
      * @return array
      */
     protected function getItems(): array

@@ -270,31 +270,26 @@ class BehaviorTest extends TestCase
         $this->assertNull($behavior->getField('test'));
     }
 
-    public function testGetFieldsViaRoles() {
-        $behavior = new Behavior([
-            'roles' => [
-                'testRole' => [
-                    'fields' => [
-                        'test2' => Field::class,
-                    ]
-                ],
-            ]
-        ]);
-        $this->assertCount(0, $behavior->getFields());
-        $behavior->setRole('testRole');
-        $this->assertCount(1, $behavior->getFields());
-    }
+//    public function testGetFieldsViaRoles() {
+//        $behavior = new Behavior([
+//            'roles' => [
+//                'testRole' => [
+//                    'fields' => [
+//                        'test2' => Field::class,
+//                    ]
+//                ],
+//            ]
+//        ]);
+//        $this->assertCount(0, $behavior->getFields());
+//        $behavior->setRole('testRole');
+//        $this->assertCount(1, $behavior->getFields());
+//    }
 
     public function testGetScopes() {
         $behavior = new Behavior([
-            'role' => 'testRole',
-            'roles' => [
-                'testRole' => [
-                    'scopes' => [
-                        function ($q) {
-                        }
-                    ]
-                ],
+            'scopes' => [
+                function ($q) {
+                }
             ]
         ]);
         $this->assertCount(1, $behavior->getScopes());

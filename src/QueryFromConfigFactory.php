@@ -6,8 +6,15 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields;
+
 use yii\db\ActiveQuery;
+use yii\db\ActiveQueryInterface;
 use yii\db\ActiveRecordInterface;
+
+/**
+ * Class QueryFromConfigFactory
+ * @package execut\crudFields
+ */
 class QueryFromConfigFactory
 {
     protected $params = [];
@@ -50,15 +57,16 @@ class QueryFromConfigFactory
         $this->params = $params;
     }
 
-    public function create() {
+    public function create()
+    {
         $relation = $this->params;
         /**
-         * @var ActiveQuery $query
+         * @var ActiveQueryInterface $query
          */
         $query = $this->createRelationQuery($relation['class'], $relation['link'], $relation['multiple']);
         if (!empty($relation['via'])) {
             $query->via($relation['via']);
-        } else if (!empty($relation['viaTable'])) {
+        } elseif (!empty($relation['viaTable'])) {
             $query->viaTable($relation['viaTable'], $relation['viaLink']);
         }
 

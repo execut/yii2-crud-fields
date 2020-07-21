@@ -6,13 +6,31 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\widgets;
+
 use yii\helpers\Url;
+
+/**
+ * Select2 with DropDownLink support
+ * @package execut\crudFields\widgets
+ */
 class Select2 extends \kartik\select2\Select2
 {
+    /**
+     * @var string Id attribute name
+     */
     public $idAttribute = 'id';
+    /**
+     * @var string Target url
+     */
     public $url = null;
+    /**
+     * @var string Is render links
+     */
     public $isRenderLink = true;
 
+    /**
+     * {@inheritDoc}
+     */
     public function run()
     {
         $this->initDropDownLinkAddon();
@@ -35,6 +53,10 @@ JS
         );
     }
 
+    /**
+     * Init dropDownLink widget addon
+     * @throws \Exception
+     */
     protected function initDropDownLinkAddon(): void
     {
         if (empty($this->url) || !$this->isRenderLink) {

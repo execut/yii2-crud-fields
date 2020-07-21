@@ -37,7 +37,7 @@ class VarsList implements Text
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getValue()
     {

@@ -6,17 +6,31 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use execut\crudFields\widgets\RadioListWithSubform;
 use kartik\detail\DetailView;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Radio list field for has one relations
+ * @package execut\crudFields
+ */
 class HasOneRadioList extends HasOneSelect2
 {
+    /**
+     * {@inheritdoc}
+     */
     public $isRenderRelationFields = true;
-    public $nameParam = null;
-    public $createUrl = null;
-    public $widgetOptions = [];
+    /**
+     * @var array RadioListWithSubform widget options
+     */
     public $fieldWidgetOptions = [];
-    public function getField() {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getField()
+    {
         if ($this->_field === false) {
             return false;
         }
@@ -55,9 +69,11 @@ class HasOneRadioList extends HasOneSelect2
         ];
     }
 
-
-
-    public function getFields($isWithRelationsFields = true) {
+    /**
+     * {@inheritdoc}
+     */
+    public function getFields($isWithRelationsFields = true)
+    {
         $field = $this->getField();
         if ($field !== false) {
             $fields = [$this->attribute => $field];

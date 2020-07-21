@@ -6,11 +6,27 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Field for rendering relation attribute value inside column
+ * @package execut\crudFields
+ */
 class RelationValue extends Field
 {
+    /**
+     * {@inheritDoc}
+     */
     public $scope = false;
+    /**
+     * {@inheritDoc}
+     */
     protected $_field = false;
+    /**
+     * {@inheritDoc}
+     */
     public function getColumn()
     {
         return [
@@ -28,7 +44,14 @@ class RelationValue extends Field
         ];
     }
 
-    protected function getAttributeValue($row, $currentKey = 0) {
+    /**
+     * Returns relation attribute value from model instance
+     * @param Model $row Model instance
+     * @param int $currentKey Current key for recursion algorithm
+     * @return array|mixed|null
+     */
+    protected function getAttributeValue($row, $currentKey = 0)
+    {
         $attributeParts = explode('.', $this->attribute);
         $attribute = $attributeParts[$currentKey];
         if ($currentKey === count($attributeParts) - 1) {
@@ -60,5 +83,7 @@ class RelationValue extends Field
                 return $this->getAttributeValue($row->$attribute, $currentKey + 1);
             }
         }
+
+        return null;
     }
 }

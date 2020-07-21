@@ -6,12 +6,26 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
+
 use kartik\detail\DetailView;
 use unclead\multipleinput\MultipleInputColumn;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Boolean CRUD field for rendering boolean column and form field
+ * @package execut\crudFields\fields
+ */
 class Boolean extends Field
 {
+    /**
+     * {@inheritdoc}
+     */
     public $multipleInputType = MultipleInputColumn::TYPE_CHECKBOX;
+
+    /**
+     * {@inheritdoc}
+     */
     public function getColumn()
     {
         $column = parent::getColumn();
@@ -27,6 +41,9 @@ class Boolean extends Field
         ], $column);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getField()
     {
         $field = parent::getField();
@@ -53,10 +70,16 @@ class Boolean extends Field
         return array_merge($field, $result);
     }
 
-    protected function getValueString() {
+    /**
+     * Returned flag value as string label
+     * @return string
+     * @throws Exception
+     */
+    protected function getValueString()
+    {
         if ($this->getValue()) {
             return 'Да';
-        } else if (!$this->getValue() && $this->getValue() !== '') {
+        } elseif (!$this->getValue() && $this->getValue() !== '') {
             return 'Нет';
         }
     }

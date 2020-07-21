@@ -6,10 +6,16 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields;
+
 use yii\base\BaseObject;
 use yii\data\DataProviderInterface;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
+
+/**
+ * Class Plugin
+ * @package execut\crudFields
+ */
 abstract class Plugin extends BaseObject
 {
     /**
@@ -22,11 +28,13 @@ abstract class Plugin extends BaseObject
      * @var QueryFromConfigFactory
      */
     public $factory = null;
-    public function getFields() {
+    public function getFields()
+    {
         return ArrayHelper::merge($this->_getFields(), $this->fields);
     }
 
-    protected function _getFields() {
+    protected function _getFields()
+    {
         return [];
     }
 
@@ -45,11 +53,13 @@ abstract class Plugin extends BaseObject
      *
      * @return array
      */
-    public function getRelations() {
+    public function getRelations()
+    {
         return [];
     }
 
-    public function getFactory () {
+    public function getFactory()
+    {
         if ($this->factory === null) {
             $this->factory = new QueryFromConfigFactory;
         }
@@ -58,7 +68,8 @@ abstract class Plugin extends BaseObject
     }
 
     protected $queries = [];
-    public function getRelationQuery($name) {
+    public function getRelationQuery($name)
+    {
         $queries = &$this->queries;
         if (array_key_exists($name, $queries)) {
             return $queries[$name];
@@ -76,54 +87,70 @@ abstract class Plugin extends BaseObject
         return $queries[$name];
     }
 
-    public function getRelationsNames() {
+    public function getRelationsNames()
+    {
         return array_keys($this->getRelations());
     }
 
-    public function rules() {
+    public function rules()
+    {
         return ArrayHelper::merge($this->rules, $this->_rules());
     }
 
-    protected function _rules() {
+    protected function _rules()
+    {
         return [];
     }
 
-    public function initDataProvider(DataProviderInterface $dataProvider) {
+    public function initDataProvider(DataProviderInterface $dataProvider)
+    {
     }
 
-    public function applyScopes(ActiveQuery $q) {
+    public function applyScopes(ActiveQuery $q)
+    {
     }
 
-    public function attach() {
+    public function attach()
+    {
     }
 
-    public function afterUpdate() {
+    public function afterUpdate()
+    {
     }
 
-    public function afterInsert() {
+    public function afterInsert()
+    {
     }
 
-    public function beforeValidate() {
+    public function beforeValidate()
+    {
     }
 
-    public function afterValidate() {
+    public function afterValidate()
+    {
     }
 
-    public function beforeUpdate() {
+    public function beforeUpdate()
+    {
     }
 
-    public function beforeInsert() {
+    public function beforeInsert()
+    {
     }
 
-    public function beforeSave() {
+    public function beforeSave()
+    {
     }
 
-    public function afterSave() {
+    public function afterSave()
+    {
     }
 
-    public function beforeDelete() {
+    public function beforeDelete()
+    {
     }
 
-    public function afterLoad() {
+    public function afterLoad()
+    {
     }
 }

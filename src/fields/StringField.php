@@ -6,20 +6,31 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields;
-use yii\db\ActiveQuery;
+
+use yii\db\ActiveQueryInterface;
 use yii\db\mysql\Schema;
+
+/**
+ * Field for sting input
+ * @package execut\crudFields\fields
+ */
 class StringField extends Field
 {
+    /**
+     * @var integer Min text length
+     */
     public $minLength = null;
+    /**
+     * @var integer Max text length
+     */
     public $maxLength = 255;
-//    public $isPartially = true;
-    public function applyScopes(ActiveQuery $query) {
+    /**
+     * {@inheritDoc}
+     */
+    public function applyScopes(ActiveQueryInterface $query)
+    {
         $value = $this->getValue();
         if ($value) {
-//            if ($this->isPartially) {
-//                $value = '%' . $value . '%';
-//            }
-
             $attribute = $this->attribute;
             if (($db = $this->model->getDb()) && ($schema = $db->getSchema()) && $schema instanceof Schema) {
                 $operator = 'LIKE';
@@ -37,6 +48,9 @@ class StringField extends Field
         return $query;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getRules():array
     {
         $rules = parent::getRules();
