@@ -1,14 +1,18 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields\fields;
-
 
 use execut\crudFields\TestCase;
 
 class RelationValueTest extends TestCase
 {
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $field = new RelationValue;
         $field->setLabel('test');
         $column = $field->getColumn();
@@ -18,7 +22,8 @@ class RelationValueTest extends TestCase
         $this->assertEquals('test', $column['label']);
     }
 
-    public function testGetColumnValueFromAttribute() {
+    public function testGetColumnValueFromAttribute()
+    {
         $model = new \stdClass();
         $model->test_attribute = 'test';
         $field = new RelationValue([
@@ -32,7 +37,8 @@ class RelationValueTest extends TestCase
         $this->assertEquals('test', $value);
     }
 
-    public function testGetColumnValueFromAttributeOfAttribute() {
+    public function testGetColumnValueFromAttributeOfAttribute()
+    {
         $model = new \stdClass();
         $subModel = new \stdClass();
         $subModel->test_attribute = 'test';
@@ -47,7 +53,8 @@ class RelationValueTest extends TestCase
         $this->assertEquals('test', $value);
     }
 
-    public function testGetColumnValueFromArray() {
+    public function testGetColumnValueFromArray()
+    {
         $model = new \stdClass();
         $model->test_attribute = ['test1', 'test2'];
         $field = new RelationValue([
@@ -60,7 +67,8 @@ class RelationValueTest extends TestCase
         $this->assertEquals('test1, test2', $value);
     }
 
-    public function testGetColumnValueFromArrayOfModels() {
+    public function testGetColumnValueFromArrayOfModels()
+    {
         $model = new \stdClass();
         $subModel = new \stdClass();
         $subModel->test_attribute = 'test';
@@ -75,7 +83,8 @@ class RelationValueTest extends TestCase
         $this->assertEquals('test, test', $value);
     }
 
-    public function testGetColumnValueOfModelFromArrayOfModels() {
+    public function testGetColumnValueOfModelFromArrayOfModels()
+    {
         $model = new \stdClass();
         $subSubModel = new \stdClass();
         $subSubModel->test_attribute = 'test';
@@ -94,17 +103,20 @@ class RelationValueTest extends TestCase
         $this->assertEquals('test, test', $value);
     }
 
-    public function testNoScope() {
+    public function testNoScope()
+    {
         $field = new RelationValue();
         $this->assertFalse($field->scope);
     }
 
-    public function testNoField() {
+    public function testNoField()
+    {
         $field = new RelationValue();
         $this->assertFalse($field->getField());
     }
 
-    public function testSkipEmptyValues() {
+    public function testSkipEmptyValues()
+    {
         $model = new \stdClass();
         $model->test_attribute = ['test', ''];
 

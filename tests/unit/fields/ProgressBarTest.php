@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 
 namespace execut\crudFields\fields;
 
@@ -7,7 +12,8 @@ use yii\bootstrap\Progress;
 
 class ProgressBarTest extends \Codeception\Test\Unit
 {
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $model = new ProgressBarTestModel;
         $field = new ProgressBar([
             'totalCountAttribute' => 'total_count',
@@ -20,7 +26,8 @@ class ProgressBarTest extends \Codeception\Test\Unit
         $this->assertEquals('9%', $value($model));
     }
 
-    public function testGetColumnWithEmptyCurrentCount() {
+    public function testGetColumnWithEmptyCurrentCount()
+    {
         $model = new ProgressBarTestModel;
         $model->total_count = null;
         $field = new ProgressBar([
@@ -34,12 +41,14 @@ class ProgressBarTest extends \Codeception\Test\Unit
         $this->assertNull($value($model));
     }
 
-    public function testDisplayOnly() {
+    public function testDisplayOnly()
+    {
         $field = new ProgressBar();
         $this->assertTrue($field->getDisplayOnly());
     }
 
-    public function testGetField() {
+    public function testGetField()
+    {
         $model = new ProgressBarTestModel;
         $field = new ProgressBar([
             'model' => $model,
@@ -56,7 +65,8 @@ class ProgressBarTest extends \Codeception\Test\Unit
         $this->assertEquals('raw', $formField['format']);
     }
 
-    public function testGetFieldWithEmptyValue() {
+    public function testGetFieldWithEmptyValue()
+    {
         $model = new ProgressBarTestModel;
         $model->total_count = null;
         $field = new ProgressBar([
@@ -71,7 +81,8 @@ class ProgressBarTest extends \Codeception\Test\Unit
         $this->assertEquals('-', $value());
     }
 
-    public function testGetFieldAsWidget() {
+    public function testGetFieldAsWidget()
+    {
         $model = new ProgressBarTestModel;
         $field = new ProgressBar([
             'model' => $model,
@@ -92,7 +103,8 @@ class ProgressBarTest extends \Codeception\Test\Unit
     }
 }
 
-class ProgressBarTestModel extends \yii\base\Model {
+class ProgressBarTestModel extends \yii\base\Model
+{
     public $total_count = 33;
     public $current_count = 3;
 }

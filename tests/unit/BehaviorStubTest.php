@@ -5,7 +5,6 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
 
 use Codeception\Test\Unit;
@@ -15,16 +14,15 @@ use yii\db\ActiveRecord;
 
 class BehaviorStubTest extends Unit
 {
-    public function testBug() {
+    public function testBug()
+    {
         $model = new ToDbCharacteristicTestModel;
         $model->dbCharacteristic;
     }
 }
 
-
-
-
-class ToDbCharacteristicTestModel extends ActiveRecord {
+class ToDbCharacteristicTestModel extends ActiveRecord
+{
     use BehaviorStub;
     public function behaviors()
     {
@@ -43,11 +41,13 @@ class ToDbCharacteristicTestModel extends ActiveRecord {
         ];
     }
 
-    public function getTest() {
+    public function getTest()
+    {
         return $this->hasOne(self::class, []);
     }
 
-    public function getDbCharacteristic() {
+    public function getDbCharacteristic()
+    {
         return 1;
     }
 

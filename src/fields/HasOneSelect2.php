@@ -256,7 +256,7 @@ class HasOneSelect2 extends Field
                 $nameParam = $this->getNameParam();
                 $widgetOptions = ArrayHelper::merge($widgetOptions, [
                     'showToggleAll' => false,
-                    'url' => $relation->url,
+                    'url' => $relation->getUrl(),
                     'pluginOptions' => [
                         'ajax' => [
                             'dataType' => 'json',

@@ -6,10 +6,13 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\fields\detailViewField\addon\help\text;
+
 use execut\settings\Component;
+
 class FromSettingTest extends \Codeception\Test\Unit
 {
-    public function testGetValue() {
+    public function testGetValue()
+    {
         $setting = $this->getMockBuilder(Component::class)->getMock();
         $settingsKey = 'settings key';
         $value = 'test value';

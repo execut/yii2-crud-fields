@@ -5,9 +5,7 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
-
 
 use execut\crudFields\Behavior;
 use execut\crudFields\fields\Field;
@@ -18,19 +16,22 @@ use yii\db\ActiveRecord;
 
 class BehaviorTest extends TestCase
 {
-    public function testGetModuleWithoutOwner() {
+    public function testGetModuleWithoutOwner()
+    {
         $behavior = new Behavior();
         $this->assertNull($behavior->getModule());
     }
 
-    public function testGetModuleDetectModule() {
+    public function testGetModuleDetectModule()
+    {
         $behavior = new Behavior([
             'owner' => new Model()
         ]);
         $this->assertEquals('crudFields', $behavior->getModule());
     }
 
-    public function testSetFields() {
+    public function testSetFields()
+    {
         $model = new Model;
         $behavior = new Behavior([
             'owner' => $model,
@@ -47,7 +48,8 @@ class BehaviorTest extends TestCase
         $this->assertEquals($model, $field->model);
     }
 
-    public function testGetRelation() {
+    public function testGetRelation()
+    {
         $field = $this->getMockBuilder(Field::class)->getMock();
         $q = new ActiveQuery('a');
         $field->method('getRelationQuery')->willReturn($q);
@@ -64,7 +66,8 @@ class BehaviorTest extends TestCase
         $this->assertEquals($q, $relation);
     }
 
-    public function testGetRelationFromPlugin() {
+    public function testGetRelationFromPlugin()
+    {
         $plugin = $this->getMockBuilder(BehaviorTestPlugin::class)->onlyMethods(['getRelationQuery'])->getMock();
         $query = new ActiveQuery('a');
         Model::$query = $query;
@@ -85,9 +88,8 @@ class BehaviorTest extends TestCase
         $this->assertEquals($query, $relation);
     }
 
-    public function testGetPluginRelation() {}
-
-    public function testSetFieldsByAttribute() {
+    public function testSetFieldsByAttribute()
+    {
         $model = new Model;
         $behavior = new Behavior([
             'owner' => $model,
@@ -99,7 +101,8 @@ class BehaviorTest extends TestCase
         $this->assertCount(1, $fields);
     }
 
-    public function testSetFieldsByClass() {
+    public function testSetFieldsByClass()
+    {
         $model = new Model;
         $behavior = new Behavior([
             'owner' => $model,
@@ -112,7 +115,8 @@ class BehaviorTest extends TestCase
         $this->assertNull($fields[0]->attribute);
     }
 
-    public function testGetGridColumns() {
+    public function testGetGridColumns()
+    {
         $field = $this->getMockBuilder(Field::class)->setMethods(['getColumn'])->getMock();
         $fieldConfig = [
             'test' => 'test',
@@ -130,7 +134,8 @@ class BehaviorTest extends TestCase
         ], $behavior->getGridColumns());
     }
 
-    public function testGetFormFields() {
+    public function testGetFormFields()
+    {
         $field = $this->getMockBuilder(Field::class)->getMock();
         $fieldConfig = [
             'test' => [
@@ -151,39 +156,37 @@ class BehaviorTest extends TestCase
         ], $formFields);
     }
 
-    public function testGetQueryDefault() {
+    public function testGetQueryDefault()
+    {
         $model = new Model();
         $behavior = new Behavior([
             'owner' => $model
         ]);
 
-        $q = new ActiveQuery([
-            'modelClass' => Model::class,
-        ]);
+        $q = new ActiveQuery(Model::class);
         $model::$query = $q;
         $this->assertEquals($q, $behavior->getQuery());
     }
 
-    public function testSetQueryFromConstructor() {
-        $q = new ActiveQuery([
-            'modelClass' => Model::class,
-        ]);
+    public function testSetQueryFromConstructor()
+    {
+        $q = new ActiveQuery(Model::class);
         $behavior = new Behavior([
             'query' => $q,
         ]);
         $this->assertEquals($q, $behavior->getQuery());
     }
 
-    public function testSetQuery() {
+    public function testSetQuery()
+    {
         $behavior = new Behavior();
-        $q = new ActiveQuery([
-            'modelClass' => Model::class,
-        ]);
+        $q = new ActiveQuery(Model::class);
         $this->assertEquals($behavior, $behavior->setQuery($q));
         $this->assertEquals($q, $behavior->getQuery());
     }
 
-    public function testApplyScopes() {
+    public function testApplyScopes()
+    {
         $field = $this->getMockBuilder(Field::class)->getMock();
         $model = new Model;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
@@ -201,7 +204,8 @@ class BehaviorTest extends TestCase
         $this->assertEquals($q, $result);
     }
 
-    public function testApplyScopesFromConfig() {
+    public function testApplyScopesFromConfig()
+    {
         $q = new ActiveQuery([
             'modelClass' => Model::class,
         ]);
@@ -217,7 +221,8 @@ class BehaviorTest extends TestCase
         $this->assertTrue($isScopeApplied);
     }
 
-    public function testSearch() {
+    public function testSearch()
+    {
         $q = new ActiveQuery([
             'modelClass' => Model::class,
         ]);
@@ -230,7 +235,8 @@ class BehaviorTest extends TestCase
         $this->assertEquals($q, $result->query);
     }
 
-    public function testRules() {
+    public function testRules()
+    {
         $field = $this->getMockBuilder(Field::class)->setMethods(['rules'])->getMock();
         $fieldConfig = [
             [
@@ -250,7 +256,8 @@ class BehaviorTest extends TestCase
         ], $behavior->rules());
     }
 
-    public function testReturnFalse() {
+    public function testReturnFalse()
+    {
         $field = $this->getMockBuilder(Field::class)->onlyMethods(['rules', 'getField', 'getColumn'])->getMock();
         $field->expects($this->once())->method('rules')->willReturn(false);
         $field->expects($this->once())->method('getField')->willReturn(false);
@@ -265,27 +272,14 @@ class BehaviorTest extends TestCase
         $this->assertEquals([], $behavior->getGridColumns());
     }
 
-    public function testGetNotExistedField() {
+    public function testGetNotExistedField()
+    {
         $behavior = new Behavior();
         $this->assertNull($behavior->getField('test'));
     }
 
-//    public function testGetFieldsViaRoles() {
-//        $behavior = new Behavior([
-//            'roles' => [
-//                'testRole' => [
-//                    'fields' => [
-//                        'test2' => Field::class,
-//                    ]
-//                ],
-//            ]
-//        ]);
-//        $this->assertCount(0, $behavior->getFields());
-//        $behavior->setRole('testRole');
-//        $this->assertCount(1, $behavior->getFields());
-//    }
-
-    public function testGetScopes() {
+    public function testGetScopes()
+    {
         $behavior = new Behavior([
             'scopes' => [
                 function ($q) {
@@ -295,7 +289,8 @@ class BehaviorTest extends TestCase
         $this->assertCount(1, $behavior->getScopes());
     }
 
-    public function testGetPlugins() {
+    public function testGetPlugins()
+    {
         $behavior = new Behavior([
             'plugins' => [
                 'test' => [
@@ -306,7 +301,8 @@ class BehaviorTest extends TestCase
         $this->assertCount(1, $behavior->getPlugins());
     }
 
-    public function testGetPluginByKey() {
+    public function testGetPluginByKey()
+    {
         $behavior = new Behavior([
             'plugins' => [
                 'test' => [
@@ -317,12 +313,14 @@ class BehaviorTest extends TestCase
         $this->assertInstanceOf(BehaviorTestPlugin::class, $behavior->getPlugin('test'));
     }
 
-    public function testGetPluginByNull() {
+    public function testGetPluginByNull()
+    {
         $behavior = new Behavior();
         $this->assertNull($behavior->getPlugin('test'));
     }
 
-    public function testInitPluginFromString() {
+    public function testInitPluginFromString()
+    {
         $behavior = new Behavior([
             'plugins' => [
                 'test' => BehaviorTestPlugin::class,
@@ -331,7 +329,8 @@ class BehaviorTest extends TestCase
         $this->assertInstanceOf(BehaviorTestPlugin::class, $behavior->getPlugin('test'));
     }
 
-    public function testTriggerPluginsEvents() {
+    public function testTriggerPluginsEvents()
+    {
         $delegatedEvents = [
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'beforeValidate',
             ActiveRecord::EVENT_BEFORE_DELETE => 'beforeDelete',
@@ -360,24 +359,10 @@ class BehaviorTest extends TestCase
             $behavior->$method();
         }
     }
-
-//    public function testGetScopesViaRoles() {
-//        $behavior = new Behavior([
-//            'roles' => [
-//                'testRole' => [
-//                    'scopes' => [
-//                        function ($q) {
-//                        }
-//                    ]
-//                ],
-//            ]
-//        ]);
-//        $behavior->setRole('testRole');
-//        $this->assertCount(1, $behavior->getScopes());
-//    }
 }
 
-class Model extends ActiveRecord {
+class Model extends ActiveRecord
+{
     public static $query = null;
     public static function find()
     {
@@ -385,5 +370,6 @@ class Model extends ActiveRecord {
     }
 }
 
-class BehaviorTestPlugin extends Plugin {
+class BehaviorTestPlugin extends Plugin
+{
 }

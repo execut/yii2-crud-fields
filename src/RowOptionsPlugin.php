@@ -8,10 +8,14 @@
 namespace execut\crudFields;
 
 /**
- * Interface RowOptionsPlugin
+ * Interface of plugin for getting options for grid row
  * @package execut\crudFields
  */
 interface RowOptionsPlugin
 {
+    /**
+     * Returns options for grid row
+     * @return array
+     */
     public function getRowOptions();
 }

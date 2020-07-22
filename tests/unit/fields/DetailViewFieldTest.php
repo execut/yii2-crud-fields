@@ -1,21 +1,25 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields\fields;
 
-
-use execut\crudFields\fields\detailViewField\Addon;
 use execut\crudFields\fields\detailViewField\addon\AddonInterface;
 use execut\crudFields\TestCase;
 
 class DetailViewFieldTest extends TestCase
 {
-    public function testGetConfig() {
+    public function testGetConfig()
+    {
         $field = new DetailViewField();
         $this->assertEquals([], $field->getConfig());
     }
 
-    public function testGetConfigSimple() {
+    public function testGetConfigSimple()
+    {
         $field = new DetailViewField([
             'test' => 'test',
         ]);
@@ -26,22 +30,24 @@ class DetailViewFieldTest extends TestCase
         ], $result);
     }
 
-    public function testGetFieldFalse() {
+    public function testGetFieldFalse()
+    {
         $field = new DetailViewField(false);
 
         $result = $field->getConfig();
         $this->assertFalse($result);
     }
 
-    public function testGetFieldCallable() {
+    public function testGetFieldCallable()
+    {
         $fieldTestModel = new FieldTestModel();
         $field = new DetailViewField(function ($factModel, $factField) use ($fieldTestModel) {
-                $this->assertEquals($fieldTestModel, $factModel);
-                $this->assertInstanceOf(DetailViewField::class, $factField);
-                return [
-                    'test' => 'test'
-                ];
-            });
+            $this->assertEquals($fieldTestModel, $factModel);
+            $this->assertInstanceOf(DetailViewField::class, $factField);
+            return [
+                'test' => 'test'
+            ];
+        });
 
         $this->assertEquals([
             'viewModel' => $fieldTestModel,
@@ -50,7 +56,8 @@ class DetailViewFieldTest extends TestCase
         ], $field->getConfig($fieldTestModel));
     }
 
-    public function testGetConfigWithAttribute() {
+    public function testGetConfigWithAttribute()
+    {
         $field = new DetailViewField([], 'test');
 
         $this->assertEquals([
@@ -58,7 +65,8 @@ class DetailViewFieldTest extends TestCase
         ], $field->getConfig());
     }
 
-    public function testGetConfigWithDisplayOnly() {
+    public function testGetConfigWithDisplayOnly()
+    {
         $field = new DetailViewField([
             'displayOnly' => true,
         ]);
@@ -68,19 +76,22 @@ class DetailViewFieldTest extends TestCase
         ], $field->getConfig());
     }
 
-    public function testGetDisplayOnlyByDefault() {
+    public function testGetDisplayOnlyByDefault()
+    {
         $field = new DetailViewField();
         $this->assertFalse($field->getDisplayOnly());
     }
 
-    public function testGetDisplayOnlyFromCallback() {
+    public function testGetDisplayOnlyFromCallback()
+    {
         $field = new DetailViewField([], null, function () {
             return false;
         });
         $this->assertFalse($field->getDisplayOnly());
     }
 
-    public function testGetConfigWithAddon() {
+    public function testGetConfigWithAddon()
+    {
         $addon = $this->getMockBuilder(AddonInterface::class)->onlyMethods(['getConfig'])->getMock();
         $addon->method('getConfig')->willReturn('test');
         $field = new DetailViewField([], null, null, $addon);
@@ -91,7 +102,8 @@ class DetailViewFieldTest extends TestCase
         $this->assertEquals('test', $fieldConfig['addon']);
     }
 
-    public function testHide() {
+    public function testHide()
+    {
         $field = new DetailViewField([]);
         $this->assertEquals($field, $field->hide());
         $this->assertEquals([
@@ -101,7 +113,8 @@ class DetailViewFieldTest extends TestCase
         ], $field->getConfig());
     }
 
-    public function testShow() {
+    public function testShow()
+    {
         $field = new DetailViewField([]);
         $field->hide()->show();
         $this->assertEquals([], $field->getConfig());

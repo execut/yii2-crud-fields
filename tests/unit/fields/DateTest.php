@@ -5,9 +5,7 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
 
 use execut\crudFields\TestCase;
 use kartik\daterange\DateRangePicker;
@@ -36,7 +34,8 @@ class DateTest extends TestCase
         parent::tearDown();
     }
 
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $model = new FieldTestModel();
         $field = new Date([
             'attribute' => 'name',
@@ -49,11 +48,14 @@ class DateTest extends TestCase
             'attribute' => 'name',
             'label' => 'Name',
             'filter' => 1,
-            'format' => function () {},
+            'format' => function () {
+                return null;
+            },
         ], $column);
     }
 
-    public function testGetColumnWithTime() {
+    public function testGetColumnWithTime()
+    {
         $model = new FieldTestModel();
         $field = new Date([
             'attribute' => 'name',
@@ -66,12 +68,15 @@ class DateTest extends TestCase
         $this->assertEquals([
             'attribute' => 'name',
             'filter' => 1,
-            'format' => function () {},
+            'format' => function () {
+                return null;
+            },
             'label' => 'Name',
         ], $column);
     }
 
-    public function testGetField() {
+    public function testGetField()
+    {
         $model = new FieldTestModel();
         $field = new Date([
             'attribute' => 'name',
@@ -82,7 +87,9 @@ class DateTest extends TestCase
             'displayOnly' => true,
             'viewModel' => $model,
             'editModel' => $model,
-            'value' => function () {},
+            'value' => function () {
+                return null;
+            },
         ], $field->getField());
     }
 }

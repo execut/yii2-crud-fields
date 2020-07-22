@@ -5,16 +5,15 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
 
 use execut\crudFields\TestCase;
 use kartik\detail\DetailView;
 
 class IdTest extends TestCase
 {
-    public function testGetField() {
+    public function testGetField()
+    {
         $model = new FieldTestModel();
         $field = new Id([
             'attribute' => 'name',
@@ -28,8 +27,9 @@ class IdTest extends TestCase
         ], $field->getField());
     }
 
-    public function testDefaultId() {
+    public function testDefaultId()
+    {
         $field = new Id();
-        $this->assertEquals('id', $field->attribute);
+        $this->assertEquals('id', $field->getAttribute());
     }
 }

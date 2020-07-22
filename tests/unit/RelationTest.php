@@ -5,9 +5,7 @@
  * Date: 6/28/17
  * Time: 10:33 AM
  */
-
 namespace execut\crudFields;
-
 
 use execut\crudFields\fields\Field;
 use execut\crudFields\fields\FieldTestModel;
@@ -18,26 +16,30 @@ use yii\db\ActiveQuery;
 
 class RelationTest extends \Codeception\Test\Unit
 {
-    public function testGetRelationNameFromAttribute() {
+    public function testGetRelationNameFromAttribute()
+    {
         $relation = new Relation([
             'attribute' => 'test_test_id',
         ]);
         $this->assertEquals('testTest', $relation->name);
     }
 
-    public function testGetQueryIsNull() {
+    public function testGetQueryIsNull()
+    {
         $relation = new Relation();
         $this->assertNull($relation->getQuery());
     }
 
-    public function testSetQuery() {
+    public function testSetQuery()
+    {
         $relation = new Relation();
         $q = new ActiveQuery('a');
         $relation->setQuery($q);
         $this->assertEquals($q, $relation->getQuery());
     }
 
-    public function testGetQueryFromModel() {
+    public function testGetQueryFromModel()
+    {
         $relation = new Relation([
             'model' => new FieldTestModel(),
             'name' => 'testTest',
@@ -45,7 +47,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertInstanceOf(ActiveQuery::class, $relation->getQuery());
     }
 
-    public function testAddWithToSearchQuery() {
+    public function testAddWithToSearchQuery()
+    {
         $relation = new Relation();
         $relation->with = [
             'testTest2'
@@ -59,14 +62,16 @@ class RelationTest extends \Codeception\Test\Unit
         $relation->applyScopes($query);
     }
 
-    public function testGetWithByDefault() {
+    public function testGetWithByDefault()
+    {
         $relation = new Relation([
             'name' => 'testTest',
         ]);
         $this->assertEquals('testTest', $relation->getWith());
     }
 
-    public function testGetColumnValue() {
+    public function testGetColumnValue()
+    {
         $model = new fields\FieldTestModel();
         $model->testTest = $model;
         $relation = new Relation([
@@ -78,7 +83,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $relation->getColumnValue($model));
     }
 
-    public function testGetSourceText() {
+    public function testGetSourceText()
+    {
         $model = new fields\FieldTestModel();
         $model->testTest = $model;
 
@@ -106,19 +112,22 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $relation->getSourceText());
     }
 
-    public function testGetValueNull() {
+    public function testGetValueNull()
+    {
         $relation = new Relation();
         $this->assertNull($relation->getValue());
     }
 
-    public function testGetValue() {
+    public function testGetValue()
+    {
         $relation = new Relation([
             'value' => true,
         ]);
         $this->assertTrue($relation->getValue());
     }
 
-    public function testGetValueViaField() {
+    public function testGetValueViaField()
+    {
         $field = $this->getMockBuilder(Field::class)->getMock();
         $field->method('getValue')
             ->willReturn(true);
@@ -147,7 +156,8 @@ class RelationTest extends \Codeception\Test\Unit
         return $relation;
     }
 
-    public function testGetDefaultUrlMaker() {
+    public function testGetDefaultUrlMaker()
+    {
         $relation = new Relation([
             'url' => ['test'],
             'updateUrl' => ['updateUrl'],
@@ -160,7 +170,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertTrue($urlMaker->getIsNoRenderRelationLink());
     }
 
-    public function testGetUpdateUrlParamsViaUrlMaker() {
+    public function testGetUpdateUrlParamsViaUrlMaker()
+    {
         $urlMaker = $this->getMockBuilder(UrlMaker::class)->getMock();
         $model = new fields\FieldTestModel();
         $urlMaker->expects($this->once())
@@ -177,7 +188,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals(['test'], $relation->getUpdateUrlParamsForModel($model));
     }
 
-    public function testSetLinkRenderer() {
+    public function testSetLinkRenderer()
+    {
         $renderer = new LinkRenderer();
         $relation = new Relation([
             'linkRenderer' => $renderer,
@@ -185,7 +197,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals(spl_object_hash($renderer), spl_object_hash($relation->getLinkRenderer()));
     }
 
-    public function testGetLink() {
+    public function testGetLink()
+    {
         $model = new fields\FieldTestModel();
         $nameAttribute = 'test name attribute';
         $renderer = $this->getMockBuilder(LinkRenderer::class)->onlyMethods(['render'])->getMock();
@@ -207,7 +220,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $link);
     }
 
-    public function testConfigureLinkRenderer() {
+    public function testConfigureLinkRenderer()
+    {
         $testUrl = ['test'];
         $model = new fields\FieldTestModel();
         $nameAttribute = 'test name attribute';
@@ -247,7 +261,8 @@ class RelationTest extends \Codeception\Test\Unit
         $relation->configureLinkRenderer($model, $nameAttribute);
     }
 
-    public function testGetIdAttribute() {
+    public function testGetIdAttribute()
+    {
         $idAttribute = 'test';
         $relation = new Relation([
             'idAttribute' => $idAttribute,
@@ -255,7 +270,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals($idAttribute, $relation->getIdAttribute());
     }
 
-    public function testGetIdAttributeCalculateForHasMany() {
+    public function testGetIdAttributeCalculateForHasMany()
+    {
         $model = new fields\FieldTestModel();
 
         $relation = new Relation([
@@ -266,7 +282,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('test_test_id', $relation->getIdAttribute());
     }
 
-    public function testGetIdAttributeCalculateForDirectSetWhenExistedRelation() {
+    public function testGetIdAttributeCalculateForDirectSetWhenExistedRelation()
+    {
         $model = new fields\FieldTestModel();
 
         $relation = new Relation([
@@ -278,7 +295,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $relation->getIdAttribute());
     }
 
-    public function testGetUrl() {
+    public function testGetUrl()
+    {
         $url = [
             '/test/test',
         ];
@@ -288,7 +306,8 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals($url, $relation->getUrl());
     }
 
-    public function testGetColumnRecordsLimit() {
+    public function testGetColumnRecordsLimit()
+    {
         $limit = 20;
         $relation = new Relation([
             'columnRecordsLimit' => $limit,

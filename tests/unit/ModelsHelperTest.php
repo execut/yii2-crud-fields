@@ -5,9 +5,7 @@
  * Date: 6/24/17
  * Time: 2:03 PM
  */
-
 namespace execut\crudFields\tests\unit;
-
 
 use execut\crudFields\fields\Boolean;
 use execut\crudFields\fields\Date;
@@ -20,25 +18,29 @@ use execut\crudFields\TestCase;
 class ModelsHelperTest extends TestCase
 {
     use ModelsHelperTrait;
-    public function testGetStandardFields() {
+    public function testGetStandardFields()
+    {
         $modelsHelper = new ModelsHelper();
         $expectedAttributes = $modelsHelper->standardFieldsDefault;
         $this->assertEquals($expectedAttributes, $this->getStandardFields());
     }
 
-    public function testGetStandardFieldsWithExcludedFields() {
+    public function testGetStandardFieldsWithExcludedFields()
+    {
         $modelsHelper = new ModelsHelper();
         $modelsHelper->exclude = ['name'];
         $fields = $modelsHelper->getStandardFields();
         $this->assertArrayNotHasKey('name', $fields);
     }
 
-    public function testGetStandardFieldsWithExcludedFieldsViaTrait() {
+    public function testGetStandardFieldsWithExcludedFieldsViaTrait()
+    {
         $fields = $this->getStandardFields(['name']);
         $this->assertArrayNotHasKey('name', $fields);
     }
 
-    public function testGetStandardFieldsWithOther() {
+    public function testGetStandardFieldsWithOther()
+    {
         $modelsHelper = new ModelsHelper();
         $modelsHelper->other = [
             'test' => [
@@ -49,7 +51,8 @@ class ModelsHelperTest extends TestCase
         $this->assertArrayHasKey('test', $fields);
     }
 
-    public function testGetStandardFieldsWithOtherViaTrait() {
+    public function testGetStandardFieldsWithOtherViaTrait()
+    {
         $fields = $this->getStandardFields([], [
             'test' => [
                 'class' => Boolean::class,

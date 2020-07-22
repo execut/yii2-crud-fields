@@ -82,5 +82,7 @@ class Boolean extends Field
         } elseif (!$this->getValue() && $this->getValue() !== '') {
             return 'Нет';
         }
+
+        return null;
     }
 }

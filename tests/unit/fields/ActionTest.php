@@ -5,9 +5,7 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
 
 use execut\crudFields\TestCase;
 use kartik\grid\ActionColumn;
@@ -15,12 +13,14 @@ use yii\db\ActiveQuery;
 
 class ActionTest extends TestCase
 {
-    public function testGetField() {
+    public function testGetField()
+    {
         $field = new Action();
         $this->assertFalse($field->getField());
     }
 
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $field = new Action([
             'update' => true,
             'delete' => false,
@@ -43,7 +43,8 @@ class ActionTest extends TestCase
         ], $column);
     }
 
-    public function testGetKartikColumn() {
+    public function testGetKartikColumn()
+    {
         $field = new Action([
             'update' => true,
             'delete' => false,
@@ -66,7 +67,8 @@ class ActionTest extends TestCase
         ], $column);
     }
 
-    public function testGetEmptyColumn() {
+    public function testGetEmptyColumn()
+    {
         $field = new Action([
             'update' => false,
             'delete' => false,
@@ -76,15 +78,15 @@ class ActionTest extends TestCase
         $this->assertFalse($column);
     }
 
-    public function testApplyScopes() {
+    public function testApplyScopes()
+    {
         $field = new Action();
-        $q = new ActiveQuery([
-            'modelClass' => FieldTestModel::class,
-        ]);
+        $q = new ActiveQuery(FieldTestModel::class);
         $this->assertEquals($q, $field->applyScopes($q));
     }
 
-    public function testRules() {
+    public function testRules()
+    {
         $field = new Action();
         $this->assertFalse($field->rules());
     }

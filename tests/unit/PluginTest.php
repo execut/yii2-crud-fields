@@ -5,9 +5,7 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
-
 
 use Codeception\Test\Unit;
 use yii\db\ActiveQuery;
@@ -15,7 +13,8 @@ use yii\db\ActiveRecord;
 
 class PluginTest extends Unit
 {
-    public function testGetRelationQuery() {
+    public function testGetRelationQuery()
+    {
         $owner = new ActiveRecord();
         $params = [
             'test' => 'test',
@@ -49,7 +48,8 @@ class PluginTest extends Unit
         $plugin->getRelationQuery('test');
     }
 
-    public function testGetFactory() {
+    public function testGetFactory()
+    {
         $plugin = $this->getMockBuilder(Plugin::class)
             ->onlyMethods([])
             ->getMock();

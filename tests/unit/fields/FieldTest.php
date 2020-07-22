@@ -5,18 +5,18 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
 
-
 use execut\crudFields\Relation;
+use execut\crudFields\relation\UrlMaker;
 use execut\crudFields\TestCase;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 class FieldTest extends TestCase
 {
-    public function testGettersWithoutAttribute() {
+    public function testGettersWithoutAttribute()
+    {
         $field = new Field();
         $this->assertEquals([], $field->rules());
         $this->assertEquals([], $field->getColumn());
@@ -25,7 +25,8 @@ class FieldTest extends TestCase
         $this->assertEquals($query, $field->applyScopes($query));
     }
 
-    public function testGetColumns() {
+    public function testGetColumns()
+    {
         $column = [
             'class' => 'test',
         ];
@@ -42,7 +43,8 @@ class FieldTest extends TestCase
         ], $field->columns);
     }
 
-    public function testGetFields() {
+    public function testGetFields()
+    {
         $formField = [
             'class' => 'test'
         ];
@@ -58,7 +60,8 @@ class FieldTest extends TestCase
         ], $field->getFields());
     }
 
-    public function testGetFieldCallable() {
+    public function testGetFieldCallable()
+    {
         $fieldTestModel = new FieldTestModel();
         $field = new Field([
             'model' => $fieldTestModel,
@@ -78,7 +81,8 @@ class FieldTest extends TestCase
         ], $field->getField());
     }
 
-    public function testGetDetailViewField() {
+    public function testGetDetailViewField()
+    {
         $fieldTestModel = new FieldTestModel();
         $field = new Field([
             'model' => $fieldTestModel,
@@ -93,57 +97,66 @@ class FieldTest extends TestCase
         $this->assertEquals('testAttribute', $detailViewField->getAttribute());
     }
 
-    public function testSetDetailViewField() {
+    public function testSetDetailViewField()
+    {
         $detailViewField = new DetailViewField();
         $field = new Field();
         $this->assertEquals($field, $field->setDetailViewField($detailViewField));
         $this->assertEquals(spl_object_hash($detailViewField), spl_object_hash($field->getDetailViewField()));
     }
 
-    public function testGetReadOnlyByDefault() {
+    public function testGetReadOnlyByDefault()
+    {
         $field = new Field();
         $this->assertFalse($field->getReadOnly());
     }
 
-    public function testSetReadOnlyFromConstructor() {
+    public function testSetReadOnlyFromConstructor()
+    {
         $field = new Field([
             'readOnly' => true,
         ]);
         $this->assertTrue($field->getReadOnly());
     }
 
-    public function testSetReadOnly() {
+    public function testSetReadOnly()
+    {
         $field = new Field();
         $this->assertEquals($field, $field->setReadOnly(true));
         $this->assertTrue($field->getReadOnly());
     }
 
-    public function testGetDisplayOnlyByDefault() {
+    public function testGetDisplayOnlyByDefault()
+    {
         $field = new Field();
         $this->assertFalse($field->getDisplayOnly());
     }
 
-    public function testSetDisplayOnlyFromConstructor() {
+    public function testSetDisplayOnlyFromConstructor()
+    {
         $field = new Field([
             'displayOnly' => true,
         ]);
         $this->assertTrue($field->getDisplayOnly());
     }
 
-    public function testSetDisplayOnly() {
+    public function testSetDisplayOnly()
+    {
         $field = new Field();
         $this->assertEquals($field, $field->setDisplayOnly(true));
         $this->assertTrue($field->getDisplayOnly());
     }
 
-    public function testGetReadOnlyTrueWhenDisplayOnlyIsTrue() {
+    public function testGetReadOnlyTrueWhenDisplayOnlyIsTrue()
+    {
         $field = new Field([
             'displayOnly' => true,
         ]);
         $this->assertTrue($field->getReadOnly());
     }
 
-    public function testSetFieldConfigDirectly() {
+    public function testSetFieldConfigDirectly()
+    {
         $formField = [
             'class' => 'test'
         ];
@@ -153,7 +166,8 @@ class FieldTest extends TestCase
         $this->assertEquals($formField, $field->getFieldConfig());
     }
 
-    public function testApplyScopes() {
+    public function testApplyScopes()
+    {
         $model = new FieldTestModel;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'a',
@@ -169,7 +183,8 @@ class FieldTest extends TestCase
         $this->assertEquals($q, $field->applyScopes($q));
     }
 
-    public function testApplyScopesWithNullValue() {
+    public function testApplyScopesWithNullValue()
+    {
         $model = new FieldTestModel;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'a',
@@ -184,7 +199,8 @@ class FieldTest extends TestCase
         $this->assertEquals($q, $field->applyScopes($q));
     }
 
-    public function testApplyScopesWithEmptyValue() {
+    public function testApplyScopesWithEmptyValue()
+    {
         $model = new FieldTestModel;
         $q = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs([
             'a',
@@ -199,7 +215,8 @@ class FieldTest extends TestCase
         $this->assertEquals($q, $field->applyScopes($q));
     }
 
-    public function testGetRelationQuery() {
+    public function testGetRelationQuery()
+    {
         $q = new ActiveQuery('a');
 
         $field = new Field([
@@ -209,13 +226,15 @@ class FieldTest extends TestCase
         $this->assertEquals($q, $field->getRelationQuery());
     }
 
-    public function testGetRelationName() {
+    public function testGetRelationName()
+    {
         $relationName = 'relationName';
         $field = new Field(['relation' => $relationName]);
         $this->assertEquals($relationName, $field->getRelationName());
     }
 
-    public function testApplyScopesWithRelationObject() {
+    public function testApplyScopesWithRelationObject()
+    {
         $relation = $this->getMockBuilder(Relation::class)->getMock();
         $relation->expects($this->once())->method('applyScopes');
         $field = new Field([
@@ -225,7 +244,8 @@ class FieldTest extends TestCase
         $field->applyScopes(new ActiveQuery('asdas'));
     }
 
-    public function testApplyScopesWithScopeCallback() {
+    public function testApplyScopesWithScopeCallback()
+    {
         $query = $this->getMockBuilder(ActiveQuery::class)->setConstructorArgs(['model class'])->getMock();
         $query->expects($this->once())->method('andWhere');
         $field = new Field([
@@ -238,7 +258,8 @@ class FieldTest extends TestCase
         $field->applyScopes($query);
     }
 
-    public function testApplyScopesWithScopeFalseCallback() {
+    public function testApplyScopesWithScopeFalseCallback()
+    {
         $model = new FieldTestModel();
         $model->name = 'test';
 
@@ -262,7 +283,8 @@ class FieldTest extends TestCase
         $field->applyScopes($query);
     }
 
-    public function testGetRules() {
+    public function testGetRules()
+    {
         $model = new FieldTestModel();
         $field = new Field([
             'model' => $model,
@@ -282,7 +304,8 @@ class FieldTest extends TestCase
         ], $field->rules());
     }
 
-    public function testGetRulesWhileRequired() {
+    public function testGetRulesWhileRequired()
+    {
         $model = new FieldTestModel();
         $field = new Field([
             'model' => $model,
@@ -303,7 +326,8 @@ class FieldTest extends TestCase
         ], $field->rules());
     }
 
-    public function testGetRulesWhenReadOnly() {
+    public function testGetRulesWhenReadOnly()
+    {
         $model = new FieldTestModel();
         $field = new Field([
             'model' => $model,
@@ -319,8 +343,10 @@ class FieldTest extends TestCase
         ], $field->rules());
     }
 
-    public function testGetRelationObject() {
+    public function testGetRelationObject()
+    {
         $model = new FieldTestModel;
+        $urlMaker = new UrlMaker();
         $field = new Field([
             'relation' => 'relationName',
             'orderByAttribute' => 'orderByAttribute',
@@ -335,7 +361,7 @@ class FieldTest extends TestCase
             'isHasRelationAttribute' => 'isHasRelationAttribute',
             'isNoRenderRelationLink' => true,
             'label' => 'label',
-            'urlMaker' => 'test url maker',
+            'urlMaker' => $urlMaker,
             'nameAttribute' => 'nameAttribute',
         ]);
         $relationObject = $field->getRelationObject();
@@ -356,7 +382,7 @@ class FieldTest extends TestCase
             'isNoRenderRelationLink' => true,
             'label' => 'label',
             'idAttribute' => 'id_attribute',
-            'urlMaker' => 'test url maker',
+            'urlMaker' => $urlMaker,
         ], [
             'field' => $relationObject->field,
             'name' => $relationObject->name,
@@ -365,7 +391,7 @@ class FieldTest extends TestCase
             'with' => $relationObject->with,
             'valueAttribute' => $relationObject->valueAttribute,
             'updateUrl' => $relationObject->updateUrl,
-            'url' => $relationObject->url,
+            'url' => $relationObject->getUrl(),
             'attribute' => $relationObject->attribute,
             'model' => $relationObject->model,
             'columnRecordsLimit' => $relationObject->columnRecordsLimit,
@@ -373,11 +399,12 @@ class FieldTest extends TestCase
             'isNoRenderRelationLink' => $relationObject->isNoRenderRelationLink,
             'label' => $relationObject->label,
             'idAttribute' => $relationObject->idAttribute,
-            'urlMaker' => $relationObject->urlMaker,
+            'urlMaker' => $relationObject->getUrlMaker(),
         ]);
     }
 
-    public function testGetValue() {
+    public function testGetValue()
+    {
         $field = new Field([
             'model' => new FieldTestModel(),
             'attribute' => 'name',
@@ -385,13 +412,15 @@ class FieldTest extends TestCase
         $this->assertEquals('test', $field->getValue());
     }
 
-    public function testGetValueAttributeRequiredException() {
+    public function testGetValueAttributeRequiredException()
+    {
         $field = new Field();
         $this->expectExceptionMessage('"attribute" is required for getting value');
         $field->getValue();
     }
 
-    public function testGetValueModelRequiredException() {
+    public function testGetValueModelRequiredException()
+    {
         $field = new Field([
             'attribute' => 'name'
         ]);
@@ -399,7 +428,8 @@ class FieldTest extends TestCase
         $field->getValue();
     }
 
-    public function testGetUrl() {
+    public function testGetUrl()
+    {
         $relationObject = $this->getMockBuilder(Relation::class)->getMock();
         $url = ['/testUrl'];
         $relationObject->method('getUrl')
@@ -410,7 +440,8 @@ class FieldTest extends TestCase
         $this->assertEquals($url, $field->getUrl());
     }
 
-    public function testGetUrlMaker() {
+    public function testGetUrlMaker()
+    {
         $relationObject = $this->getMockBuilder(Relation::class)->getMock();
         $relationObject->method('getUrlMaker')
             ->willReturn(true);
@@ -420,7 +451,8 @@ class FieldTest extends TestCase
         $this->assertTrue($field->getUrlMaker());
     }
 
-    public function testGetAttribute() {
+    public function testGetAttribute()
+    {
         $attribute = 'test';
         $field = new Field([
             'attribute' => $attribute,
@@ -428,7 +460,8 @@ class FieldTest extends TestCase
         $this->assertEquals($attribute, $field->getAttribute());
     }
 
-    public function testGetRequired() {
+    public function testGetRequired()
+    {
         $field = new Field([
             'required' => true,
         ]);
@@ -436,7 +469,8 @@ class FieldTest extends TestCase
         $this->assertTrue($field->getRequired());
     }
 
-    public function testSetAttributeDelegation() {
+    public function testSetAttributeDelegation()
+    {
         $attribute = 'test';
         $detailViewField = $this->getMockBuilder(DetailViewField::class)->getMock();
         $detailViewField->expects($this->once())
@@ -448,7 +482,8 @@ class FieldTest extends TestCase
         $field->setAttribute($attribute);
     }
 
-    public function testSetFieldConfigDelegation() {
+    public function testSetFieldConfigDelegation()
+    {
         $config = [
             'test' => 'test',
         ];
@@ -462,19 +497,22 @@ class FieldTest extends TestCase
         $field->setFieldConfig($config);
     }
 
-    public function testGetReloaders() {
+    public function testGetReloaders()
+    {
         $field = new Field;
         $this->assertCount(0, $field->getReloaders());
     }
 
-    public function testAddReloader() {
+    public function testAddReloader()
+    {
         $reloader = $this->getMockBuilder(ReloaderInterface::class)->getMock();
         $field = new Field();
         $field->addReloader($reloader);
         $this->assertEquals([$reloader], $field->getReloaders());
     }
 
-    public function testSetReloaders() {
+    public function testSetReloaders()
+    {
         $reloader = $this->getMockBuilder(ReloaderInterface::class)->getMock();
         $field = new Field([
             'reloaders' => [$reloader]
@@ -482,7 +520,8 @@ class FieldTest extends TestCase
         $this->assertEquals([$reloader], $field->getReloaders());
     }
 
-    public function testSetGetDetailViewFieldClass() {
+    public function testSetGetDetailViewFieldClass()
+    {
         $field = new Field();
         $class = 'test';
         $this->assertEquals($field, $field->setDetailViewFieldClass($class));
@@ -490,7 +529,8 @@ class FieldTest extends TestCase
     }
 }
 
-class FieldTestModel extends ActiveRecord {
+class FieldTestModel extends ActiveRecord
+{
     public $id = 2;
     public $name = 'test';
     public $test_test_id = 2;
@@ -501,7 +541,8 @@ class FieldTestModel extends ActiveRecord {
     public static $hasManySubQuery = null;
     public $badAttribute = null;
 
-    public static function primaryKey() {
+    public static function primaryKey()
+    {
         return ['id'];
     }
 
@@ -533,7 +574,7 @@ class FieldTestModel extends ActiveRecord {
     {
         if ($name === 'testTest') {
             return $this->getTestTest();
-        } else if ($name === 'testTests') {
+        } elseif ($name === 'testTests') {
             return $this->getTestTests();
         } else {
             return false;
@@ -551,7 +592,7 @@ class FieldTestModel extends ActiveRecord {
             return $this->id;
         }
         if ($name === 'badAttribute') {
-            return;
+            return null;
         }
 
         return parent::__get($name);
@@ -566,7 +607,8 @@ class FieldTestModel extends ActiveRecord {
         return true;
     }
 
-    public function getMultipleInputFields() {
+    public function getMultipleInputFields()
+    {
         return [];
     }
 }

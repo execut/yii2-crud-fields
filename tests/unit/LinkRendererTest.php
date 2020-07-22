@@ -1,12 +1,18 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields;
 
 use \execut\crudFields\fields\FieldTestModel;
+
 class LinkRendererTest extends \Codeception\Test\Unit
 {
-    public function testRenderWithEmptyName() {
+    public function testRenderWithEmptyName()
+    {
         $model = new FieldTestModel();
         $model->test_test_id = 2;
         $model->name = null;
@@ -16,7 +22,8 @@ class LinkRendererTest extends \Codeception\Test\Unit
         $this->assertEquals('2', $renderer->render());
     }
 
-    public function testRenderWithoutIdAttribute() {
+    public function testRenderWithoutIdAttribute()
+    {
         $model = new FieldTestModel();
         $model->name = 'test';
 
@@ -25,7 +32,8 @@ class LinkRendererTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $renderer->render());
     }
 
-    public function testRenderWithoutUrlMaker() {
+    public function testRenderWithoutUrlMaker()
+    {
         $model = new FieldTestModel();
         $model->name = 'test';
 
@@ -33,7 +41,8 @@ class LinkRendererTest extends \Codeception\Test\Unit
         $this->assertEquals('test', $renderer->render());
     }
 
-    public function testRenderByAttribute() {
+    public function testRenderByAttribute()
+    {
         $model = new FieldTestModel();
         $model->name = 'test';
         $model->test_test_id = 3;
@@ -43,7 +52,8 @@ class LinkRendererTest extends \Codeception\Test\Unit
         $this->assertEquals('test&nbsp;<a href="/test/test/update" title="Перейти к редактированию">>>></a>', $renderer->render());
     }
 
-    public function testRenderByAttributeWithLabel() {
+    public function testRenderByAttributeWithLabel()
+    {
         $model = new FieldTestModel();
         $model->name = 'test';
         $model->test_test_id = 3;
@@ -53,77 +63,89 @@ class LinkRendererTest extends \Codeception\Test\Unit
         $this->assertEquals('test&nbsp;<a href="/test/test/update" title="test label - перейти к редактированию">>>></a>', $renderer->render());
     }
 
-    public function testGetModel() {
+    public function testGetModel()
+    {
         $model = new FieldTestModel();
         $renderer = new LinkRenderer($model);
         $this->assertEquals($model, $renderer->getModel());
     }
 
-    public function testSetModel() {
+    public function testSetModel()
+    {
         $model = new FieldTestModel();
         $renderer = new LinkRenderer();
         $this->assertEquals($renderer, $renderer->setModel($model));
         $this->assertEquals($model, $renderer->getModel());
     }
 
-    public function testGetNameAttribute() {
+    public function testGetNameAttribute()
+    {
         $renderer = new LinkRenderer(null, 'test');
         $this->assertEquals('test', $renderer->getNameAttribute());
     }
 
-    public function testSetNameAttribute() {
+    public function testSetNameAttribute()
+    {
         $renderer = new LinkRenderer();
         $name = 'test';
         $this->assertEquals($renderer, $renderer->setNameAttribute($name));
         $this->assertEquals($name, $renderer->getNameAttribute());
     }
 
-    public function testGetIdAttribute() {
+    public function testGetIdAttribute()
+    {
         $idAttribute = 'test';
         $renderer = new LinkRenderer(null, null, $idAttribute);
         $this->assertEquals($idAttribute, $renderer->getIdAttribute());
     }
 
-    public function testSetIdAttribute() {
+    public function testSetIdAttribute()
+    {
         $idAttribute = 'test';
         $renderer = new LinkRenderer();
         $this->assertEquals($renderer, $renderer->setIdAttribute($idAttribute));
         $this->assertEquals($idAttribute, $renderer->getIdAttribute());
     }
 
-    public function testTryWithoutModelRenderException() {
+    public function testTryWithoutModelRenderException()
+    {
         $renderer = new LinkRenderer();
         $this->expectExceptionMessage('Model is required for render');
         $renderer->render();
     }
 
-    public function testTryWithoutNameAttributeRenderException() {
+    public function testTryWithoutNameAttributeRenderException()
+    {
         $model = new FieldTestModel();
         $renderer = new LinkRenderer($model);
         $this->expectExceptionMessage('nameAttribute is required for render');
         $renderer->render();
     }
 
-    public function testGetLabel() {
+    public function testGetLabel()
+    {
         $label = 'test';
         $renderer = new LinkRenderer(null, null, null, $label);
         $this->assertEquals($label, $renderer->getLabel());
     }
 
-    public function testSetLabel() {
+    public function testSetLabel()
+    {
         $renderer = new LinkRenderer();
         $name = 'test';
         $this->assertEquals($renderer, $renderer->setLabel($name));
         $this->assertEquals($name, $renderer->getLabel());
     }
 
-    public function testGetUrl() {
+    public function testGetUrl()
+    {
         $url = ['test'];
         $renderer = new LinkRenderer(null, null, null, null, $url);
         $this->assertEquals($url, $renderer->getUrl());
     }
 
-    public function testSetUrl() {
+    public function testSetUrl()
+    {
         $url = ['test'];
         $renderer = new LinkRenderer();
         $this->assertEquals($renderer, $renderer->setUrl($url));

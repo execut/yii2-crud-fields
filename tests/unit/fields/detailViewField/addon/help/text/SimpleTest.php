@@ -5,13 +5,14 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields\detailViewField\addon\help\text;
+
 use execut\crudFields\TestCase;
 
 class SimpleTest extends TestCase
 {
-    public function testGetValue() {
+    public function testGetValue()
+    {
         $text = new Simple('test');
         $this->assertEquals('test', $text->getValue());
     }

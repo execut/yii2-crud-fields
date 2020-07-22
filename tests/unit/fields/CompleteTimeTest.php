@@ -1,23 +1,28 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields\fields;
-
-use yii\bootstrap\Progress;
 
 class CompleteTimeTest extends \Codeception\Test\Unit
 {
-    public function testRules() {
+    public function testRules()
+    {
         $field = new CompleteTime();
         $this->assertFalse($field->rules);
     }
 
-    public function testScope() {
+    public function testScope()
+    {
         $field = new CompleteTime();
         $this->assertFalse($field->scope);
     }
 
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $model = new CompleteTimeTestModel;
         $currentTime = '2020-03-25 14:00:00';
         $field = new CompleteTime([
@@ -33,17 +38,20 @@ class CompleteTimeTest extends \Codeception\Test\Unit
         $this->assertEquals('2020-03-25 18:00:00', $value($model));
     }
 
-    public function testCurrentTimeByDefault() {
+    public function testCurrentTimeByDefault()
+    {
         $field = new CompleteTime();
         $this->assertIsString($field->currentTime);
     }
 
-    public function testDisplayOnly() {
+    public function testDisplayOnly()
+    {
         $field = new CompleteTime();
         $this->assertTrue($field->getDisplayOnly());
     }
 
-    public function testGetField() {
+    public function testGetField()
+    {
         $model = new CompleteTimeTestModel;
         $currentTime = '2020-03-25 14:00:00';
         $field = new CompleteTime([
@@ -64,7 +72,8 @@ class CompleteTimeTest extends \Codeception\Test\Unit
     /**
      * @TODO Needed class extract for value callback
      */
-    public function testGetValueWhenEmptyStartTime() {
+    public function testGetValueWhenEmptyStartTime()
+    {
         $model = new CompleteTimeTestModel;
         $model->start_time = null;
 //        $model->total_count = null;
@@ -84,7 +93,8 @@ class CompleteTimeTest extends \Codeception\Test\Unit
     /**
      * @TODO Needed class extract for value callback
      */
-    public function testGetValueWhenEmptyTotalCount() {
+    public function testGetValueWhenEmptyTotalCount()
+    {
         $model = new CompleteTimeTestModel;
         $model->total_count = null;
         $currentTime = '2020-03-25 14:00:00';
@@ -103,7 +113,8 @@ class CompleteTimeTest extends \Codeception\Test\Unit
     /**
      * @TODO Needed class extract for value callback
      */
-    public function testGetValueWhenEmptyCurrentCount() {
+    public function testGetValueWhenEmptyCurrentCount()
+    {
         $model = new CompleteTimeTestModel;
         $model->current_count = null;
         $currentTime = '2020-03-25 14:00:00';
@@ -139,7 +150,8 @@ class CompleteTimeTest extends \Codeception\Test\Unit
 //    }
 }
 
-class CompleteTimeTestModel extends \yii\base\Model {
+class CompleteTimeTestModel extends \yii\base\Model
+{
     public $start_time = '2020-03-25 12:00:00';
     public $total_count = 3;
     public $current_count = 1;

@@ -16,23 +16,28 @@ use yii\i18n\Formatter;
 
 class EditorTest extends TestCase
 {
-    public function testGetDetailViewField() {
+    public function testGetDetailViewField()
+    {
         $field = new Editor();
         $this->assertInstanceOf(\execut\crudFields\fields\detailViewField\Editor::class, $field->getDetailViewField());
     }
 
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $field = new Editor([
             'attribute' => 'text',
         ]);
         $this->assertEquals([
             'attribute' => 'text',
-            'value' => function () {},
+            'value' => function () {
+                return null;
+            },
             'label' => 'Text',
         ], $field->getColumn());
     }
 
-    public function testGetEmptyColumn() {
+    public function testGetEmptyColumn()
+    {
         $model = new FieldTestModel();
         $field = new Editor([
             'attribute' => 'name',

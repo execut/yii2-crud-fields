@@ -5,9 +5,7 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields;
-
 
 use Codeception\Test\Unit;
 use yii\db\ActiveQuery;
@@ -15,7 +13,8 @@ use yii\db\ActiveRecord;
 
 class QueryFromConfigFactoryTest extends Unit
 {
-    public function testRun() {
+    public function testRun()
+    {
         $link = [
             'id' => 'relation_id',
         ];
@@ -51,26 +50,30 @@ class QueryFromConfigFactoryTest extends Unit
         $this->assertTrue($callbackIsCalled);
     }
 
-    public function testGetParams() {
+    public function testGetParams()
+    {
         $params = ['test' => 'test'];
         $factory = new QueryFromConfigFactory($params);
         $this->assertEquals($params, $factory->getParams());
     }
 
-    public function testSetParams() {
+    public function testSetParams()
+    {
         $params = ['test' => 'test'];
         $factory = new QueryFromConfigFactory();
         $factory->setParams($params);
         $this->assertEquals($params, $factory->getParams());
     }
 
-    public function testGetModel() {
+    public function testGetModel()
+    {
         $model = new QueryFromConfigFactoryTestModel();
         $factory = new QueryFromConfigFactory([], $model);
         $this->assertEquals($model, $factory->getModel());
     }
 
-    public function testSetModel() {
+    public function testSetModel()
+    {
         $model = new QueryFromConfigFactoryTestModel();
         $factory = new QueryFromConfigFactory();
         $factory->setModel($model);
@@ -78,7 +81,8 @@ class QueryFromConfigFactoryTest extends Unit
     }
 }
 
-class QueryFromConfigFactoryTestModel extends ActiveRecord {
+class QueryFromConfigFactoryTestModel extends ActiveRecord
+{
     public static $query = null;
     public static function find()
     {

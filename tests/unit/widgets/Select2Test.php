@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 
 namespace execut\crudFields\widgets;
 
@@ -35,7 +40,8 @@ class Select2Test extends TestCase
         $this->destroyApplication();
     }
 
-    public function testSelectWrapperAndRegisterWidget() {
+    public function testSelectWrapperAndRegisterWidget()
+    {
         $result = Select2::widget([
             'id' => 'test-widget',
             'name' => 'test',
@@ -60,7 +66,8 @@ class Select2Test extends TestCase
         );
     }
 
-    public function testWidgetWithArrayValue() {
+    public function testWidgetWithArrayValue()
+    {
         Select2::widget([
             'id' => 'test-widget',
             'name' => 'test',

@@ -5,9 +5,7 @@
  * Date: 6/27/17
  * Time: 5:28 PM
  */
-
 namespace execut\crudFields\fields;
-
 
 use execut\crudFields\TestCase;
 use kartik\detail\DetailView;
@@ -16,13 +14,16 @@ use yii\db\ActiveQuery;
 
 class DropDownTest extends TestCase
 {
-    public function testGetField() {
+    public function testGetField()
+    {
         $fieldObject = $this->getField();
         $field = $fieldObject->getField();
         $this->assertEquals([
             'type'=> DetailView::INPUT_DROPDOWN_LIST,
             'attribute' => 'test_test_id',
-            'value' => function() {},
+            'value' => function () {
+                return null;
+            },
             'items' => [
                 '' => '',
                 2 => 'test',
@@ -32,7 +33,8 @@ class DropDownTest extends TestCase
         ], $field);
     }
 
-    public function testGetMultipleInputField() {
+    public function testGetMultipleInputField()
+    {
         $field = $this->getField();
         $field = $field->getMultipleInputField();
         $this->assertEquals([
@@ -50,7 +52,8 @@ class DropDownTest extends TestCase
         ], $field);
     }
 
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $field = $this->getField();
 
         $this->assertEquals([

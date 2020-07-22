@@ -5,21 +5,15 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
 
 use Codeception\Test\Unit;
 use execut\crudFields\Relation;
-use kartik\detail\DetailView;
-use kartik\grid\GridView;
-use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
-use yii\web\JsExpression;
 
 class HasOneSelect2Test extends Unit
 {
-    public function testGetField() {
+    public function testGetField()
+    {
         $relationObject = $this->getMockBuilder(Relation::class)->getMock();
         $model = new HasOneSelect2TestModel;
         $field = new HasOneSelect2([
@@ -31,7 +25,8 @@ class HasOneSelect2Test extends Unit
         $this->assertArrayHasKey('type', $field);
     }
 
-    public function testGetFieldWithoutRelation() {
+    public function testGetFieldWithoutRelation()
+    {
         $model = new HasOneSelect2TestModel;
         $data = ['test' => 'test'];
         $field = new HasOneSelect2([
@@ -45,7 +40,8 @@ class HasOneSelect2Test extends Unit
         $this->assertEquals($data, $field['widgetOptions']['data']);
     }
 
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $relationObject = $this->getMockBuilder(Relation::class)->onlyMethods(['getSourcesText', 'getRelationFormName', 'getRelatedModels', 'getData'])->getMock();
         $relationObject->method('getSourcesText')
             ->willReturn([]);
@@ -68,7 +64,8 @@ class HasOneSelect2Test extends Unit
         $this->assertArrayHasKey('attribute', $field);
     }
 
-    public function testGetEmptyMultipleInputField() {
+    public function testGetEmptyMultipleInputField()
+    {
         $field = new HasOneSelect2([
             'multipleInputField' => false,
         ]);
@@ -76,5 +73,6 @@ class HasOneSelect2Test extends Unit
     }
 }
 
-class HasOneSelect2TestModel extends FieldTestModel {
+class HasOneSelect2TestModel extends FieldTestModel
+{
 }

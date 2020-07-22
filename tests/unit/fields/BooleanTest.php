@@ -5,9 +5,7 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields;
-
 
 use execut\crudFields\TestCase;
 use kartik\detail\DetailView;
@@ -15,7 +13,8 @@ use kartik\grid\BooleanColumn;
 
 class BooleanTest extends TestCase
 {
-    public function testGetColumn() {
+    public function testGetColumn()
+    {
         $field = new Boolean([
             'attribute' => 'visible',
         ]);
@@ -30,7 +29,8 @@ class BooleanTest extends TestCase
         ]);
     }
 
-    public function testGetField() {
+    public function testGetField()
+    {
         $field = new Boolean([
             'attribute' => 'visible',
         ]);

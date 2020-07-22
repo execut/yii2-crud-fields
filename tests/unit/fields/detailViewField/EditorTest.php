@@ -14,7 +14,8 @@ use kartik\detail\DetailView;
 
 class EditorTest extends TestCase
 {
-    public function testGetConfig() {
+    public function testGetConfig()
+    {
         $field = new Editor([], 'text');
         $this->assertEquals([
             'attribute' => 'text',

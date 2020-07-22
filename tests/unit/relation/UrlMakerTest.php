@@ -1,20 +1,25 @@
 <?php
-
-
+/**
+ * @author Mamaev Yuriy (eXeCUT)
+ * @link https://github.com/execut
+ * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
+ * @license http://www.apache.org/licenses/LICENSE-2.0
+ */
 namespace execut\crudFields\relation;
-
 
 use execut\crudFields\TestCase;
 
 class UrlMakerTest extends TestCase
 {
-    public function testGetUpdateUrlWithoutUrl() {
+    public function testGetUpdateUrlWithoutUrl()
+    {
         $urlMaker = new UrlMaker();
         $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertNull($urlMaker->make($model, ''));
     }
 
-    public function testGetUpdateUrlWithArrayUrl() {
+    public function testGetUpdateUrlWithArrayUrl()
+    {
         $urlMaker = new UrlMaker([
             'test',
             'id' => 1,
@@ -26,7 +31,8 @@ class UrlMakerTest extends TestCase
         ], $urlMaker->make($model, ''));
     }
 
-    public function testGetUpdateUrlWithIdCalculation() {
+    public function testGetUpdateUrlWithIdCalculation()
+    {
         $urlMaker = new UrlMaker([
             'test',
         ]);
@@ -38,7 +44,8 @@ class UrlMakerTest extends TestCase
         ], $urlMaker->make($model, 'id'));
     }
 
-    public function testGetUpdateUrlWithBadAttribute() {
+    public function testGetUpdateUrlWithBadAttribute()
+    {
         $urlMaker = new UrlMaker([
             'test',
         ]);
@@ -47,7 +54,8 @@ class UrlMakerTest extends TestCase
         $this->assertNull($urlMaker->make($model, 'badAttribute'));
     }
 
-    public function testGetUpdateUrlWithPkArrayCalculation() {
+    public function testGetUpdateUrlWithPkArrayCalculation()
+    {
         $urlMaker = new UrlMaker([
             'test',
         ]);
@@ -63,28 +71,33 @@ class UrlMakerTest extends TestCase
         ], $urlMaker->make($model, 'id'));
     }
 
-    public function testGetUrl() {
+    public function testGetUrl()
+    {
         $maker = new UrlMaker(['test']);
         $this->assertEquals(['test'], $maker->getUrl());
     }
 
-    public function testGetUpdateUrl() {
+    public function testGetUpdateUrl()
+    {
         $maker = new UrlMaker(null, ['test']);
         $this->assertEquals(['test'], $maker->getUpdateUrl());
     }
 
-    public function testMakeFromUpdateUrl() {
+    public function testMakeFromUpdateUrl()
+    {
         $maker = new UrlMaker(null, ['test']);
         $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertEquals(['test'], $maker->make($model, 'id'));
     }
 
-    public function testGetIsNoRenderRelationLink() {
+    public function testGetIsNoRenderRelationLink()
+    {
         $maker = new UrlMaker(null, null, true);
         $this->assertTrue($maker->getIsNoRenderRelationLink());
     }
 
-    public function testMakeWhenIsNoRenderRelationLink() {
+    public function testMakeWhenIsNoRenderRelationLink()
+    {
         $maker = new UrlMaker(null, ['test'], true);
         $model = new \execut\crudFields\fields\FieldTestModel();
         $this->assertNull($maker->make($model, 'id'));

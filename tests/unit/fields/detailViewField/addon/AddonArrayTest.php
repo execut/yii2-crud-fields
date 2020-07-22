@@ -5,15 +5,14 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields\detailViewField\addon;
-
 
 use execut\crudFields\TestCase;
 
 class AddonArrayTest extends TestCase
 {
-    public function testGetConfig() {
+    public function testGetConfig()
+    {
         $addon = new AddonArray([
             'key' => 'option',
         ], 'test content');

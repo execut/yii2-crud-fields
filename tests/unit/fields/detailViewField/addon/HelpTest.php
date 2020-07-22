@@ -5,20 +5,21 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-
 namespace execut\crudFields\fields\detailViewField\addon;
 
 use execut\crudFields\fields\detailViewField\addon\help\Text;
 
 class HelpTest extends \Codeception\Test\Unit
 {
-    public function testGetText() {
+    public function testGetText()
+    {
         $text = $this->getTextMock();
         $help = new Help($text);
         $this->assertEquals($text, $help->getText());
     }
 
-    public function testGetGetConfig() {
+    public function testGetGetConfig()
+    {
         $text = $this->getTextMock();
         Help::resetInstancesCounter();
         $help = new Help($text);
