@@ -126,10 +126,10 @@ return [
 не сделал некоторые поля (Краткое описание, Биография, Дата рождения, Известность, Электронная почта, Книги), но даже этого кода оказалось больше,
 чем в полной реализации с помощью yii2-crud-fields.
 
-Далее я реализовал уже полный функционал подобного CRUD-а в [модели Author](https://github.com/execut/yii2-crud-fields/example/models/Author.php). Чтобы её
+Далее я реализовал уже полный функционал подобного CRUD-а в [модели Author](https://github.com/execut/yii2-books/blob/master/models/Author.php). Чтобы её
 установить в пример CRUD execut/yii2-books-native необходимо:
 1. Установить в свой проект [пример CRUD execut/yii2-books-native](https://github.com/execut/yii2-books-native).
-1. Переключить в нём модель Author [\execut\booksNative\models\Author](https://github.com/execut/yii2-books-native/blob/master/models/Book.php) на доработанную [\execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/models/Author.php)
+1. Переключить в нём модель Author [\execut\booksNative\models\Author](https://github.com/execut/yii2-books-native/blob/master/models/Author.php) на доработанную [\execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/models/Author.php)
 путём её подмены в конфигурации приложения:
 ```php
 return [
@@ -144,6 +144,6 @@ return [
 ];
 ```
 3. В результате мы написали в три раза быстрее более функциональный и компактный CRUD:
-[Было 370 строк](https://github.com/execut/yii2-books-native/blob/master/models/Author.php), а [стало 116](https://github.com/execut/yii2-crud-fields/example/models/Author.php).
+[Было 370 строк](https://github.com/execut/yii2-books-native/blob/master/models/Author.php), а [стало 116](https://github.com/execut/yii2-books/blob/master/models/Author.php).
 ![Список авторов](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/authors-list.jpg)
 ![Форма редактирования авторов](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/authors-form.jpg)
