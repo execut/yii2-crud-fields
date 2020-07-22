@@ -144,6 +144,7 @@ return [
 ];
 ```
 3. В результате мы написали в три раза быстрее более функциональный и компактный CRUD:
+
 [Было 370 строк](https://github.com/execut/yii2-books-native/blob/master/models/Author.php), а [стало 116](https://github.com/execut/yii2-books/blob/master/models/Author.php).
 ![Список авторов](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/authors-list.jpg)
 ![Форма редактирования авторов](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/authors-form.jpg)
