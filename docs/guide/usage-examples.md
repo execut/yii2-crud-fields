@@ -130,7 +130,7 @@ than in the full implementation with yii2-crud-fields.
 Further, I have already implemented the full functionality of such a CRUD in the [Author model](https://github.com/execut/yii2-crud-fields/example/models/Author.php).
 To install it in the example CRUD execut/yii2-books-native you need:
 1. Install in your project [example of CRUD execut/yii2-books-native](https://github.com/execut/yii2-books-native).
-1. Replace the native model Author [\execut\booksNative\models\Author](https://github.com/execut/yii2-books-native/blob/master/models/Book.php) на доработанную [\execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/models/Author.php)
+1. Replace the native model Author [\execut\booksNative\models\Author](https://github.com/execut/yii2-books-native/blob/master/models/Book.php) with the modified [\execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/models/Author.php)
 by changing it in the application configuration:
 ```php
 return [
@@ -145,6 +145,7 @@ return [
 ];
 ```
 3. As a result, we wrote a more functional and compact CRUD three times faster:
+
 [There were 370 lines](https://github.com/execut/yii2-books-native/blob/master/models/Author.php), but [now it is 116](https://github.com/execut/yii2-crud-fields/example/models/Author.php).
 ![Authors CRUD list](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-list.jpg)
 ![Authors CRUD form](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-form.jpg)
