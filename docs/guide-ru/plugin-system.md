@@ -88,7 +88,7 @@ return [
 ];
 ```
 И у нас должна появится новая группа полей SEO:
-![Форма](i/books-form-pluggable.jpg)
+![Форма](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/i/books-form-pluggable.jpg)
 
 Плагин от [execut\seo\crudFields\Fields](https://github.com/execut/yii2-seo/blob/master/crudFields/Fields.php) наследует абстрактный класс для
 плагинов [execut\crudFields\Plugin](https://github.com/execut/yii2-crud-fields/blob/master/Plugin.php) и переопределяет

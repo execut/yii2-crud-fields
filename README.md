@@ -83,8 +83,8 @@ class Book extends \yii\db\ActiveRecord {
  var_dump($model->getFormFields());
  ```
 
-![Список](https://raw.githubusercontent.com/execut/yii2-crud-fields/master/docs/guide/i/books-list.jpg)
-![Форма](https://raw.githubusercontent.com/execut/yii2-crud-fields/master/docs/guide/i/books-form.jpg)
+![Books CRUD list](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/books-list.jpg)
+![Books CRUD form](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/books-form.jpg)
 
 If we compare the implementation of such a model with a model without extension, we can see that the amount of code has changed in a positive direction:
 
@@ -93,3 +93,10 @@ If we compare the implementation of such a model with a model without extension,
 Or more strong example with books authors:
 
 [Model on native Yii2 (370 lines)](https://github.com/execut/yii2-books-native/blob/master/models/Author.php) vs [Model on CRUD fields (116 lines)](https://github.com/execut/yii2-books/blob/master/models/Author.php)
+
+![Authors CRUD list](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-list.jpg)
+![Authors CRUD form](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-form.jpg)
+
+For more details please refer to the documentation [docs/guide-ru/README.md](https://github.com/execut/yii2-crud-fields/blob/master/docs/guide-ru/README.md).
+
+Для более подробной информации обращайтесь к документации [docs/guide-ru/README.md](https://github.com/execut/yii2-crud-fields/blob/master/docs/guide-ru/README.md).

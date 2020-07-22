@@ -1,10 +1,15 @@
-## Простой пример использования
-Допустим у нас возникла задача создать CRUD для управления простой моделью Book с двумя полями id и name.
+# Примеры использования
+Yii2 CRUD fields покажет все свои преимущества только после того, как вы увидите как легко и быстро можно создавать
+админки с его помощью. Для этого давайте разберём пару примеров.
 
-Для сравнения в нативном виде на Yii2 уже был написан точно такой-же CRUD в следующем пакете
+## Простой пример использования
+Допустим у нас возникла задача создать CRUD для управления простой моделью Book с двумя полями: id и name.
+
+Для сравнения уже был написан точно такой-же CRUD без использования Yii2 CRUD fields в следующем пакете
 [execut/yii2-books-native](https://github.com/execut/yii2-books-native). Весь функционал, который там реализован 
-приведён на [этой странице](https://github.com/execut/yii2-books-native/blob/master/docs/guide-ru/implemented-functionality.md).
-Для демонстрации функционала Yii2 CRUD fields мы будем дорабатывать этот пример путём его расширения.
+перечислен в [этом списке](https://github.com/execut/yii2-books-native/blob/master/docs/guide-ru/implemented-functionality.md).
+Для демонстрации эффективности использования Yii2 CRUD fields мы будем улучшать этот пример путём подмены его моделей на
+доработанные с помощью CRUD fields.
 Вот перечень того, что из этого списка автоматизирует Yii2 CRUD fields:
 1. Задание в модели правил валидации для сценария search путём объявления Book::rules()
 1. Формирование ActiveQuery на основе параметров фильтрации
@@ -13,11 +18,11 @@
 1. Задание правил валидации модели по сценарию form путём добавления Simple::rules()
 1. Формирование настроек аттрибутов для формы редактирования
 
-Уже доработанный с помощью Yii2 CRUD fields CRUD расположен в другом пакете [execut/yii2-books](https://github.com/execut/yii2-books)
+Уже доработанный с помощью Yii2 CRUD fields CRUD расположен в ещё одном пакете [execut/yii2-books](https://github.com/execut/yii2-books)
 и все дальнейшие примеры будут ссылаться на него.
 
-Автоматизация вычеркнутых пунктов достигается путём подключения к модели [Book](https://github.com/execut/yii2-books/blob/master/models/Book.php) характеристики
-[execut\crudFields\Behavior](Behavior.php) и поведения [execut\crudFields\BehaviorStub](BehaviorStub.php):
+Автоматизация этих пунктов достигается путём подключения к модели [Book](https://github.com/execut/yii2-books/blob/master/models/Book.php) характеристики
+[execut\crudFields\Behavior](Behavior.php) и черты [execut\crudFields\BehaviorStub](BehaviorStub.php):
 ```php
 namespace execut\books\models;
 class Book extends \yii\db\ActiveRecord {
@@ -60,14 +65,13 @@ echo 'Правила валидации для сценария search и edit';
 var_dump($model->rules());
 echo 'Формирование ActiveQuery на основе параметров фильтрации и настройка ActiveDataProvider';
 var_dump($model->search());
-echo 'Формирование настроек колонок списка';
+echo 'Формирование настроек колонок списка для \yii\grid\GridView';
 var_dump($model->getGridColumns());
-echo 'Формирование настроек формы создания\редактирования';
+echo 'Формирование настроек формы создания\редактирования для \kartik\detail\DetailView';
 var_dump($model->getFormFields());
 ```
 
-Чтобы увидеть преимущества yii2-crud-fields на примере execut/yii2-books-native, можно его доработать, сократив количество кода,
-используя yii2-crud-fields:
+Чтобы увидеть преимущества yii2-crud-fields на примере execut/yii2-books-native, необходимо его доработать используя yii2-crud-fields:
 1. Установите в свой проект [пример CRUD execut/yii2-books-native](https://github.com/execut/yii2-books-native).
 1. Замените в нём нативную модель [\execut\booksNative\models\Book](https://github.com/execut/yii2-books-native/blob/master/models/Book.php) на доработанную [\execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/models/Book.php)
 путём её подмены в конфигурации приложения:
@@ -84,16 +88,16 @@ return [
 ];
 ```
 3. В результате останется тот-же самый CRUD, но с двухкратно упрощённой моделью:
-[Было 85 строк](https://github.com/execut/yii2-books-native/blob/master/models/Book.php), а [стало 37](https://github.com/execut/yii2-crud-fields/example/models/Book.php).
-![Список](i/books-list.jpg)
-![Форма](i/books-form.jpg)
+[Было 85 строк](https://github.com/execut/yii2-books-native/blob/master/models/Book.php), а [стало 37](https://github.com/execut/yii2-books/blob/master/models/Book.php).
+![Список книг](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/books-list.jpg)
+![Форма редактирования книг](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/books-form.jpg)
 
 Большинство остальных пунктов тоже можно автоматизировать путём использования другого компонента [execut/yii2-crud](https://github.com/execut/yii2-crud)
 , что ещё больше сократит дублирование кода между вашими CRUD-ами. Обращайтесь к его [документации](https://github.com/execut/yii2-crud), чтобы понять как это сделать.
 
 Чем разнообразней и больше полей нашей CRUD-модели, тем жирнее и сложнее она становится. С каждым новым типом поля необходимо
-писать и дублировать логику по проверке, поиску, выводу колонок и формированию полей формы модели. yii2-crud-fields позволяет
-минимизировать такие затраты. Чтобы это рассмотреть в деле, давайте разберём более сложный пример использования.
+писать и дублировать логику по проверке, поиску, выводу колонок и формированию полей формы модели. Yii2 CRUD fields позволяет
+минимизировать такие затраты. Чтобы увидеть это в деле, давайте разберём более сложный пример использования.
 
 ## Сложный пример использования
 Допустим, у наших книг есть авторы и для них нужны следующие поля:
@@ -139,7 +143,7 @@ return [
     ],
 ];
 ```
-3. В итоге у нас есть написанный более чем в три раза быстрее и компактнее CRUD, при этом имея куда больше возможностей:
+3. В результате мы написали в три раза быстрее более функциональный и компактный CRUD:
 [Было 370 строк](https://github.com/execut/yii2-books-native/blob/master/models/Author.php), а [стало 116](https://github.com/execut/yii2-crud-fields/example/models/Author.php).
-![Список](i/authors-list.jpg)
-![Форма](i/authors-form.jpg)
+![Список авторов](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/authors-list.jpg)
+![Форма редактирования авторов](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide-ru/i/authors-form.jpg)
