@@ -28,7 +28,7 @@
     "execut/yii2-base": "*",
     "execut/yii2-save-relations-behavior": "*",
     "execut/yii2-kcfinder": "*",
-    "sammaye/yii2-qtip": "*"
+    "sammaye/yii2-qtip": "dev-master as 0.1.0"
   },
   "require-dev": {
     "codeception/codeception": "^4.0",
