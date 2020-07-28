@@ -37,5 +37,11 @@
     "psr-4": {
       "execut\\crudFields\\": "src"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ]
 }
