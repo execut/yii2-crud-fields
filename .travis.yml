@@ -14,7 +14,7 @@ before_script:
   - ls -lA
   - ls -lA vendor/
   - travis_retry composer self-update
-  - travis_retry composer config minimum-stability dev
+  - travis_retry composer config minimum-stability stable
   - travis_retry composer install ${COMPOSER_FLAGS} --no-interaction
 
 script:
