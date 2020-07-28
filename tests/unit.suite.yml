@@ -2,7 +2,8 @@
 #
 # Suite for unit (internal) tests.
 
-class_name: UnitTester
+suite_namespace: execut\navigation\tests\unit
+class_name: CodeGuy
 modules:
     enabled:
       - Yii2:

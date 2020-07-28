@@ -23,6 +23,6 @@ script:
 
 # Cache folder, you can delete cache from Travis CI web interface
 cache:
-    directories:
-        - vendor
-        - $HOME/.composer/cache
+  directories:
+    - vendor
+    - $HOME/.composer/cache

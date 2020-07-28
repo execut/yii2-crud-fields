@@ -3,7 +3,7 @@
   "description": "A behavior for standard fields logic in CRUD based on kartik dynagrid and detailView",
   "keywords": ["yii2 grid", "yii2 fields"],
   "homepage": "https://github.com/execut/yii2-crud-fields",
-  "type": "library",
+  "type": "yii2-extension",
   "license": "Apache-2.0",
   "support": {
     "issues": "https://github.com/execut/yii2-crud-fields/issues?state=open",
@@ -12,10 +12,10 @@
   },
   "authors": [
     {
-      "name": "eXeCUT"
+      "name": "Mamaev Yuriy (eXeCUT)"
     }
   ],
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "require": {
     "php": "^7.4",
     "yiisoft/yii2": "@dev",
