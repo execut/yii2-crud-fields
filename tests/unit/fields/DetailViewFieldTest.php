@@ -10,7 +10,7 @@ namespace execut\crudFields\fields;
 use execut\crudFields\fields\detailViewField\addon\AddonInterface;
 use execut\crudFields\TestCase;
 
-class DetailViewFieldTest extends TestCase
+class DetailViewFieldTest extends \Codeception\Test\Unit
 {
     public function testGetConfig()
     {

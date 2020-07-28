@@ -9,7 +9,7 @@ namespace execut\crudFields\relation;
 
 use execut\crudFields\TestCase;
 
-class UrlMakerTest extends TestCase
+class UrlMakerTest extends \Codeception\Test\Unit
 {
     public function testGetUpdateUrlWithoutUrl()
     {

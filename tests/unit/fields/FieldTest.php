@@ -13,7 +13,7 @@ use execut\crudFields\TestCase;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
-class FieldTest extends TestCase
+class FieldTest extends \Codeception\Test\Unit
 {
     public function testGettersWithoutAttribute()
     {

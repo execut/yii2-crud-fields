@@ -14,7 +14,7 @@ use kartik\detail\DetailView;
 use kartik\grid\GridView;
 use yii\i18n\Formatter;
 
-class EditorTest extends TestCase
+class EditorTest extends \Codeception\Test\Unit
 {
     public function testGetDetailViewField()
     {

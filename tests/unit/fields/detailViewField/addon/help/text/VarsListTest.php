@@ -9,7 +9,7 @@ namespace execut\crudFields\fields\detailViewField\addon\help\text;
 
 use execut\crudFields\TestCase;
 
-class VarsListTest extends TestCase
+class VarsListTest extends \Codeception\Test\Unit
 {
     public function testGetValue()
     {

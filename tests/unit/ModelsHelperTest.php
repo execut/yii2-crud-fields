@@ -13,9 +13,8 @@ use execut\crudFields\fields\Field;
 use execut\crudFields\fields\Id;
 use execut\crudFields\ModelsHelper;
 use execut\crudFields\ModelsHelperTrait;
-use execut\crudFields\TestCase;
 
-class ModelsHelperTest extends TestCase
+class ModelsHelperTest extends  \Codeception\Test\Unit
 {
     use ModelsHelperTrait;
     public function testGetStandardFields()

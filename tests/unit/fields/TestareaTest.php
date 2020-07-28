@@ -12,7 +12,7 @@ use execut\crudFields\TestCase;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
-class TextareaTest extends TestCase
+class TextareaTest extends \Codeception\Test\Unit
 {
     public function testGetColumn()
     {

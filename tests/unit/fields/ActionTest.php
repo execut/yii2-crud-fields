@@ -7,11 +7,10 @@
  */
 namespace execut\crudFields\fields;
 
-use execut\crudFields\TestCase;
 use kartik\grid\ActionColumn;
 use yii\db\ActiveQuery;
 
-class ActionTest extends TestCase
+class ActionTest extends \Codeception\Test\Unit
 {
     public function testGetField()
     {

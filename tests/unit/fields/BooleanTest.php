@@ -7,11 +7,10 @@
  */
 namespace execut\crudFields\fields;
 
-use execut\crudFields\TestCase;
 use kartik\detail\DetailView;
 use kartik\grid\BooleanColumn;
 
-class BooleanTest extends TestCase
+class BooleanTest extends \Codeception\Test\Unit
 {
     public function testGetColumn()
     {

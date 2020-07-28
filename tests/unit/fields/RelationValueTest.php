@@ -9,7 +9,7 @@ namespace execut\crudFields\fields;
 
 use execut\crudFields\TestCase;
 
-class RelationValueTest extends TestCase
+class RelationValueTest extends \Codeception\Test\Unit
 {
     public function testGetColumn()
     {

@@ -12,7 +12,7 @@ use kartik\detail\DetailView;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\db\ActiveQuery;
 
-class DropDownTest extends TestCase
+class DropDownTest extends \Codeception\Test\Unit
 {
     public function testGetField()
     {

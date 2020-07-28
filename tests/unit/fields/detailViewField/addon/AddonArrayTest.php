@@ -9,7 +9,7 @@ namespace execut\crudFields\fields\detailViewField\addon;
 
 use execut\crudFields\TestCase;
 
-class AddonArrayTest extends TestCase
+class AddonArrayTest extends \Codeception\Test\Unit
 {
     public function testGetConfig()
     {

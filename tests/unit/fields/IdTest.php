@@ -10,7 +10,7 @@ namespace execut\crudFields\fields;
 use execut\crudFields\TestCase;
 use kartik\detail\DetailView;
 
-class IdTest extends TestCase
+class IdTest extends \Codeception\Test\Unit
 {
     public function testGetField()
     {

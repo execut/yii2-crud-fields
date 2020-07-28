@@ -14,7 +14,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
-class BehaviorTest extends TestCase
+class BehaviorTest extends \Codeception\Test\Unit
 {
     public function testGetModuleWithoutOwner()
     {

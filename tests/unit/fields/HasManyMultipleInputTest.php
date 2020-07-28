@@ -10,7 +10,7 @@ namespace execut\crudFields\fields;
 use execut\crudFields\Relation;
 use execut\crudFields\TestCase;
 
-class HasManyMultipleInputTest extends TestCase
+class HasManyMultipleInputTest extends \Codeception\Test\Unit
 {
     public function testGetField()
     {

@@ -12,7 +12,7 @@ use execut\crudFields\TestCase;
 use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 
-class EditorTest extends TestCase
+class EditorTest extends \Codeception\Test\Unit
 {
     public function testGetConfig()
     {
@@ -26,7 +26,7 @@ class EditorTest extends TestCase
                 'preset' => 'full',
                 'clientOptions' => [
                     'allowedContent' => true,
-                    'language' => null
+                    'language' => 'en-US'
                 ],
             ],
         ], $field->getConfig());
