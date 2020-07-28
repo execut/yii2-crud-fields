@@ -71,6 +71,7 @@ class Book extends \yii\db\ActiveRecord {
 ```
 
  will make all required for CRUD:
+ 
  ```php
  $model = new Book();
  echo 'Validation rules for the search and edit scenario';
