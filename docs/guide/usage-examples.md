@@ -1,5 +1,4 @@
-# Usage 
-s
+# Usage
 Yii2 CRUD fields will show all their advantages only after you see how easy and fast you can create
 admin panel with its help. To do this, let's look at a couple of examples.
 
@@ -8,7 +7,7 @@ Let's say we have a task to create a CRUD to manage a simple Book model with two
 
 For comparison exactly the same CRUD has already been written on native Yii2 in the following package
 [execut/yii2-books-native](https://github.com/execut/yii2-books-native). All the functionality that is implemented there
-listed in [this list](https://github.com/execut/yii2-books-native/blob/master/docs/guide-ru/implemented-functionality.md).
+listed in [this list](https://github.com/execut/yii2-books-native/blob/master/docs/guide/implemented-functionality.md).
 To demonstrate the effectiveness of using Yii2 CRUD fields, we will improve this example by replacing its models with
 modified using CRUD fields.
 Here is a list of what Yii2 CRUD fields automates from this list:
