@@ -1,0 +1,28 @@
+language: php
+
+php:
+  - 7.4
+
+matrix:
+  fast_finish: true
+
+# Disable x-debug to speed up things
+before_install: phpenv config-rm xdebug.ini
+
+# Install packages those will be required during build
+before_script:
+  - travis_retry composer self-update
+  - travis_retry composer config minimum-stability dev
+  - travis_retry composer install ${COMPOSER_FLAGS} --no-interaction
+
+script:
+  - ./vendor/bin/codecept build
+  - ./vendor/bin/codecept run
+
+#after_script:
+
+# Cache folder, you can delete cache from Travis CI web interface
+cache:
+    directories:
+        - vendor
+        - $HOME/.composer/cache
