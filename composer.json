@@ -15,23 +15,27 @@
       "name": "Mamaev Yuriy (eXeCUT)"
     }
   ],
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "php": "^7.4",
     "yiisoft/yii2": "2.*",
+    "yiisoft/yii2-imagine": "*",
+    "kartik-v/yii2-detail-view": "*",
     "kartik-v/yii2-date-range": "*",
     "kartik-v/yii2-widget-select2": "*",
     "unclead/yii2-multiple-input": "*",
+    "execut/yii2-base": "*",
     "execut/yii2-save-relations-behavior": "*",
-    "execut/yii2-kcfinder": "*",
-    "yiisoft/yii2-imagine": "*"
+    "execut/yii2-kcfinder": "*"
   },
   "require-dev": {
     "codeception/codeception": "^4.0",
     "codeception/module-asserts": "^1.0",
     "codeception/module-yii2": "^1.0",
     "codeception/module-filesystem": "^1.0",
-    "codeception/verify": "~0.5.0 || ~1.1.0"
+    "codeception/verify": "~0.5.0 || ~1.1.0",
+    "execut/yii2-settings": "*"
   },
   "autoload": {
     "psr-4": {
