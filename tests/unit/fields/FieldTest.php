@@ -5,8 +5,10 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields;
+namespace execut\crudFields\tests\unit\fields;
 
+use execut\crudFields\fields\DetailViewField;
+use execut\crudFields\fields\Field;
 use execut\crudFields\Relation;
 use execut\crudFields\relation\UrlMaker;
 use execut\crudFields\TestCase;

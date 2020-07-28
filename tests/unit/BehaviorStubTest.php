@@ -5,9 +5,11 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields;
+namespace execut\crudFields\tests\unit;
 
 use Codeception\Test\Unit;
+use execut\crudFields\Behavior;
+use execut\crudFields\BehaviorStub;
 use execut\crudFields\fields\HasOneSelect2;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;

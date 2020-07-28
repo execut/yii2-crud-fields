@@ -5,9 +5,10 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields;
+namespace execut\crudFields\tests\unit\fields;
 
 use Codeception\Test\Unit;
+use execut\crudFields\fields\Date;
 use kartik\daterange\DateRangePicker;
 use kartik\detail\DetailView;
 use kartik\grid\GridView;

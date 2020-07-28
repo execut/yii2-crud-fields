@@ -5,9 +5,10 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields\reloader;
+namespace execut\crudFields\tests\unit\fields\reloader;
 
 use execut\crudFields\fields\Field;
+use execut\crudFields\fields\reloader\Target;
 
 class TargetTest extends \PHPUnit_Framework_TestCase
 {

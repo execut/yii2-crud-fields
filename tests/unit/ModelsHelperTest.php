@@ -5,7 +5,7 @@
  * Date: 6/24/17
  * Time: 2:03 PM
  */
-namespace execut\crudFields\tests\unit;
+namespace execut\crudFields\tests\unit\tests\unit;
 
 use execut\crudFields\fields\Boolean;
 use execut\crudFields\fields\Date;

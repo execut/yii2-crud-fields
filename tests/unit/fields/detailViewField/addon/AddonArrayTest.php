@@ -5,8 +5,9 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields\detailViewField\addon;
+namespace execut\crudFields\tests\unit\fields\detailViewField\addon;
 
+use execut\crudFields\fields\detailViewField\addon\AddonArray;
 use execut\crudFields\TestCase;
 
 class AddonArrayTest extends \Codeception\Test\Unit

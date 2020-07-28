@@ -5,9 +5,10 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields;
+namespace execut\crudFields\tests\unit\fields;
 
 use Codeception\Test\Unit;
+use execut\crudFields\fields\HasOneSelect2;
 use execut\crudFields\Relation;
 
 class HasOneSelect2Test extends Unit

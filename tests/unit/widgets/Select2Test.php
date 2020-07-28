@@ -6,9 +6,10 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 
-namespace execut\crudFields\widgets;
+namespace execut\crudFields\tests\unit\widgets;
 
 use execut\crudFields\TestCase;
+use execut\crudFields\widgets\Select2;
 use Yii;
 use yii\di\Container;
 use yii\helpers\ArrayHelper;

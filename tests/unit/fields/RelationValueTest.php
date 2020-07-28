@@ -5,15 +5,16 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields;
+namespace execut\crudFields\tests\unit\fields;
 
+use execut\crudFields\fields\RelationValue;
 use execut\crudFields\TestCase;
 
 class RelationValueTest extends \Codeception\Test\Unit
 {
     public function testGetColumn()
     {
-        $field = new RelationValue;
+        $field = new RelationValue();
         $field->setLabel('test');
         $column = $field->getColumn();
         $this->assertArrayHasKey('value', $column);

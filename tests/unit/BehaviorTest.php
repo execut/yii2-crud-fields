@@ -5,10 +5,11 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields;
+namespace execut\crudFields\tests\unit;
 
 use execut\crudFields\Behavior;
 use execut\crudFields\fields\Field;
+use execut\crudFields\Plugin;
 use PHPUnit\Framework\TestCase;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;

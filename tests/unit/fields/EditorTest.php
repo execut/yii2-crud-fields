@@ -6,8 +6,9 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 
-namespace execut\crudFields\fields;
+namespace execut\crudFields\tests\unit\fields;
 
+use execut\crudFields\fields\Editor;
 use execut\crudFields\TestCase;
 use iutbay\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;

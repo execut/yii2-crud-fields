@@ -5,9 +5,10 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields;
+namespace execut\crudFields\tests\unit;
 
-use \execut\crudFields\fields\FieldTestModel;
+use execut\crudFields\LinkRenderer;
+use execut\crudFields\tests\unit\fields\FieldTestModel;
 
 class LinkRendererTest extends \Codeception\Test\Unit
 {

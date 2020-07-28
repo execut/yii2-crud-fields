@@ -5,11 +5,13 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields\reloader;
+namespace execut\crudFields\tests\unit\fields\reloader;
 
 use Codeception\Test\Unit;
 use execut\crudFields\fields\Field;
+use execut\crudFields\fields\reloader\Reloader;
 use execut\crudFields\fields\reloader\Target;
+use execut\crudFields\fields\reloader\TypeInterface;
 
 class ReloaderTest extends Unit
 {

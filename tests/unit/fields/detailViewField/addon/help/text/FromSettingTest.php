@@ -5,8 +5,9 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields\detailViewField\addon\help\text;
+namespace execut\crudFields\tests\unit\fields\detailViewField\addon\help\text;
 
+use execut\crudFields\fields\detailViewField\addon\help\text\FromSetting;
 use execut\settings\Component;
 
 class FromSettingTest extends \Codeception\Test\Unit

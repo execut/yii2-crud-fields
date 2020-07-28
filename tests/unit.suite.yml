@@ -2,7 +2,7 @@
 #
 # Suite for unit (internal) tests.
 
-suite_namespace: execut\navigation\tests\unit
+suite_namespace: execut\crudFields\tests\unit
 class_name: CodeGuy
 modules:
     enabled:

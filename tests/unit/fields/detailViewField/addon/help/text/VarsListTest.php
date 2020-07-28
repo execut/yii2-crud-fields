@@ -5,8 +5,9 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\fields\detailViewField\addon\help\text;
+namespace execut\crudFields\tests\unit\fields\detailViewField\addon\help\text;
 
+use execut\crudFields\fields\detailViewField\addon\help\text\VarsList;
 use execut\crudFields\TestCase;
 
 class VarsListTest extends \Codeception\Test\Unit

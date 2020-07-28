@@ -5,16 +5,18 @@
  * @copyright Copyright (c) 2020 Mamaev Yuriy (eXeCUT)
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
-namespace execut\crudFields\relation;
+namespace execut\crudFields\tests\unit\relation;
 
+use execut\crudFields\relation\UrlMaker;
 use execut\crudFields\TestCase;
+use execut\crudFields\tests\unit\fields\FieldTestModel;
 
 class UrlMakerTest extends \Codeception\Test\Unit
 {
     public function testGetUpdateUrlWithoutUrl()
     {
         $urlMaker = new UrlMaker();
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $this->assertNull($urlMaker->make($model, ''));
     }
 
@@ -24,7 +26,7 @@ class UrlMakerTest extends \Codeception\Test\Unit
             'test',
             'id' => 1,
         ]);
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $this->assertEquals([
             'test/update',
             'id' => 1,
@@ -36,7 +38,7 @@ class UrlMakerTest extends \Codeception\Test\Unit
         $urlMaker = new UrlMaker([
             'test',
         ]);
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $model->id = 1;
         $this->assertEquals([
             'test/update',
@@ -49,7 +51,7 @@ class UrlMakerTest extends \Codeception\Test\Unit
         $urlMaker = new UrlMaker([
             'test',
         ]);
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $model->badAttribute = 1;
         $this->assertNull($urlMaker->make($model, 'badAttribute'));
     }
@@ -59,7 +61,7 @@ class UrlMakerTest extends \Codeception\Test\Unit
         $urlMaker = new UrlMaker([
             'test',
         ]);
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $model->id = [
             'pk1' => 'pk1_value',
             'pk2' => 'pk2_value',
@@ -86,7 +88,7 @@ class UrlMakerTest extends \Codeception\Test\Unit
     public function testMakeFromUpdateUrl()
     {
         $maker = new UrlMaker(null, ['test']);
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $this->assertEquals(['test'], $maker->make($model, 'id'));
     }
 
@@ -99,7 +101,7 @@ class UrlMakerTest extends \Codeception\Test\Unit
     public function testMakeWhenIsNoRenderRelationLink()
     {
         $maker = new UrlMaker(null, ['test'], true);
-        $model = new \execut\crudFields\fields\FieldTestModel();
+        $model = new FieldTestModel();
         $this->assertNull($maker->make($model, 'id'));
     }
 }
