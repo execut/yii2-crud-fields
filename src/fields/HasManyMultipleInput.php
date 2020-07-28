@@ -226,7 +226,7 @@ class HasManyMultipleInput extends Field
         $relatedModelClass = $relation->getRelationModelClass();
         $relatedModel = new $relatedModelClass;
 
-        foreach ($this->value as $rowModel) {
+        foreach ($this->getValue() as $rowModel) {
             $row = array_filter($rowModel->attributes);
             if (!empty($row)) {
                 $relatedModel->scenario = Field::SCENARIO_GRID;
@@ -257,6 +257,10 @@ class HasManyMultipleInput extends Field
         return $query;
     }
 
+    public function _applyScopes(ActiveQuery $query)
+    {
+        return;
+    }
 
     /**
      * {@inheritdoc}
@@ -354,6 +358,15 @@ class HasManyMultipleInput extends Field
         }
 
         return $column;
+    }
+
+    public function getValue()
+    {
+        if ($this->attribute && $this->model->getOldRelation($this->attribute)) {
+            return [];
+        }
+
+        return parent::getValue();
     }
 
     /**
