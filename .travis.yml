@@ -11,6 +11,8 @@ before_install: phpenv config-rm xdebug.ini
 
 # Install packages those will be required during build
 before_script:
+  - ls -lA
+  - ls -lA vendor/
   - travis_retry composer self-update
   - travis_retry composer config minimum-stability dev
   - travis_retry composer install ${COMPOSER_FLAGS} --no-interaction
