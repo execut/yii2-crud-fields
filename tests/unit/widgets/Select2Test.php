@@ -46,6 +46,9 @@ class Select2Test extends \Codeception\Test\Unit
         $result = Select2::widget([
             'id' => 'test-widget',
             'name' => 'test',
+            'data' => [
+                'test' => 'test',
+            ]
         ]);
 
         $out = Yii::$app->view->renderFile(__DIR__ . '/../../views/layout.php', [
@@ -53,7 +56,7 @@ class Select2Test extends \Codeception\Test\Unit
         ]);
 
         $this->assertEqualsWithoutLE('<div class="select2-execut" id="test-widget-execut"><div class="kv-plugin-loading loading-test-widget">&nbsp;</div><select id="test-widget" class="form-control" name="test" data-s2-options="s2options_d6851687" data-krajee-select2="select2_50f2809b" style="width: 1px; height: 1px; visibility: hidden;">
-<option value=""></option>
+<option value="test">test</option>
 </select><div class="select-label"></div></div>', $result);
 
         $this->assertStringContainsString(
