@@ -1,5 +1,4 @@
-# Usage 
-s
+# Usage
 Yii2 CRUD fields will show all their advantages only after you see how easy and fast you can create
 admin panel with its help. To do this, let's look at a couple of examples.
 
