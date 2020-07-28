@@ -15,10 +15,10 @@
       "name": "Mamaev Yuriy (eXeCUT)"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require": {
     "php": "^7.4",
-    "yiisoft/yii2": "@dev",
+    "yiisoft/yii2": "2.*",
     "kartik-v/yii2-date-range": "*",
     "kartik-v/yii2-widget-select2": "*",
     "unclead/yii2-multiple-input": "*",
