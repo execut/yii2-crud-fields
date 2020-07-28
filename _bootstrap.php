@@ -13,8 +13,8 @@ defined('YII_ENV') or define('YII_ENV', 'test');
 $autoloadPath = __DIR__ . '/../../../autoload.php';
 $yiiPath = __DIR__ . '/../../../yiisoft/yii2/Yii.php';
 if (!file_exists($autoloadPath)) {
-    $autoloadPath = __DIR__ . '/../../vendor/autoload.php';//For travis
-    $yiiPath = __DIR__ . '/../../vendor/yiisoft/yii2/Yii.php';
+    $autoloadPath = __DIR__ . '/../vendor/autoload.php';//For travis
+    $yiiPath = __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 }
 
 require_once($autoloadPath);
