@@ -80,7 +80,7 @@ To see the benefits of yii2-crud-fields using execut/yii2-books-native as an exa
 return [
     'bootstrap' => [
          'booksNative' => [
-            'class' => \execut\booksNative\bootstrap\Console::class,
+            'class' => \execut\booksNative\bootstrap\Common::class,
             'moduleConfig' => [
                 'bookModelClass' => \execut\books\models\Book::class,
             ]
@@ -137,7 +137,7 @@ by changing it in the application configuration:
 return [
     'bootstrap' => [
          'crudExample' => [
-            'class' => \execut\booksNative\bootstrap\Console::class,
+            'class' => \execut\booksNative\bootstrap\Common::class,
             'moduleConfig' => [
                 'authorModelClass' => \execut\books\models\Author::class,
             ]
