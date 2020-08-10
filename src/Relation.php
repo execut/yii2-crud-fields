@@ -907,7 +907,7 @@ class Relation extends BaseObject
     public function getLinkRenderer()
     {
         if ($this->linkRenderer === null) {
-            $this->linkRenderer = new LinkRenderer(null, null, null, $this->label);
+            $this->linkRenderer = new LinkRenderer(null, null, null, $this->field->getLabel());
         }
 
         return $this->linkRenderer;

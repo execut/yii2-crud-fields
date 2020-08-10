@@ -807,7 +807,7 @@ class Field extends BaseObject
             'attribute' => $this->attribute,
             'model' => $this->model,
             'isHasRelationAttribute' => $this->isHasRelationAttribute,
-            'label' => $this->getLabel(),
+//            'label' => $this->getLabel(),
         ], $relationObjectParams);
         /**
          * @var DetailViewField $relation
