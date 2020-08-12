@@ -34,6 +34,7 @@ class DateTest extends TestCase
 
     public function testGetColumn() {
         $model = new FieldTestModel();
+        $model->name = null;
         $field = new Date([
             'attribute' => 'name',
             'model' => $model,
@@ -58,6 +59,7 @@ class DateTest extends TestCase
 
     public function testGetColumnWithTime() {
         $model = new FieldTestModel();
+        $model->name = null;
         $field = new Date([
             'attribute' => 'name',
             'model' => $model,
