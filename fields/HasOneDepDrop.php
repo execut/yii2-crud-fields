@@ -21,7 +21,6 @@ class HasOneDepDrop extends HasOneSelect2
     public $depends = [];
     public $dependedAttribute = null;
     public $searchDataScopes = [];
-    public $nameAttribute = null;
     public function getField()
     {
         $field = parent::getField();
@@ -124,7 +123,7 @@ class HasOneDepDrop extends HasOneSelect2
 //                $indexBy = 'Ref_Key';
 //            }
 
-            $result = $query->indexBy($indexBy)->select($this->nameAttribute)->column();
+            $result = $query->indexBy($indexBy)->select($this->getRelationObject()->nameAttribute)->column();
             return $result;
         }
     }
