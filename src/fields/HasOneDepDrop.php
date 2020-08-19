@@ -36,14 +36,6 @@ class HasOneDepDrop extends HasOneSelect2
      * @var array Scopes for search data from relation object
      */
     public $searchDataScopes = [];
-    /**
-     * @var string Name attribute from relation object. @TODO delegate to relation object?
-     */
-    public $nameAttribute = null;
-
-    /**
-     * {@inheritdoc}
-     */
     public function getField()
     {
         $field = parent::getField();
