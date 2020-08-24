@@ -90,11 +90,11 @@ class Book extends \yii\db\ActiveRecord {
 
 If we compare the implementation of such a model with a model without extension, we can see that the amount of code has changed in a positive direction:
 
-[Model on native Yii2 (85 lines)](https://github.com/execut/yii2-books-native/blob/master/models/Book.php) vs [Model on CRUD fields (36 lines)](https://github.com/execut/yii2-books/blob/master/models/Book.php)
+[Model on native Yii2 (85 lines)](https://github.com/execut/yii2-books-native/blob/master/src/models/Book.php) vs [Model on CRUD fields (36 lines)](https://github.com/execut/yii2-books/blob/master/src/models/Book.php)
 
 Or more strong example with books authors:
 
-[Model on native Yii2 (370 lines)](https://github.com/execut/yii2-books-native/blob/master/models/Author.php) vs [Model on CRUD fields (116 lines)](https://github.com/execut/yii2-books/blob/master/models/Author.php)
+[Model on native Yii2 (370 lines)](https://github.com/execut/yii2-books-native/blob/master/src/models/Author.php) vs [Model on CRUD fields (116 lines)](https://github.com/execut/yii2-books/blob/master/src/models/Author.php)
 
 ![Authors CRUD list](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-list.jpg)
 ![Authors CRUD form](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-form.jpg)

@@ -17,7 +17,7 @@ class BooksModule extends \execut\booksNative\Module
     public $booksPlugins = [];
 }
 ```
-Then we expand the book model Book to [BookPluggable](https://github.com/execut/yii2-books/blob/master/models/BookPluggable.php) to be able to connect plugins to it from the configuration of our module:
+Then we expand the book model Book to [BookPluggable](https://github.com/execut/yii2-books/blob/master/src/models/BookPluggable.php) to be able to connect plugins to it from the configuration of our module:
 ```php
 namespace execut\books\models;
 use execut\crudFields\Behavior;

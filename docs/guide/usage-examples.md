@@ -21,7 +21,7 @@ Here is a list of what Yii2 CRUD fields automates from this list:
 CRUD fields, already modified with Yii2, is located in another package [execut/yii2-books](https://github.com/execut/yii2-books)
  and all further examples will refer to it.
 
-The automation of these points is achieved by connecting the behavior to the model [Book](https://github.com/execut/yii2-books/blob/master/models/Book.php) behavior
+The automation of these points is achieved by connecting the behavior to the model [Book](https://github.com/execut/yii2-books/blob/master/src/models/Book.php) behavior
 [execut\crudFields\Behavior](Behavior.php) and trait [execut\crudFields\BehaviorStub](BehaviorStub.php):
 ```php
 namespace execut\books\models;
@@ -73,7 +73,7 @@ var_dump($model->getFormFields());
 
 To see the benefits of yii2-crud-fields using execut/yii2-books-native as an example, you need to modify it using yii2-crud-fields:
 1. Install in your project [example of CRUD execut/yii2-books-native](https://github.com/execut/yii2-books-native).
-1. Replace the native model [execut\booksNative\models\Book](https://github.com/execut/yii2-books-native/blob/master/models/Book.php) with the modified [execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/models/Book.php)
+1. Replace the native model [execut\booksNative\models\Book](https://github.com/execut/yii2-books-native/blob/master/src/models/Book.php) with the modified [execut\books\models\Book](https://github.com/execut/yii2-books/blob/master/src/models/Book.php)
    by redefine it in the application configuration:
 ```php
 return [
@@ -88,7 +88,7 @@ return [
 ];
 ```
 3. As a result, the same CRUD will remain, but with a two-fold simplified model:
-[There were 85 lines](https://github.com/execut/yii2-books-native/blob/master/models/Book.php), but [now it is 37](https://github.com/execut/yii2-books/blob/master/models/Book.php).
+[There were 85 lines](https://github.com/execut/yii2-books-native/blob/master/src/models/Book.php), but [now it is 37](https://github.com/execut/yii2-books/blob/master/src/models/Book.php).
 ![Books CRUD list](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/books-list.jpg)
 ![Books CRUD form](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/books-form.jpg)
 
@@ -120,17 +120,17 @@ Books | Multi-dropdown list with data from the Books section | -
 Date created | Date and time (read-only) | +
 Update date | Date and time (read-only) | -
 
-I tried to partially implement the functionality of a similar CRUD in the form of native Yii2 code in [this file](https://github.com/execut/yii2-books-native/blob/master/models/Author.php).
+I tried to partially implement the functionality of a similar CRUD in the form of native Yii2 code in [this file](https://github.com/execut/yii2-books-native/blob/master/src/models/Author.php).
 For the example to work correctly, you need to support in your PHP the image format that you want to load in CRUD.
 
 Since, when writing a native example, I got tired of copying the code yii2-crud-fields, I intentionally
 did not make some fields (Short description, Biography, Date of birth, Popularity, Email, Books), but even this code turned out to be more,
 than in the full implementation with yii2-crud-fields.
 
-Further, I have already implemented the full functionality of such a CRUD in the [Author model](https://github.com/execut/yii2-books/blob/master/models/Author.php).
+Further, I have already implemented the full functionality of such a CRUD in the [Author model](https://github.com/execut/yii2-books/blob/master/src/models/Author.php).
 To install it in the example CRUD execut/yii2-books-native you need:
 1. Install in your project [example of CRUD execut/yii2-books-native](https://github.com/execut/yii2-books-native).
-1. Replace the native model Author [\execut\booksNative\models\Author](https://github.com/execut/yii2-books-native/blob/master/models/Author.php) with the modified [\execut\books\models\Author](https://github.com/execut/yii2-books/blob/master/models/Author.php)
+1. Replace the native model Author [\execut\booksNative\models\Author](https://github.com/execut/yii2-books-native/blob/master/src/models/Author.php) with the modified [\execut\books\models\Author](https://github.com/execut/yii2-books/blob/master/src/models/Author.php)
 by changing it in the application configuration:
 ```php
 return [
@@ -146,6 +146,6 @@ return [
 ```
 3. As a result, we wrote a more functional and compact CRUD three times faster:
 
-[There were 370 lines](https://github.com/execut/yii2-books-native/blob/master/models/Author.php), but [now it is 116](https://github.com/execut/yii2-books/blob/master/models/Author.php).
+[There were 370 lines](https://github.com/execut/yii2-books-native/blob/master/src/models/Author.php), but [now it is 116](https://github.com/execut/yii2-books/blob/master/src/models/Author.php).
 ![Authors CRUD list](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-list.jpg)
 ![Authors CRUD form](https://raw.githubusercontent.com/execut/yii2-crud/master/docs/guide/i/authors-form.jpg)
