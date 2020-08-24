@@ -84,10 +84,6 @@ class Relation extends BaseObject
      */
     public $value = null;
     /**
-     * @var string Relation label for links
-     */
-    public $label = null;
-    /**
      * @var string Id attribute for list items data
      */
     public $idAttribute = null;
@@ -907,7 +903,7 @@ class Relation extends BaseObject
     public function getLinkRenderer()
     {
         if ($this->linkRenderer === null) {
-            $this->linkRenderer = new LinkRenderer(null, null, null, $this->field->getLabel());
+            $this->linkRenderer = new LinkRenderer(null, null, null, $this->field ? $this->field->getLabel() : null);
         }
 
         return $this->linkRenderer;

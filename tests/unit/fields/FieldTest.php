@@ -382,7 +382,6 @@ class FieldTest extends \Codeception\Test\Unit
             'columnRecordsLimit' => 10,
             'isHasRelationAttribute' => 'isHasRelationAttribute',
             'isNoRenderRelationLink' => true,
-            'label' => 'label',
             'idAttribute' => 'id_attribute',
             'urlMaker' => $urlMaker,
         ], [
@@ -399,7 +398,6 @@ class FieldTest extends \Codeception\Test\Unit
             'columnRecordsLimit' => $relationObject->columnRecordsLimit,
             'isHasRelationAttribute' => $relationObject->isHasRelationAttribute,
             'isNoRenderRelationLink' => $relationObject->isNoRenderRelationLink,
-            'label' => $relationObject->label,
             'idAttribute' => $relationObject->idAttribute,
             'urlMaker' => $relationObject->getUrlMaker(),
         ]);

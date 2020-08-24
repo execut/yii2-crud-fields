@@ -50,7 +50,14 @@ class DateTest extends Unit
         $this->assertEquals([
             'attribute' => 'name',
             'label' => 'Name',
-            'filter' => 1,
+            'filter' => preg_replace('/daterangepicker_[a-z\d]+/', '', DateRangePicker::widget([
+                'attribute' => 'name',
+                'model' => $model,
+                'convertFormat' =>true,
+                'pluginOptions' => [
+                    'locale' => ['format' =>'Y-m-d']
+                ]
+            ])),
             'format' => function () {
                 return null;
             },
@@ -71,7 +78,14 @@ class DateTest extends Unit
         $column['filter'] = preg_replace('/daterangepicker_[a-z\d]+/', '', $column['filter']);
         $this->assertEquals([
             'attribute' => 'name',
-            'filter' => 1,
+            'filter' => preg_replace('/daterangepicker_[a-z\d]+/', '', DateRangePicker::widget([
+                'attribute' => 'name',
+                'model' => $model,
+                'convertFormat' =>true,
+                'pluginOptions' => [
+                    'locale' => ['format' =>'Y-m-d']
+                ]
+            ])),
             'format' => function () {
                 return null;
             },

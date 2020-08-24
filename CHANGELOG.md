@@ -8,6 +8,10 @@ eXeCUT Yii2 CRUD fields
 - API docs
 - Added changelog file
 
-0.1.0 Apr 2, 2017 - 0.53.0 July 18, 2020
+0.53.2 2020-08-24
+---
+- Fixed tests
+
+0.1.0 Apr 2, 2017 - 0.53.1 July 18, 2020
 ----
 - Changelog does not exist
