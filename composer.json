@@ -36,7 +36,8 @@
     "codeception/module-yii2": "^1.0",
     "codeception/module-filesystem": "^1.0",
     "codeception/verify": "~0.5.0 || ~1.1.0",
-    "execut/yii2-settings": "*"
+    "execut/yii2-settings": "*",
+    "execut/yii2-crud": "*"
   },
   "autoload": {
     "psr-4": {

@@ -1,15 +1,31 @@
 <?php
 use execut\crudFields\widgets\Select2ExecutAsset;
 use kartik\select2\Select2Asset;
+use yii\bootstrap\BootstrapPluginAsset;
+use yii\jui\JuiAsset;
 
 $params = [];
 
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
-    'modules' => [],
+    'bootstrap' => [
+        'log',
+    ],
+    'modules' => [
+        'gridview' => [
+            'class' => '\kartik\grid\Module',
+        ],
+    ],
     'components' => [
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => getenv('DB_DSN'),
+            'username' => getenv('DB_USER'),
+            'password' => getenv('DB_PASSWORD'),
+            'charset' => 'utf8',
+            'enableSchemaCache' => true,
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -25,6 +41,24 @@ return [
         'assetManager' => [
             'basePath' => __DIR__ . '/../../tests/assets/',
             'bundles' => [
+                JuiAsset::class => [
+                    'sourcePath' => null,
+                    'js' => [],
+                    'css' => [],
+                    'depends' => [],
+                ],
+                \execut\crudFields\widgets\HasRelationDropdownAsset::class => [
+                    'sourcePath' => null,
+                    'js' => [],
+                    'css' => [],
+                    'depends' => [],
+                ],
+                BootstrapPluginAsset::class => [
+                    'sourcePath' => null,
+                    'js' => [],
+                    'css' => [],
+                    'depends' => [],
+                ],
                 Select2ExecutAsset::class => [
                     'sourcePath' => null,
                     'js' => [],
@@ -69,24 +103,11 @@ return [
 //            'class' => 'yii\caching\FileCache',
 //        ],
         'i18n' => [
-//            'translations' => [
-//                'app'=>[
-//                    'class' => 'yii\i18n\PhpMessageSource',
-//                    'basePath' => "@app/messages",
-//                    'sourceLanguage' => 'en_US',
-//                    'fileMap' => [
-//                        'app'=>'app.php',
-//                    ]
-//                ],
-//                'common.modules.catalog.models' => [
-//                    'class' => 'yii\i18n\PhpMessageSource',
-//                    'basePath' => '@app/modules/catalog/messages',
-//                    'sourceLanguage' => 'en',
-//                    'fileMap' => [
-//                        'common.modules.catalog.models' => 'models.php',
-//                    ],
-//                ],
-//            ],
+            'translations' => [
+                '*' => [
+                    'class' => \yii\i18n\PhpMessageSource::class,
+                ],
+            ]
         ],
     ],
     'params' => $params,

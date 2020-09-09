@@ -7,6 +7,9 @@
  */
 namespace execut\crudFields\fields;
 
+use execut\crudFields\fields\HasManyMultipleInput\GridRenderer;
+use execut\crudFields\relation\HasManyScope;
+use execut\crudFields\relation\Value;
 use execut\oData\ActiveRecord;
 use kartik\detail\DetailView;
 use kartik\grid\BooleanColumn;
@@ -27,8 +30,9 @@ use yii\web\JsExpression;
  * @package execut\crudFields
  * @see MultipleInput
  */
-class HasManyMultipleInput extends Field
+class HasManyMultipleInput extends Field implements Value
 {
+    protected ?GridRenderer $gridRenderer = null;
     /**
      * @var array Configuration for GridView of relation
      */
@@ -92,7 +96,20 @@ class HasManyMultipleInput extends Field
                         'class' => 'success',
                     ],
                 ],
-                $this->attribute => $this->getGrid(),
+                $this->attribute => [
+                    'value' => '',
+                    'format' => 'raw',
+                    'displayOnly' => true,
+                    'group' => true,
+                    'groupOptions' => [
+                        'style' => [
+                            'padding' => 0,
+                        ],
+                    ],
+                    'label' => function () {
+                        return $this->renderFieldGrid();
+                    },
+                ],
             ];
         }
 
@@ -117,88 +134,18 @@ class HasManyMultipleInput extends Field
             'attribute' => $attribute,
 //            'label' => $this->getLabel(),
             'format' => 'raw',
-            'value' => function () {
-                $dataProvider = new ActiveDataProvider();
+            'value' => '',
+//            'value' => function () {
+//                $dataProvider = new ActiveDataProvider();
 //                $query = $this->model->getRelation($this->relation);
 //                $dataProvider->query = $query;
 //                return GridView::widget([
 //                    'dataProvider' => $dataProvider,
 //                    'columns' => $this->columns,
 //                ]);
-            },
+//            },
             'widgetOptions' => $widgetOptions,
         ], $field);
-    }
-
-    /**
-     * Returns GridView config
-     */
-    protected function getGrid()
-    {
-        return [
-            'value' => '',
-            'format' => 'raw',
-            'displayOnly' => true,
-            'group' => true,
-            'groupOptions' => [
-                'style' => [
-                    'padding' => 0,
-                ],
-            ],
-            'label' => function () {
-                $model = $this->model;
-                $relationName = $this->getRelationObject()->getName();
-                $dataProvider = new ActiveDataProvider([
-                    'query' => $model->getRelation($relationName),
-                ]);
-
-                $widgetClass = GridView::class;
-                $gridOptions = $this->getGridOptions();
-
-                if (!empty($gridOptions['class'])) {
-                    $widgetClass = $gridOptions['class'];
-                }
-
-                return $widgetClass::widget(ArrayHelper::merge([
-                    'dataProvider' => $dataProvider,
-                    'layout' => '{toolbar}{summary}{items}{pager}',
-                    'bordered' => false,
-                    'columns' => $this->getRelationObject()->getRelationModel()->getGridColumns(),
-                    'showOnEmpty' => true,
-                ], $gridOptions));
-            },
-        ];
-    }
-
-    /**
-     * Returns calculated GridView options
-     * @return array
-     */
-    protected function getGridOptions()
-    {
-        $gridOptions = $this->gridOptions;
-        if (is_callable($gridOptions)) {
-            $gridOptions = $gridOptions();
-        }
-
-        return $gridOptions;
-    }
-
-    /**
-     * Returns name param for filtration related records
-     * @TODO Copy-past from HasOneSelect2
-     *
-     * @return null|string
-     */
-    public function getNameParam() {
-        if ($this->nameParam !== null) {
-            return $this->nameParam;
-        }
-
-        $relation = $this->getRelationObject();
-        $formName = $relation->getRelationFormName();
-
-        return $formName . '[' . $relation->nameAttribute . ']';
     }
 
     /**
@@ -206,60 +153,12 @@ class HasManyMultipleInput extends Field
      */
     public function applyScopes(ActiveQueryInterface $query)
     {
-        /**
-         * @TODO Учесть with=false
-         */
-        $relation = $this->getRelationObject();
-        if ($relation->getColumnRecordsLimit() === null || $relation->getColumnRecordsLimit() === false) {
-            $query->with($relation->getWith());
-        }
+        $scope = new HasManyScope($query, $this, $this->getRelationObject());
 
-        if ($this->scope === false) {
-            return $query;
-        }
+        $scope->setIsApplyScope($this->scope);
+        $scope->setModel($this->model);
 
-        if (!empty($this->model->errors)) {
-            return $query->andWhere('false');
-        }
-
-        $relation->applyScopeIsExistRecords($query);
-        $relatedModelClass = $relation->getRelationModelClass();
-        $relatedModel = new $relatedModelClass;
-
-        foreach ($this->getValue() as $rowModel) {
-            $row = array_filter($rowModel->attributes);
-            if (!empty($row)) {
-                $relatedModel->scenario = Field::SCENARIO_GRID;
-                $relatedModel->attributes = $row;
-                $relationQuery = clone $relation->getQuery();
-                $relationQuery = $relatedModel->applyScopes($relationQuery);
-
-                $relationQuery->select(key($relationQuery->link));
-                $relationQuery->indexBy = key($relationQuery->link);
-
-
-                if (!($this->model instanceof ActiveRecord)) {
-                    $attributePrefix = $this->model->tableName() . '.';
-                } else {
-                    $attributePrefix = '';
-                }
-
-                $relatedAttribute = current($relationQuery->link);
-                $relationQuery->primaryModel = null;
-                $relationQuery->link = null;
-
-                $query->andWhere([
-                    $attributePrefix . $relatedAttribute => $relationQuery,
-                ]);
-            }
-        }
-
-        return $query;
-    }
-
-    public function _applyScopes(ActiveQuery $query)
-    {
-        return;
+        return $scope->applyScopes();
     }
 
     /**
@@ -274,51 +173,7 @@ class HasManyMultipleInput extends Field
 
         if ($this->isGridInColumn) {
             $valueClosure = function ($row) {
-                /**
-                 * @var \yii\db\ActiveRecord $row
-                 */
-                $relationName = $this->getRelationObject()->getName();
-                if ($row->isRelationPopulated($relationName)) {
-                    $allModels = $row->$relationName;
-                } else {
-                    $limit = $this->getRelationObject()->getColumnRecordsLimit();
-                    $q = $row->getRelation($relationName);
-                    if ($limit !== false) {
-                        if ($limit === null) {
-                            $limit = 10;
-                        }
-
-                        $q->limit($limit);
-                    }
-
-                    $allModels = $q->all();
-                }
-
-                if (!$allModels) {
-                    return '';
-                }
-                $dataProvider = new ArrayDataProvider([
-                    'allModels' => $allModels,
-                ]);
-
-                $widgetClass = GridView::class;
-                $gridOptions = $this->getGridOptions();
-                if (!empty($gridOptions['class'])) {
-                    $widgetClass = $gridOptions['class'];
-                }
-
-                $gridColumns = $this->getRelationObject()->getRelationModel()->getGridColumns();
-                unset($gridColumns['actions']);
-                return $widgetClass::widget(ArrayHelper::merge([
-                    'dataProvider' => $dataProvider,
-                    'layout' => '{items}',
-                    'export' => false,
-                    'resizableColumns' => false,
-                    'bordered' => false,
-                    'toolbar' => '',
-                    'columns' => $gridColumns,
-                    'showOnEmpty' => true,
-                ], $gridOptions));
+                return $this->renderColumnGrid($row);
             };
         } else {
             $valueClosure = function ($row) {
@@ -333,7 +188,6 @@ class HasManyMultipleInput extends Field
         ], $column);
 
         if (!array_key_exists('filter', $column) || $column['filter'] !== false) {
-            $multipleInputWidgetOptions = $this->getMultipleInputWidgetOptions();
             if (!$this->isRenderFilter) {
                 if ($this->isHasRelationAttribute !== false) {
                     $column['filter'] = $this->renderHasRelationFilter();
@@ -344,6 +198,7 @@ class HasManyMultipleInput extends Field
                 return $column;
             }
 
+            $multipleInputWidgetOptions = $this->getMultipleInputWidgetOptions();
             $multipleInputWidgetOptions = ArrayHelper::merge($multipleInputWidgetOptions, [
                 'attribute' => $this->attribute,
                 'model' => $this->model,
@@ -360,8 +215,20 @@ class HasManyMultipleInput extends Field
         return $column;
     }
 
+    protected $value = null;
+    public function setValue($value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
     public function getValue()
     {
+        if ($this->value !== null) {
+            return $this->value;
+        }
+
         if ($this->attribute && $this->model->getOldRelation($this->attribute)) {
             return [];
         }
@@ -376,7 +243,6 @@ class HasManyMultipleInput extends Field
      */
     protected function getMultipleInputWidgetOptions(): array
     {
-        $nameParam = $this->getNameParam();
         $relation = $this->getRelationObject();
         if ($relation->isVia()) {
             $sourceInitText = $relation->getSourcesText();
@@ -395,43 +261,43 @@ class HasManyMultipleInput extends Field
 JS
             );
             $targetFields = [
-                'id' => [
-                    'name' => 'id',
-                    'type' => Select2::class,
-                    'defaultValue' => null,
-                    'value' => $sourceInitText,
-                    'headerOptions' => [
-                        'style' => 'width: 150px;',
-                    ],
-                    'options' => [
-                        'initValueText' => $sourceInitText,
-                        'pluginEvents' => [
-                            'change' => $changeEvent,
-                        ],
-                        'pluginOptions' => [
-                            'allowClear' => true,
-                            'placeholder' => '',
-                            'ajax' => [
-                                'url' => Url::to($this->getUrl()),
-                                'dataType' => 'json',
-                                'data' => new JsExpression(<<<JS
-    function(params) {
-        return {
-            "$nameParam": params.term
-        };
-    }
-JS
-                                )
-                            ],
-                        ],
-                    ],
-                ],
+//                'id' => [
+//                    'name' => 'id',
+//                    'type' => Select2::class,
+//                    'defaultValue' => null,
+//                    'value' => $sourceInitText,
+//                    'headerOptions' => [
+//                        'style' => 'width: 150px;',
+//                    ],
+//                    'options' => [
+//                        'initValueText' => $sourceInitText,
+//                        'pluginEvents' => [
+//                            'change' => $changeEvent,
+//                        ],
+//                        'pluginOptions' => [
+//                            'allowClear' => true,
+//                            'placeholder' => '',
+//                            'ajax' => [
+//                                'url' => Url::to($this->getUrl()),
+//                                'dataType' => 'json',
+//                                'data' => new JsExpression(<<<JS
+//    function(params) {
+//        return {
+//            "$nameParam": params.term
+//        };
+//    }
+//JS
+//                                )
+//                            ],
+//                        ],
+//                    ],
+//                ],
             ];
             $columns = ArrayHelper::merge($targetFields, $viaRelationModel->getMultipleInputFields(), $this->viaColumns);
 
-            foreach ($columns as &$column) {
+            foreach ($columns as $key => $column) {
                 if (empty($column['title']) && !empty($column['name'])) {
-                    $column['title'] = Html::activeLabel($viaRelationModel, $column['name']);
+                    $columns[$key]['title'] = Html::activeLabel($viaRelationModel, $column['name']);
                 }
             }
         } else {
@@ -477,5 +343,58 @@ JS
         return ArrayHelper::merge($field, [
             'options' => $options,
         ]);
+    }
+
+    /**
+     * getGridRenderer
+     * @return GridRenderer
+     */
+    protected function getGridRenderer(): GridRenderer
+    {
+        if ($this->gridRenderer !== null) {
+            return $this->gridRenderer;
+        }
+
+        $renderer = new GridRenderer($this->gridOptions);
+        return $renderer;
+    }
+
+    public function setGridRenderer(GridRenderer $renderer)
+    {
+        $this->gridRenderer = $renderer;
+    }
+
+    /**
+     * renderColumnGrid
+     * @param $row
+     * @return string
+     * @throws \yii\db\Exception
+     */
+    protected function renderColumnGrid($row): string
+    {
+        $renderer = $this->getColumnGridRenderer($row);
+
+        return $renderer->render();
+    }
+
+    protected function renderFieldGrid()
+    {
+        $renderer = $this->getGridRenderer();
+        $renderer->setParams(new GridRenderer\Params\Field($this->getRelationName(), $this->getRelationObject()->getRelationModel()->getGridColumns(), $this->model));
+
+        return $renderer->render();
+    }
+
+    /**
+     * getColumnGridRenderer
+     * @param $row
+     * @return GridRenderer
+     */
+    protected function getColumnGridRenderer($row): GridRenderer
+    {
+        $renderer = $this->getGridRenderer();
+        $renderer->setParams(new GridRenderer\Params\Column($this->getRelationName(), $this->getRelationObject()->getRelationModel()->getGridColumns(), $row, $this->getRelationObject()->getColumnRecordsLimit()));
+
+        return $renderer;
     }
 }
