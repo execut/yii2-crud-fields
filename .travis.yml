@@ -18,7 +18,7 @@ before_script:
 
 script:
   - ./vendor/bin/codecept build
-  - ./vendor/bin/codecept run
+  - ./vendor/bin/codecept run --skip-group db
 
 #after_script:
 

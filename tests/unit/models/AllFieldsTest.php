@@ -209,6 +209,9 @@ class AllFieldsTest extends Unit
         $this->assertEquals('select2Via', $via[0]);
     }
 
+    /**
+     * @group db
+     */
     public function testSave()
     {
         $model = new AllFields();
@@ -217,6 +220,9 @@ class AllFieldsTest extends Unit
         $this->assertTrue($model->save());
     }
 
+    /**
+     * @group db
+     */
     public function testSaveHasManySelect2ViaField()
     {
         $model = new AllFields();
@@ -254,6 +260,9 @@ class AllFieldsTest extends Unit
         $this->assertEquals(Nested::class, $query->modelClass);
     }
 
+    /**
+     * @group db
+     */
     public function testGetRecursiveFields() {
         $model = new AllFields;
         $field = $model->getField('hasManyMultipleinput');

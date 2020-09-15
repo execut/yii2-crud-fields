@@ -1,7 +1,7 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
-0.54.0 2020-09-15
+0.54.0 dev
 ---
 - HasManyMultipleInput field refactoring
 - Added tests for HasManyMultipleInput

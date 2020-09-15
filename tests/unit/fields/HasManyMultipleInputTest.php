@@ -98,6 +98,9 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         $this->assertInstanceOf(HasManyMultipleInput\Grid\Field::class, $field->getFieldGrid());
     }
 
+    /**
+     * @group db
+     */
     public function testGetFieldAsGrid()
     {
         $model = $this->getTestModel();
@@ -180,6 +183,9 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         ], $field);
     }
 
+    /**
+     * @group db
+     */
     public function testGetFieldForHasManyRelationVia()
     {
         $model = $this->getTestModel(true);
@@ -329,6 +335,9 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         $this->assertEquals($query, $field->applyScopes($query));
     }
 
+    /**
+     * @group db
+     */
     public function testApplyScopesWithModel()
     {
         $model = new AllFields();
@@ -405,6 +414,9 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         $this->assertInstanceOf(HasManyMultipleInput\Grid\Column::class, $field->getColumnGrid());
     }
 
+    /**
+     * @group db
+     */
     public function testGetColumnAsGrid()
     {
         $model = $this->getTestModel();
@@ -435,6 +447,9 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         $this->assertStringContainsString('test', $result);
     }
 
+    /**
+     * @group db
+     */
     public function testGetColumnWithHasRelationFilter()
     {
         $model = new AllFields();
@@ -459,6 +474,9 @@ class="has-relation-dropdown"><select id="allfields-hasmanymultipleinput_hasrela
 HTML, $filter);
     }
 
+    /**
+     * @group db
+     */
     public function testGetColumnWithHasManyFilter()
     {
         $model = new AllFields();
@@ -485,6 +503,9 @@ class="has-relation-dropdown"><select id="allfields-hasmanymultipleinput_hasrela
 HTML, $filter);
     }
 
+    /**
+     * @group db
+     */
     public function testGetMultipleInputField()
     {
         $model = $this->getTestModel();
