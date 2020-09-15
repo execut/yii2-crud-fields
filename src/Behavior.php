@@ -439,18 +439,19 @@ class Behavior extends BaseBehavior
             }
 
             if (is_array($field)) {
-                if (empty($field['class'])) {
+                $fieldConfig = $field;
+                if (empty($fieldConfig['class'])) {
                     $class = Field::class;
                 } else {
-                    $class = $field['class'];
-                    unset($field['class']);
+                    $class = $fieldConfig['class'];
+                    unset($fieldConfig['class']);
                 }
 
                 if (!is_subclass_of($class, Field::class) && $class !== Field::class) {
                     $this->throwFieldClassException($key, $class);
                 }
 
-                $field = new $class($field);
+                $field = \yii::$container->get($class, [$fieldConfig]);
             } else {
                 if (!($field instanceof Field)) {
                     $this->throwFieldClassException($key, $field);

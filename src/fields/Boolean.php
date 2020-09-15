@@ -8,6 +8,7 @@
 namespace execut\crudFields\fields;
 
 use kartik\detail\DetailView;
+use kartik\grid\BooleanColumn;
 use unclead\multipleinput\MultipleInputColumn;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;

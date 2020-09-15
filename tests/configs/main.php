@@ -12,11 +12,7 @@ return [
     'bootstrap' => [
         'log',
     ],
-    'modules' => [
-        'gridview' => [
-            'class' => '\kartik\grid\Module',
-        ],
-    ],
+//    'vendorPath' => dirname(__DIR__) . '/vendor',
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',

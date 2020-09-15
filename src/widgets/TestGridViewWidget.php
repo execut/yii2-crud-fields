@@ -15,6 +15,13 @@ class TestGridViewWidget extends GridView
     public static $test = null;
     public $dataProvider = null;
     public static $factDataProvider = null;
+    public static $factConfig = null;
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+        self::$factConfig =  $config;
+    }
+
     public function init()
     {
     }
@@ -23,6 +30,7 @@ class TestGridViewWidget extends GridView
     {
         self::$isRunned = true;
         self::$factDataProvider = $this->dataProvider;
+        return 'test';
     }
 
     public function setTest(string $test)

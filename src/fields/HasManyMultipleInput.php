@@ -7,7 +7,7 @@
  */
 namespace execut\crudFields\fields;
 
-use execut\crudFields\fields\HasManyMultipleInput\GridRenderer;
+use execut\crudFields\fields\HasManyMultipleInput\Grid\Grid;
 use execut\crudFields\relation\HasManyScope;
 use execut\crudFields\relation\Value;
 use execut\oData\ActiveRecord;
@@ -32,11 +32,8 @@ use yii\web\JsExpression;
  */
 class HasManyMultipleInput extends Field implements Value
 {
-    protected ?GridRenderer $gridRenderer = null;
-    /**
-     * @var array Configuration for GridView of relation
-     */
-    public $gridOptions = [];
+    protected ?Grid $fieldGrid = null;
+    protected ?Grid $columnGrid = null;
     /**
      * @var array Columns for MultipleInput widget
      * @see MultipleInput
@@ -345,23 +342,36 @@ JS
         ]);
     }
 
-    /**
-     * getGridRenderer
-     * @return GridRenderer
-     */
-    protected function getGridRenderer(): GridRenderer
+    protected function setFieldGrid(Grid $grid)
     {
-        if ($this->gridRenderer !== null) {
-            return $this->gridRenderer;
-        }
+        $this->fieldGrid = $grid;
 
-        $renderer = new GridRenderer($this->gridOptions);
-        return $renderer;
+        return $this;
     }
 
-    public function setGridRenderer(GridRenderer $renderer)
+    public function getFieldGrid():?Grid
     {
-        $this->gridRenderer = $renderer;
+        if ($this->fieldGrid === null) {
+            $this->fieldGrid = new \execut\crudFields\fields\HasManyMultipleInput\Grid\Field([]);
+        }
+
+        return $this->fieldGrid;
+    }
+
+    protected function setColumnGrid(Grid $grid)
+    {
+        $this->columnGrid = $grid;
+
+        return $this;
+    }
+
+    public function getColumnGrid():?Grid
+    {
+        if ($this->columnGrid === null) {
+            $this->columnGrid = new \execut\crudFields\fields\HasManyMultipleInput\Grid\Column([]);
+        }
+
+        return $this->columnGrid;
     }
 
     /**
@@ -370,31 +380,17 @@ JS
      * @return string
      * @throws \yii\db\Exception
      */
-    protected function renderColumnGrid($row): string
+    protected function renderColumnGrid($row): ?string
     {
-        $renderer = $this->getColumnGridRenderer($row);
+        $grid = $this->getColumnGrid();
 
-        return $renderer->render();
+        return $grid->render($this->getRelationObject(), $row);
     }
 
     protected function renderFieldGrid()
     {
-        $renderer = $this->getGridRenderer();
-        $renderer->setParams(new GridRenderer\Params\Field($this->getRelationName(), $this->getRelationObject()->getRelationModel()->getGridColumns(), $this->model));
+        $grid = $this->getFieldGrid();
 
-        return $renderer->render();
-    }
-
-    /**
-     * getColumnGridRenderer
-     * @param $row
-     * @return GridRenderer
-     */
-    protected function getColumnGridRenderer($row): GridRenderer
-    {
-        $renderer = $this->getGridRenderer();
-        $renderer->setParams(new GridRenderer\Params\Column($this->getRelationName(), $this->getRelationObject()->getRelationModel()->getGridColumns(), $row, $this->getRelationObject()->getColumnRecordsLimit()));
-
-        return $renderer;
+        return $grid->render($this->getRelationObject(), $this->model);
     }
 }

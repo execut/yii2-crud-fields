@@ -92,17 +92,17 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         return $model;
     }
 
+    public function testGetFieldGridByDefault()
+    {
+        $field = new HasManyMultipleInput();
+        $this->assertInstanceOf(HasManyMultipleInput\Grid\Field::class, $field->getFieldGrid());
+    }
+
     public function testGetFieldAsGrid()
     {
         $model = $this->getTestModel();
-        $gridRenderer = $this->getMockBuilder(HasManyMultipleInput\GridRenderer::class)
-            ->setConstructorArgs([[]])
+        $grid = $this->getMockBuilder(HasManyMultipleInput\Grid\Grid::class)
             ->getMock();
-        $gridRenderer->expects($this->once())
-            ->method('setParams')
-            ->with($this->isInstanceOf(HasManyMultipleInput\GridRenderer\Params\Field::class));
-        $gridRenderer->method('render')
-            ->willReturn('test');
         $field = new HasManyMultipleInput([
             'isGridForOldRecords' => true,
             'model' => $model,
@@ -110,8 +110,12 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
             'relation' => 'hasManyMultipleinput',
             'relationQuery' => $model->getRelation('hasManyMultipleinput'),
             'label' => 'Label',
-            'gridRenderer' => $gridRenderer,
+            'fieldGrid' => $grid,
         ]);
+        $grid->expects($this->once())
+            ->method('render')
+            ->with($field->getRelationObject(), $model)
+            ->willReturn('test');
         $fields = $field->getFields();
         $this->assertEquals([
             'hasManyMultipleinputGroup' => [
@@ -394,35 +398,39 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
         $this->assertEquals(1, $value($model));
     }
 
+
+    public function testGetColumnGridByDefault()
+    {
+        $field = new HasManyMultipleInput();
+        $this->assertInstanceOf(HasManyMultipleInput\Grid\Column::class, $field->getColumnGrid());
+    }
+
     public function testGetColumnAsGrid()
     {
-
         $model = $this->getTestModel();
-        $gridRenderer = $this->getMockBuilder(HasManyMultipleInput\GridRenderer::class)
-            ->setConstructorArgs([[]])
+        $grid = $this->getMockBuilder(HasManyMultipleInput\Grid\Grid::class)
             ->getMock();
-        $gridRenderer->expects($this->once())
-            ->method('setParams')
-            ->with($this->isInstanceOf(HasManyMultipleInput\GridRenderer\Params\Column::class));
-        $gridRenderer->method('render')
-            ->willReturn('test');
-
         $field = new HasManyMultipleInput([
             'relation' => 'hasManyMultipleinput',
             'attribute' => 'hasManyMultipleinput',
             'relationQuery' => $model->getRelation('hasManyMultipleinput'),
             'model' => $model,
-            'gridRenderer' => $gridRenderer,
+            'columnGrid' => $grid,
             'column' => [
                 'filter' => false,
             ],
             'isGridInColumn' => true,
         ]);
+        $grid->expects($this->once())
+            ->method('render')
+            ->with($field->getRelationObject(), $model)
+            ->willReturn('test');
+
+
         $column = $field->getColumn();
         $this->assertArrayHasKey('value', $column);
         $callback = $column['value'];
         $this->assertIsCallable($callback);
-
         $result = $callback($model);
         $this->assertStringContainsString('test', $result);
     }

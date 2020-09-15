@@ -22,6 +22,7 @@ use yii\helpers\Url;
  */
 class HasOneDepDrop extends HasOneSelect2
 {
+    public $nameAttribute = null;
     /**
      * @var array Array of depends for DepDrop widget
      * @see DepDrop
