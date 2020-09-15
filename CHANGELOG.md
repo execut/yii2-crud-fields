@@ -1,9 +1,23 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
-0.53.2 2020-08-24
+0.54.0 2020-09-15
 ---
-- Fixed tests
+- HasManyMultipleInput field refactoring
+- Added tests for HasManyMultipleInput
+- Added classes for grids of HasManyMultipleInput field
+
+0.53.3 2020-08-24
+---
+- Fixed a bug with relations labels translation
+
+0.53.2 2020-08-19
+---
+- Fixed a bug with date field validation for tests
+
+0.53.1 2020-07-28
+---
+- New kartik select2 version adaptation
 
 0.53.0 2020-07-15
 ---------------------
