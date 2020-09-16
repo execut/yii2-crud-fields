@@ -37,12 +37,13 @@ class Date extends Field
      */
     protected function getRules(): array
     {
+        $self = $this;
         return ArrayHelper::merge(parent::getRules(), [
             $this->attribute . 'Date' => [
                 $this->attribute,
-                function () {
-                    if (!$this->extractIntervalDates()) {
-                        $this->model->addError($this->attribute, 'Bad date interval "' . $this->getValue() . '"');
+                function () use ($self) {
+                    if (!$self->extractIntervalDates()) {
+                        $self->model->addError($self->attribute, 'Bad date interval "' . $self->getValue() . '"');
                         return false;
                     }
 
