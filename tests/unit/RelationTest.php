@@ -315,4 +315,38 @@ class RelationTest extends \Codeception\Test\Unit
         ]);
         $this->assertEquals($limit, $relation->getColumnRecordsLimit());
     }
+
+    public function testGetNameAttribute()
+    {
+        $nameAttribute = 'test';
+        $relation = new Relation([
+            'nameAttribute' => $nameAttribute,
+        ]);
+        $this->assertEquals($nameAttribute, $relation->getNameAttribute());
+    }
+
+    public function testSetNameAttribute()
+    {
+        $nameAttribute = 'test';
+        $relation = new Relation();
+        $relation->setNameAttribute($nameAttribute);
+        $this->assertEquals($nameAttribute, $relation->getNameAttribute());
+    }
+
+    public function testGetOrderByAttribute()
+    {
+        $nameAttribute = 'test';
+        $relation = new Relation([
+            'orderByAttribute' => $nameAttribute,
+        ]);
+        $this->assertEquals($nameAttribute, $relation->getOrderByAttribute());
+    }
+
+    public function testSetOrderByAttribute()
+    {
+        $nameAttribute = 'test';
+        $relation = new Relation();
+        $relation->setOrderByAttribute($nameAttribute);
+        $this->assertEquals($nameAttribute, $relation->getOrderByAttribute());
+    }
 }

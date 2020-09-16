@@ -1,6 +1,10 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
+0.54.1 2020-09-16
+---
+- Added setters and getters to relation object for tests
+
 0.54.0 2020-09-15
 ---
 - HasManyMultipleInput field refactoring

@@ -42,7 +42,7 @@ class Relation extends BaseObject
     /**
      * @var string Relation name attribute
      */
-    public $nameAttribute = 'name';
+    protected $nameAttribute = 'name';
     /**
      * @var string Relation value attribute
      */
@@ -934,5 +934,37 @@ class Relation extends BaseObject
     public function getColumnRecordsLimit()
     {
         return $this->columnRecordsLimit;
+    }
+
+    /**
+     * @param string $nameAttribute
+     */
+    public function setNameAttribute(string $nameAttribute): void
+    {
+        $this->nameAttribute = $nameAttribute;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameAttribute(): string
+    {
+        return $this->nameAttribute;
+    }
+
+    /**
+     * @param string $attribute
+     */
+    public function setOrderByAttribute(string $attribute): void
+    {
+        $this->orderByAttribute = $attribute;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrderByAttribute(): ?string
+    {
+        return $this->orderByAttribute;
     }
 }
