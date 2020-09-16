@@ -27,6 +27,15 @@ class DynaGrid extends Field
             'bordered' => false,
             'updateUrl' => $url,
             'addButtonUrl' => $url,
+            'containerOptions' => [
+                'style' => <<<TEXT
+overflow-x: scroll;
+position: relative;
+width: 100vw;
+TEXT
+            ],
+            'floatHeader' => false,
+            'resizableColumns' => false,
             'dataProvider' => $this->getDataProvider($model, $relation),
         ]);
 
