@@ -1,7 +1,7 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
-0.54.3
+0.54.3 2020-09-16
 ---
 - Fixed a bug with date validation and new yii2
 - Added scrollbars for hasMany DynaGrid
