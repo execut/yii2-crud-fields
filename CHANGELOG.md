@@ -1,6 +1,11 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
+0.54.3
+---
+- Fixed a bug with date validation and new yii2
+- Added scrollbars for hasMany DynaGrid
+
 0.54.2 2020-09-16
 ---
 - Added supporting of callback name attribute for relation object
