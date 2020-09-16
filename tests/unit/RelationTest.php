@@ -333,6 +333,15 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals($nameAttribute, $relation->getNameAttribute());
     }
 
+    public function testSetNameAttributeCallback()
+    {
+        $relation = new Relation();
+        $nameAttribute = function () {
+        };
+        $relation->setNameAttribute($nameAttribute);
+        $this->assertEquals($nameAttribute, $relation->getNameAttribute());
+    }
+
     public function testGetOrderByAttribute()
     {
         $nameAttribute = 'test';

@@ -939,7 +939,7 @@ class Relation extends BaseObject
     /**
      * @param string $nameAttribute
      */
-    public function setNameAttribute(string $nameAttribute): void
+    public function setNameAttribute($nameAttribute): void
     {
         $this->nameAttribute = $nameAttribute;
     }
@@ -947,7 +947,7 @@ class Relation extends BaseObject
     /**
      * @return string
      */
-    public function getNameAttribute(): string
+    public function getNameAttribute()
     {
         return $this->nameAttribute;
     }

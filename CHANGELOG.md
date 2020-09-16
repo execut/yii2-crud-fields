@@ -1,6 +1,10 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
+0.54.2 2020-09-16
+---
+- Added supporting of callback name attribute for relation object
+
 0.54.1 2020-09-16
 ---
 - Added setters and getters to relation object for tests
