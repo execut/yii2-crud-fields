@@ -31,7 +31,7 @@ class DynaGrid extends Field
                 'style' => <<<TEXT
 overflow-x: scroll;
 position: relative;
-width: 100vw;
+width: 98vw;
 TEXT
             ],
             'floatHeader' => false,
@@ -39,9 +39,14 @@ TEXT
             'dataProvider' => $this->getDataProvider($model, $relation),
         ]);
 
+        $gridColumns = $relation->getRelationModel()->getGridColumns();
+        if (!empty($gridColumns['actions'])) {
+            $gridColumns['actions']['width'] = '';
+        }
+
         return \execut\actions\widgets\DynaGrid::widget([
             'dataProvider' => $params['dataProvider'],
-            'columns' => $relation->getRelationModel()->getGridColumns(),
+            'columns' => $gridColumns,
             'gridOptions' => $params,
         ]);
     }
