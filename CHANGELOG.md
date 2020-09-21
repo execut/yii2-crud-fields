@@ -1,6 +1,10 @@
 eXeCUT Yii2 CRUD fields
 ==============================================
 
+0.54.4 2020-09-21
+---
+- Removed width for action columns inside fields DynaGrids
+
 0.54.3 2020-09-16
 ---
 - Fixed a bug with date validation and new yii2
