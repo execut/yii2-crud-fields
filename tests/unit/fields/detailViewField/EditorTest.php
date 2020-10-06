@@ -8,12 +8,12 @@
 
 namespace execut\crudFields\tests\unit\fields\detailViewField;
 
+use Codeception\Test\Unit;
 use execut\crudFields\fields\detailViewField\Editor;
-use execut\crudFields\TestCase;
-use iutbay\yii2kcfinder\CKEditor;
+use execut\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 
-class EditorTest extends \Codeception\Test\Unit
+class EditorTest extends Unit
 {
     public function testGetConfig()
     {
