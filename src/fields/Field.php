@@ -426,7 +426,8 @@ class Field extends BaseObject
         if ($this->detailViewField === null) {
             $fieldConfig = $this->getDetailViewFieldConfig();
 
-            $this->detailViewField = new $this->detailViewFieldClass($fieldConfig, $this->attribute);
+            $detailViewFieldClass = $this->detailViewFieldClass;
+            $this->detailViewField = \yii::$container->get($detailViewFieldClass, [$fieldConfig, $this->attribute]);
             $this->initDetailViewField($this->detailViewField);
         }
 

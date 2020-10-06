@@ -22,7 +22,7 @@ class Editor extends DetailViewField
      */
     public function getConfig($model = null)
     {
-        return array_merge(parent::getConfig($model), [
+        return array_merge([
             'type' => DetailView::INPUT_WIDGET,
             'format' => 'html',
             'widgetOptions' => [
@@ -33,6 +33,6 @@ class Editor extends DetailViewField
                     'allowedContent' => true,
                 ],
             ],
-        ]);
+        ], parent::getConfig($model));
     }
 }
