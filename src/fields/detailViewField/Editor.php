@@ -8,7 +8,7 @@
 namespace execut\crudFields\fields\detailViewField;
 
 use execut\crudFields\fields\DetailViewField;
-use iutbay\yii2kcfinder\CKEditor;
+use execut\yii2kcfinder\CKEditor;
 use kartik\detail\DetailView;
 
 /**
