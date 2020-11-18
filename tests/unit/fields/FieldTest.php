@@ -285,7 +285,7 @@ class FieldTest extends \Codeception\Test\Unit
         $field->applyScopes($query);
     }
 
-    public function testGetRules()
+    public function testRules()
     {
         $model = new FieldTestModel();
         $field = new Field([
@@ -306,7 +306,7 @@ class FieldTest extends \Codeception\Test\Unit
         ], $field->rules());
     }
 
-    public function testGetRulesWhileRequired()
+    public function testRulesWhileRequired()
     {
         $model = new FieldTestModel();
         $field = new Field([
@@ -328,7 +328,7 @@ class FieldTest extends \Codeception\Test\Unit
         ], $field->rules());
     }
 
-    public function testGetRulesWhenReadOnly()
+    public function testRulesWhenReadOnly()
     {
         $model = new FieldTestModel();
         $field = new Field([
@@ -526,6 +526,26 @@ class FieldTest extends \Codeception\Test\Unit
         $class = 'test';
         $this->assertEquals($field, $field->setDetailViewFieldClass($class));
         $this->assertEquals($class, $field->getDetailViewFieldClass());
+    }
+
+    public function testGetModule()
+    {
+        $module = 'test';
+        $field = new Field([
+            'module' => $module,
+        ]);
+        $this->assertEquals($module, $field->getModule());
+    }
+
+    public function testGetRules()
+    {
+        $rules = [
+            'asdasd' => [],
+        ];
+        $field = new Field([
+            'rules' => $rules
+        ]);
+        $this->assertEquals($rules, $field->getRules());
     }
 }
 

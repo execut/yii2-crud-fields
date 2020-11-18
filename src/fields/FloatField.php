@@ -29,7 +29,7 @@ class FloatField extends Field
      */
     public function rules()
     {
-        return ArrayHelper::merge(parent::getRules(), [
+        return ArrayHelper::merge(parent::getPreparedRules(), [
             $this->attribute . 'float' => [[$this->attribute], 'double', 'min' => $this->min, 'max' => $this->max]
         ]);
     }

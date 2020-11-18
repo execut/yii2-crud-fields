@@ -43,7 +43,7 @@ class PasswordWidget extends Field
     /**
      * {@inheritDoc}
      */
-    public function getRules():array
+    public function getPreparedRules():array
     {
         if (!$this->isCheckStrength()) {
             return [];

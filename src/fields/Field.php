@@ -658,7 +658,7 @@ class Field extends BaseObject
 
         $rules = [];
         if ($this->attribute !== null) {
-            $rules = $this->getRules();
+            $rules = $this->getPreparedRules();
         }
 
         $rules = ArrayHelper::merge($rules, $this->rules);
@@ -854,7 +854,7 @@ class Field extends BaseObject
      * Return rules
      * @return array
      */
-    protected function getRules(): array
+    protected function getPreparedRules(): array
     {
         $rules = [];
         $uniqueId = $this->attribute . $this->getRelationName();
@@ -980,5 +980,15 @@ class Field extends BaseObject
                 $this->model->$attribute = $defaultValue;
             }
         }
+    }
+
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    public function getRules()
+    {
+        return $this->rules;
     }
 }

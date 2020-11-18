@@ -51,9 +51,9 @@ class StringField extends Field
     /**
      * {@inheritDoc}
      */
-    protected function getRules():array
+    protected function getPreparedRules():array
     {
-        $rules = parent::getRules();
+        $rules = parent::getPreparedRules();
         if ($this->maxLength || $this->minLength) {
             $rule = [[$this->attribute], 'string'];
             if ($this->maxLength) {

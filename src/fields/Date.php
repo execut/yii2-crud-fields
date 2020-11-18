@@ -35,10 +35,10 @@ class Date extends Field
     /**
      * {@inheritdoc}
      */
-    protected function getRules(): array
+    protected function getPreparedRules(): array
     {
         $self = $this;
-        return ArrayHelper::merge(parent::getRules(), [
+        return ArrayHelper::merge(parent::getPreparedRules(), [
             $this->attribute . 'Date' => [
                 $this->attribute,
                 function () use ($self) {

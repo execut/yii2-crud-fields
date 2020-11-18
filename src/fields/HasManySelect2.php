@@ -135,9 +135,9 @@ class HasManySelect2 extends HasOneSelect2
     /**
      * {@inheritdoc}
      */
-    protected function getRules(): array
+    protected function getPreparedRules(): array
     {
-        $rules = parent::getRules();
+        $rules = parent::getPreparedRules();
         if ($this->getRelationObject()->isVia()) {
             $viaRelationName = $this->getRelationObject()->getViaRelation();
             $rules[$viaRelationName] = [
