@@ -1,4 +1,4 @@
-# eXeCUT Yii2 CRUD fields
+# eXeCUT Yii2 CRUD fields. CRUD without generators and code duplication
 This component allows you to automate many processes that occur in working with models, thereby reducing code
 duplication, and hence the total time spent:
 * Writing validation rules for fields of the same type
