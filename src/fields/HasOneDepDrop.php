@@ -100,7 +100,7 @@ class HasOneDepDrop extends HasOneSelect2
     /**
      * {@inheritdoc}
      */
-    public function getMultipleInputField()
+    public function getMultipleInputField($relationModels = null)
     {
         throw new Exception(__METHOD__ . ' is not implemented');
     }

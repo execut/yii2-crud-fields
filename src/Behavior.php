@@ -717,11 +717,11 @@ class Behavior extends BaseBehavior
      * @return array
      * @throws Exception
      */
-    public function getMultipleInputFields()
+    public function getMultipleInputFields($relationModels = null)
     {
         $columns = [];
         foreach ($this->getFields() as $key => $field) {
-            $field = $field->getMultipleInputField();
+            $field = $field->getMultipleInputField($relationModels);
             if ($field !== false) {
                 $columns[$key] = $field;
             }

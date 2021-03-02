@@ -209,7 +209,7 @@ class HasOneSelect2 extends Field
     /**
      * {@inheritdoc}
      */
-    public function getMultipleInputField()
+    public function getMultipleInputField($relationModels = null)
     {
         $multipleInputField = parent::getMultipleInputField();
         if ($multipleInputField == false) {
@@ -218,7 +218,7 @@ class HasOneSelect2 extends Field
 
         unset($multipleInputField['options']);
         return ArrayHelper::merge($multipleInputField, [
-            'options' => $this->getSelect2WidgetOptions(),
+            'options' => $this->getSelect2WidgetOptions($relationModels),
         ]);
     }
 
@@ -227,11 +227,22 @@ class HasOneSelect2 extends Field
      * @return array
      * @throws Exception
      */
-    protected function getSelect2WidgetOptions(): array
+    protected function getSelect2WidgetOptions($relationModels = null): array
     {
-        $sourceInitText = $this->getSourcesText();
-        if (empty($sourceInitText)) {
-            $sourceInitText = null;
+        if ($relationModels !== null) {
+            $sourceInitText = [];
+            foreach ($relationModels as $relationModel) {
+                $model = $relationModel->{$this->getRelationName()};
+                if ($model) {
+                    $nameAttrtibute = $this->getRelationObject()->getNameAttribute();
+                    $sourceInitText[$model->primaryKey] = $model->$nameAttrtibute;
+                }
+            }
+        } else {
+            $sourceInitText = $this->getSourcesText();
+            if (empty($sourceInitText)) {
+                $sourceInitText = null;
+            }
         }
 
         $relation = $this->getRelationObject();

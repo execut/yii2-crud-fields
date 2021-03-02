@@ -307,7 +307,8 @@ JS
                 ];
             }
 
-            $multipleInputColumns = $viaRelationModel->getMultipleInputFields();
+            $models = $this->model->{$relation->getName()};
+            $multipleInputColumns = $viaRelationModel->getMultipleInputFields($models);
             $columns = ArrayHelper::merge($pksFields, $multipleInputColumns, $this->viaColumns);
         }
 

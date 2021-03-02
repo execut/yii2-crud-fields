@@ -127,7 +127,7 @@ class HasManySelect2 extends HasOneSelect2
     /**
      * {@inheritdoc}
      */
-    public function getMultipleInputField()
+    public function getMultipleInputField($relationModels = null)
     {
         return false;
     }
