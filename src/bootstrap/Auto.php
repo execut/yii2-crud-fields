@@ -6,7 +6,6 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 namespace execut\crudFields\bootstrap;
-
 use yii\base\BootstrapInterface;
 use yii\console\Application;
 
@@ -23,6 +22,8 @@ class Auto implements BootstrapInterface
     {
         $bootstraps = [];
         if ($app instanceof Application) {
+            $bootstraps[] = new Console();
+        } else if ($app->id === 'backend') {
             $bootstraps[] = new Backend();
         }
 
