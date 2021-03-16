@@ -589,8 +589,13 @@ class Relation extends BaseObject
      * @return ActiveRecordInterface[]
      * @throws ExceptionAlias
      */
-    public function getRelatedModels()
+    public function getRelatedModels(bool $isFromModel = false)
     {
+        if ($isFromModel) {
+            $name = $this->getName();
+            return $this->model->$name;
+        }
+
         $relationQuery = clone $this->getQuery();
         $relationQuery->link = null;
         $relationQuery->primaryModel = null;

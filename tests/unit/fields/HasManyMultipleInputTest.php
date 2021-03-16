@@ -150,11 +150,16 @@ class HasManyMultipleInputTest extends \Codeception\Test\Unit
 
     public function testGetFieldForHasManyRelation()
     {
-        $relationObject = $this->getMockBuilder(Relation::class)->getMock();
+        $relationObject = $this->getMockBuilder(Relation::class)->onlyMethods(['getRelatedModels', 'getRelationModel', 'isVia'])->getMock();
         $model = new HasOneSelect2TestModel;
         $relationObject->method('getRelationModel')
             ->with(true)
             ->willReturn($model);
+        $relationObject->method('getRelatedModels')
+            ->with(true)
+            ->willReturn([$model]);
+        $relationObject->method('isVia')
+            ->willReturn(false);
         $field = new HasManyMultipleInput([
             'relationObject' => $relationObject,
             'attribute' => 'name',

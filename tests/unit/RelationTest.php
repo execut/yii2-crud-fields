@@ -71,6 +71,18 @@ class RelationTest extends \Codeception\Test\Unit
         $this->assertEquals('testTest', $relation->getWith());
     }
 
+    public function testGetRelatedModelsFromModel()
+    {
+        $relation = new Relation();
+        $model = new fields\FieldTestModel();
+        $model->testTest = [$model];
+        $relation = new Relation([
+            'name' => 'testTest',
+            'model' => $model,
+        ]);
+        $this->assertEquals([$model], $relation->getRelatedModels(true));
+    }
+
     public function testGetColumnValue()
     {
         $model = new fields\FieldTestModel();
