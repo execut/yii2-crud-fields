@@ -72,6 +72,72 @@ class HasOneSelect2Test extends Unit
         ]);
         $this->assertFalse($field->getMultipleInputField());
     }
+
+    public function testGetMultipleInputFieldWithData()
+    {
+        $model = new HasOneSelect2TestModel;
+        $data = ['test' => 'test'];
+        $field = new HasOneSelect2([
+            'attribute' => 'name',
+            'model' => $model,
+            'data' => $data,
+        ]);
+        $field = $field->getMultipleInputField();
+        $this->assertIsArray($field);
+    }
+
+    public function testGetMultipleInputFieldWithRelationModels()
+    {
+        $model = new HasOneSelect2TestModel;
+        $field = new HasOneSelect2([
+            'attribute' => 'name',
+            'model' => $model,
+            'relation' => 'testTest',
+        ]);
+
+        $relationModel = new HasOneSelect2TestModel();
+        $subRelationModel = new HasOneSelect2TestModel();
+        $subRelationName = 'sub relation name';
+        $subRelationModel->name = $subRelationName;
+        $relationModel->testTest = $subRelationModel;
+        $relationModels = [
+            $relationModel
+        ];
+        $multipleInputField = $field->getMultipleInputField($relationModels);
+        $this->assertIsArray($multipleInputField);
+        $this->assertArrayHasKey('options', $multipleInputField);
+        $options = $multipleInputField['options'];
+        $this->assertArrayHasKey('data', $options);
+        $this->assertEquals([
+            2 => $subRelationName,
+        ], $options['data']);
+    }
+
+    public function testGetMultipleInputFieldWithRelationModelsException()
+    {
+        $field = new HasOneSelect2([
+            'attribute' => 'name',
+        ]);
+        $this->expectExceptionMessage('Relation name is required for generation select2 widget options for field name');
+        $multipleInputField = $field->getMultipleInputField([1]);
+    }
+
+    public function testGetMultipleInputFieldWithRelationModelsWhenHasDataOption()
+    {
+        $data = [
+            'test',
+        ];
+        $field = new HasOneSelect2([
+            'attribute' => 'name',
+            'data' => $data
+        ]);
+        $multipleInputField = $field->getMultipleInputField([1]);
+        $this->assertIsArray($multipleInputField);
+        $this->assertArrayHasKey('options', $multipleInputField);
+        $options = $multipleInputField['options'];
+        $this->assertArrayHasKey('data', $options);
+        $this->assertEquals($data, $options['data']);
+    }
 }
 
 class HasOneSelect2TestModel extends FieldTestModel

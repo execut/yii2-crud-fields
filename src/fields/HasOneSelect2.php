@@ -229,10 +229,15 @@ class HasOneSelect2 extends Field
      */
     protected function getSelect2WidgetOptions($relationModels = null): array
     {
-        if ($relationModels !== null) {
+        if ($relationModels !== null && empty($this->data)) {
             $sourceInitText = [];
             foreach ($relationModels as $relationModel) {
-                $model = $relationModel->{$this->getRelationName()};
+                $relationName = $this->getRelationName();
+                if (!$relationName) {
+                    throw new Exception('Relation name is required for generation select2 widget options for field ' . $this->attribute);
+                }
+
+                $model = $relationModel->{$relationName};
                 if ($model) {
                     $nameAttrtibute = $this->getRelationObject()->getNameAttribute();
                     $sourceInitText[$model->primaryKey] = $model->$nameAttrtibute;
@@ -287,7 +292,7 @@ JS
         }
 
 
-        if (!empty($this->data) || $relation->getUrl() === null) {
+        if ((!empty($this->data) || $relation->getUrl() === null) && $relationModels === null) {
             $data = $this->getData();
 
             $widgetOptions['data'] = $data;
