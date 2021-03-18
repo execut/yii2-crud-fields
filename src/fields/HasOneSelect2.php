@@ -229,6 +229,13 @@ class HasOneSelect2 extends Field
      */
     protected function getSelect2WidgetOptions($relationModels = null): array
     {
+        $relation = $this->getRelationObject();
+        if (!$relation || $relation->getUrl() === null) {
+            $data = $this->getData();
+        } else {
+            $data = null;
+        }
+
         if ($relationModels !== null && empty($this->data)) {
             $sourceInitText = [];
             foreach ($relationModels as $relationModel) {
@@ -250,7 +257,6 @@ class HasOneSelect2 extends Field
             }
         }
 
-        $relation = $this->getRelationObject();
         $widgetOptions = [
             'class' => Select2::class,
             'bsVersion' => 3,
@@ -292,9 +298,7 @@ JS
         }
 
 
-        if ((!empty($this->data) || $relation->getUrl() === null) && $relationModels === null) {
-            $data = $this->getData();
-
+        if ($data !== null) {
             $widgetOptions['data'] = $data;
         }
 

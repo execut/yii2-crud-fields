@@ -110,7 +110,7 @@ class HasOneSelect2Test extends Unit
         $this->assertArrayHasKey('data', $options);
         $this->assertEquals([
             2 => $subRelationName,
-        ], $options['data']);
+        ], $options['initValueText']);
     }
 
     public function testGetMultipleInputFieldWithRelationModelsException()
