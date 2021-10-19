@@ -123,12 +123,17 @@ class Date extends Field
             $type = DetailView::INPUT_DATE;
         }
 
-        return [
+        return ArrayHelper::merge(parent::getField(), [
             'type' => $type,
             'attribute' => $this->attribute,
             'format' => ['date', $this->getFormat()],
             'widgetOptions' => $this->getWidgetOptions(),
-        ];
+        ]);
+    }
+
+    protected function getFieldType()
+    {
+        return $this->fieldType;
     }
 
     /**
@@ -144,6 +149,7 @@ class Date extends Field
             if (!$dateTime) {
                 $dateTime = \DateTime::createFromFormat($this->getDatabaseFormat(false), $value, new \DateTimeZone(\yii::$app->formatter->defaultTimeZone));
             }
+
             if (!$dateTime) {
                 throw new Exception('Failed to format date ' . $value . ' to format ' . $this->getDatabaseFormat(false));
             }
