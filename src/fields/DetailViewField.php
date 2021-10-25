@@ -190,4 +190,9 @@ class DetailViewField
         $this->isHidden = false;
         return $this;
     }
+
+    public function getIsHidden()
+    {
+        return $this->isHidden;
+    }
 }
